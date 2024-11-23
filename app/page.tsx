@@ -14,7 +14,7 @@ export default function LoginPage() {
                 variant="underlined"
             />
 
-            <Button className="w-[264px]" size="sm" type="submit">
+            <Button className="w-[264px]" color="primary" type="submit" variant="shadow">
                 Login
             </Button>
         </form>

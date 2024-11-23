@@ -13,7 +13,7 @@ import NextLink from "next/link";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { DynamicAccessKeyIcon, GithubIcon, Logo, ServersIcon, TwitterIcon } from "@/components/icons";
+import { DynamicAccessKeyIcon, GithubIcon, Logo, LogoutIcon, ServersIcon, TwitterIcon } from "@/components/icons";
 
 const navItems = [
     {
@@ -29,7 +29,7 @@ const navItems = [
 ];
 
 export const Navbar = () => {
-    const isAuthorized = false;
+    const isAuthorized = true;
 
     return (
         <NextUINavbar maxWidth="xl" position="sticky">
@@ -77,10 +77,6 @@ export const Navbar = () => {
             </NavbarContent>
 
             <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-                <Link isExternal aria-label="Twitter" href={siteConfig.links.twitter}>
-                    <TwitterIcon className="text-default-500" />
-                </Link>
-
                 <Link isExternal aria-label="Github" href={siteConfig.links.github}>
                     <GithubIcon className="text-default-500" />
                 </Link>
@@ -101,6 +97,13 @@ export const Navbar = () => {
                                 </NextLink>
                             </NavbarMenuItem>
                         ))}
+
+                        <NavbarMenuItem key="logout">
+                            <NextLink className="flex gap-2 items-center" href="#">
+                                <LogoutIcon size={22} />
+                                <span>LOGOUT</span>
+                            </NextLink>
+                        </NavbarMenuItem>
                     </div>
                 </NavbarMenu>
             )}
