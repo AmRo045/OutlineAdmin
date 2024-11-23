@@ -131,7 +131,14 @@ export default function ServersPage() {
                                         delay={600}
                                         size="sm"
                                     >
-                                        <Button color="primary" isIconOnly={true} size="sm" variant="light">
+                                        <Button
+                                            as={Link}
+                                            color="primary"
+                                            href={`/servers/${1}/access-keys`}
+                                            isIconOnly={true}
+                                            size="sm"
+                                            variant="light"
+                                        >
                                             <KeyIcon size={24} />
                                         </Button>
                                     </Tooltip>
