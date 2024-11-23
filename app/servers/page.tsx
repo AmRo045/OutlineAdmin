@@ -108,73 +108,14 @@ export default function ServersPage() {
                                     delay={600}
                                     size="sm"
                                 >
-                                    <Button color="primary" isIconOnly={true} size="sm" variant="light">
-                                        <SettingsIcon size={24} />
-                                    </Button>
-                                </Tooltip>
-
-                                <Tooltip
-                                    closeDelay={100}
-                                    color="danger"
-                                    content="Remove the server"
-                                    delay={600}
-                                    size="sm"
-                                >
-                                    <Button color="danger" isIconOnly={true} size="sm" variant="light">
-                                        <DeleteIcon size={24} />
-                                    </Button>
-                                </Tooltip>
-                            </div>
-                        </TableCell>
-                    </TableRow>
-                    <TableRow key="2">
-                        <TableCell>2</TableCell>
-                        <TableCell>United States</TableCell>
-                        <TableCell>
-                            <Snippet
-                                classNames={{
-                                    copyButton: "text-sm !min-w-6 !w-6 h-6",
-                                    pre: "!ps-1"
-                                }}
-                                copyIcon={<CopyIcon size={16} />}
-                                hideSymbol={true}
-                                size="sm"
-                                variant="flat"
-                            >
-                                192.125.66.85
-                            </Snippet>
-                        </TableCell>
-                        <TableCell>
-                            <Chip color="default" size="sm" variant="flat">
-                                24
-                            </Chip>
-                        </TableCell>
-                        <TableCell>
-                            <Chip color="default" size="sm" variant="flat">
-                                1.52 GB
-                            </Chip>
-                        </TableCell>
-                        <TableCell>
-                            <Chip color="danger" size="sm" variant="flat">
-                                NOT AVAILABLE
-                            </Chip>
-                        </TableCell>
-                        <TableCell>
-                            <div className="flex gap-2 justify-center items-center">
-                                <Tooltip closeDelay={100} color="primary" content="Server keys" delay={600} size="sm">
-                                    <Button color="primary" isIconOnly={true} size="sm" variant="light">
-                                        <KeyIcon size={24} />
-                                    </Button>
-                                </Tooltip>
-
-                                <Tooltip
-                                    closeDelay={100}
-                                    color="primary"
-                                    content="Server settings"
-                                    delay={600}
-                                    size="sm"
-                                >
-                                    <Button color="primary" isIconOnly={true} size="sm" variant="light">
+                                    <Button
+                                        as={Link}
+                                        color="primary"
+                                        href={`/servers/${1}/settings`}
+                                        isIconOnly={true}
+                                        size="sm"
+                                        variant="light"
+                                    >
                                         <SettingsIcon size={24} />
                                     </Button>
                                 </Tooltip>
