@@ -15,6 +15,7 @@ import {
     Tooltip
 } from "@nextui-org/react";
 import React from "react";
+import { Link } from "@nextui-org/link";
 
 import { CopyIcon, DeleteIcon, KeyIcon, PlusIcon, SettingsIcon } from "@/components/icons";
 
@@ -26,7 +27,13 @@ export default function ServersPage() {
             <div className="flex justify-between items-center gap-2">
                 <Input className="w-fit" placeholder="Name or IP [+Enter]" startContent={<>🔍</>} variant="faded" />
 
-                <Button color="primary" startContent={<PlusIcon size={20} />} variant="shadow">
+                <Button
+                    as={Link}
+                    color="primary"
+                    href="/servers/add"
+                    startContent={<PlusIcon size={20} />}
+                    variant="shadow"
+                >
                     Add
                 </Button>
             </div>
