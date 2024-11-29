@@ -34,6 +34,10 @@ export default function ConfirmModal({
                 {title && <ModalHeader>{title}</ModalHeader>}
                 {body && <ModalBody>{body}</ModalBody>}
                 <ModalFooter className="flex justify-between gap-2 mt-4">
+                    <Button isDisabled={isPerformingIntendedAction} variant="flat" onClick={disclosure.onClose}>
+                        Cancel
+                    </Button>
+
                     <Button
                         color="danger"
                         isLoading={isPerformingIntendedAction}
@@ -46,9 +50,6 @@ export default function ConfirmModal({
                         }}
                     >
                         {confirmLabel ?? "Ok"}
-                    </Button>
-                    <Button isDisabled={isPerformingIntendedAction} variant="light" onClick={disclosure.onClose}>
-                        Cancel
                     </Button>
                 </ModalFooter>
             </ModalContent>
