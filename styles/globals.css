@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    :root {
+        --qr-code-text: theme('colors.default-600');
+    }
+}
