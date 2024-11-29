@@ -16,7 +16,7 @@ import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
 import React, { useState } from "react";
 
-import { ArrowLeftIcon, DeleteIcon, EditIcon, InfinityIcon, KeyIcon } from "@/components/icons";
+import { ArrowLeftIcon, DeleteIcon, EditIcon, EyeIcon, InfinityIcon } from "@/components/icons";
 import AccessKeyModal from "@/components/modals/access-key-modal";
 import ServerInfo from "@/components/access-keys/server-info";
 
@@ -107,7 +107,7 @@ export default function ServerAccessKeysPage() {
                                                     accessKeyModalDisclosure.onOpen();
                                                 }}
                                             >
-                                                <KeyIcon size={24} />
+                                                <EyeIcon size={24} />
                                             </Button>
                                         </Tooltip>
 
