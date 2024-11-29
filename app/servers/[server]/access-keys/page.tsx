@@ -16,15 +16,23 @@ import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
 import React, { useState } from "react";
 
-import { ArrowLeftIcon, DeleteIcon, EditIcon, EyeIcon, InfinityIcon } from "@/components/icons";
+import { ArrowLeftIcon, DeleteIcon, EditIcon, EyeIcon, InfinityIcon, PlusIcon } from "@/components/icons";
 import AccessKeyModal from "@/components/modals/access-key-modal";
 import ServerInfo from "@/components/access-keys/server-info";
 import ConfirmModal from "@/components/modals/confirm-modal";
+import AccessKeyFormModal from "@/components/modals/access-key-form-modal";
+
+enum AccessKeyFormType {
+    New,
+    Edit
+}
 
 export default function ServerAccessKeysPage() {
+    const accessKeyFormModalDisclosure = useDisclosure();
     const accessKeyModalDisclosure = useDisclosure();
     const removeAccessKeyConfirmModalDisclosure = useDisclosure();
 
+    const [accessKeyFormType, setAccessKeyFormType] = useState<AccessKeyFormType>(AccessKeyFormType.New);
     const [accessKeyToRemove, setAccessKeyToRemove] = useState<string | null>(null);
     const [currentAccessKey, setCurrentAccessKey] = useState<string>();
 
@@ -38,6 +46,8 @@ export default function ServerAccessKeysPage() {
     return (
         <>
             <AccessKeyModal disclosure={accessKeyModalDisclosure} value={currentAccessKey} />
+
+            <AccessKeyFormModal disclosure={accessKeyFormModalDisclosure} type={accessKeyFormType} />
 
             <ConfirmModal
                 body={
@@ -72,7 +82,22 @@ export default function ServerAccessKeysPage() {
                 <ServerInfo />
 
                 <section className="grid gap-6">
-                    <h1 className="text-xl">🗝️ Access Keys</h1>
+                    <div className="flex justify-between items-center gap-2">
+                        <h1 className="text-xl">🗝️ Access Keys</h1>
+
+                        <Button
+                            color="primary"
+                            startContent={<PlusIcon size={20} />}
+                            variant="shadow"
+                            onClick={() => {
+                                setAccessKeyFormType(AccessKeyFormType.New);
+                                accessKeyFormModalDisclosure.onOpen();
+                            }}
+                        >
+                            New
+                        </Button>
+                    </div>
+
                     <Table
                         aria-label="Servers list"
                         bottomContent={
@@ -144,10 +169,13 @@ export default function ServerAccessKeysPage() {
                                             <Button
                                                 as={Link}
                                                 color="primary"
-                                                href={`/servers/${1}/access-keys/${2}/edit`}
                                                 isIconOnly={true}
                                                 size="sm"
                                                 variant="light"
+                                                onClick={() => {
+                                                    setAccessKeyFormType(AccessKeyFormType.Edit);
+                                                    accessKeyFormModalDisclosure.onOpen();
+                                                }}
                                             >
                                                 <EditIcon size={24} />
                                             </Button>
