@@ -19,15 +19,38 @@ import React, { useState } from "react";
 import { ArrowLeftIcon, DeleteIcon, EditIcon, EyeIcon, InfinityIcon } from "@/components/icons";
 import AccessKeyModal from "@/components/modals/access-key-modal";
 import ServerInfo from "@/components/access-keys/server-info";
+import ConfirmModal from "@/components/modals/confirm-modal";
 
 export default function ServerAccessKeysPage() {
     const accessKeyModalDisclosure = useDisclosure();
+    const removeAccessKeyConfirmModalDisclosure = useDisclosure();
 
+    const [accessKeyToRemove, setAccessKeyToRemove] = useState<string | null>(null);
     const [currentAccessKey, setCurrentAccessKey] = useState<string>();
+
+    const handleRemoveServer = async () => {
+        if (!accessKeyToRemove) return;
+
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        console.log(`Removing access key ${accessKeyToRemove}`);
+    };
 
     return (
         <>
             <AccessKeyModal disclosure={accessKeyModalDisclosure} value={currentAccessKey} />
+
+            <ConfirmModal
+                body={
+                    <div className="grid gap-2">
+                        <span>Are you sure you want to remove this access key?</span>
+                        <p className="text-default-500 text-sm whitespace-pre-wrap break-all">{accessKeyToRemove}</p>
+                    </div>
+                }
+                confirmLabel="Remove"
+                disclosure={removeAccessKeyConfirmModalDisclosure}
+                title="Remove Access Key"
+                onConfirm={handleRemoveServer}
+            />
 
             <div className="grid gap-6">
                 <section className="flex justify-between items-center gap-2">
@@ -137,7 +160,18 @@ export default function ServerAccessKeysPage() {
                                             delay={600}
                                             size="sm"
                                         >
-                                            <Button color="danger" isIconOnly={true} size="sm" variant="light">
+                                            <Button
+                                                color="danger"
+                                                isIconOnly={true}
+                                                size="sm"
+                                                variant="light"
+                                                onClick={() => {
+                                                    setAccessKeyToRemove(
+                                                        "ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTpFUlNKSVc5MWMwZURPSElTQzlxTjUx@192.168.12.5:23924/?outline=1"
+                                                    );
+                                                    removeAccessKeyConfirmModalDisclosure.onOpen();
+                                                }}
+                                            >
                                                 <DeleteIcon size={24} />
                                             </Button>
                                         </Tooltip>
