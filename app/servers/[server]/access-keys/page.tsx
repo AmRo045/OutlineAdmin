@@ -28,7 +28,7 @@ export default function ServerAccessKeysPage() {
     const [accessKeyToRemove, setAccessKeyToRemove] = useState<string | null>(null);
     const [currentAccessKey, setCurrentAccessKey] = useState<string>();
 
-    const handleRemoveServer = async () => {
+    const handleRemoveAccessKey = async () => {
         if (!accessKeyToRemove) return;
 
         await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -49,7 +49,7 @@ export default function ServerAccessKeysPage() {
                 confirmLabel="Remove"
                 disclosure={removeAccessKeyConfirmModalDisclosure}
                 title="Remove Access Key"
-                onConfirm={handleRemoveServer}
+                onConfirm={handleRemoveAccessKey}
             />
 
             <div className="grid gap-6">
