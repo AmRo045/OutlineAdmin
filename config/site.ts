@@ -15,7 +15,7 @@ export const siteConfig = {
     ],
     links: {
         github: "https://github.com/AmRo045/OutlineAdmin",
-        twitter: "https://twitter.com/AmRo045",
+        x: "https://x.com/AmRo045",
         me: "https://amro045.github.io"
     },
     snippets: {

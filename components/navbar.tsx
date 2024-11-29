@@ -13,7 +13,7 @@ import NextLink from "next/link";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { DynamicAccessKeyIcon, GithubIcon, Logo, LogoutIcon, ServersIcon, TwitterIcon } from "@/components/icons";
+import { DynamicAccessKeyIcon, GithubIcon, Logo, LogoutIcon, ServersIcon, XIcon } from "@/components/icons";
 
 const navItems = [
     {
@@ -56,8 +56,8 @@ export const Navbar = () => {
 
             <NavbarContent className="hidden sm:flex basis-1/5 sm:basis-full" justify="end">
                 <NavbarItem className="hidden sm:flex gap-2">
-                    <Link isExternal aria-label="Twitter" href={siteConfig.links.twitter}>
-                        <TwitterIcon className="text-default-500" />
+                    <Link isExternal aria-label="Twitter" href={siteConfig.links.x}>
+                        <XIcon className="text-default-500" />
                     </Link>
 
                     <Link isExternal aria-label="Github" href={siteConfig.links.github}>
