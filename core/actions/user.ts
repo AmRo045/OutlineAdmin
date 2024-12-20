@@ -1,8 +1,10 @@
 "use server";
 
 import bcrypt from "bcrypt";
+import { redirect } from "next/navigation";
 
 import prisma from "@/prisma/db";
+import { createSession, deleteSession } from "@/core/session";
 
 export async function updatePassword(password: string): Promise<void> {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -25,10 +27,24 @@ export async function updatePassword(password: string): Promise<void> {
     }
 }
 
-export async function checkPassword(password: string): Promise<boolean> {
+export async function checkPassword(password: string): Promise<number | null> {
     const adminUser = await prisma.user.findFirst();
 
-    if (!adminUser) return false;
+    if (!adminUser) return null;
 
-    return bcrypt.compare(password, adminUser.password);
+    const result = await bcrypt.compare(password, adminUser.password);
+
+    return result ? adminUser.id : null;
+}
+
+export async function login(userId: number, redirectTo?: string): Promise<void> {
+    await createSession(userId);
+
+    redirect(redirectTo ?? "/servers");
+}
+
+export async function logout(): Promise<void> {
+    await deleteSession();
+
+    redirect("/");
 }

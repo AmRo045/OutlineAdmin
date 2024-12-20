@@ -1,26 +1,23 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 
-import { checkPassword } from "@/core/actions";
+import { checkPassword, login } from "@/core/actions";
 
 interface FormProps {
     password: string;
 }
 
 export default function LoginForm() {
-    const router = useRouter();
     const form = useForm<FormProps>();
 
     const actualSubmit = async (data: FormProps) => {
-        const result = await checkPassword(data.password);
+        const userId = await checkPassword(data.password);
 
-        if (result) {
-            // todo: setup auth related stuff
-            router.push("/servers");
+        if (userId) {
+            await login(userId);
         } else {
             form.setError("password", { type: "custom", message: "Incorrect password." });
         }

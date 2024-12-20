@@ -1,3 +1,5 @@
+"use client";
+
 import {
     Navbar as NextUINavbar,
     NavbarBrand,
@@ -10,10 +12,12 @@ import {
 import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
 import NextLink from "next/link";
+import { useForm } from "react-hook-form";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { DynamicAccessKeyIcon, GithubIcon, Logo, LogoutIcon, ServersIcon, XIcon } from "@/components/icons";
+import { logout } from "@/core/actions";
 
 const navItems = [
     {
@@ -30,6 +34,12 @@ const navItems = [
 
 export const Navbar = () => {
     const isAuthorized = true;
+
+    const logoutForm = useForm();
+
+    const handleLogout = async () => {
+        await logout();
+    };
 
     return (
         <NextUINavbar maxWidth="xl" position="sticky">
@@ -69,9 +79,18 @@ export const Navbar = () => {
 
                 {isAuthorized && (
                     <NavbarItem className="hidden md:flex">
-                        <Button className="text-sm" color="danger" variant="light">
-                            Logout
-                        </Button>
+                        <form onSubmit={logoutForm.handleSubmit(handleLogout)}>
+                            <Button
+                                color="danger"
+                                isIconOnly={true}
+                                isLoading={logoutForm.formState.isSubmitting}
+                                size="sm"
+                                type="submit"
+                                variant="light"
+                            >
+                                <LogoutIcon size={22} />
+                            </Button>
+                        </form>
                     </NavbarItem>
                 )}
             </NavbarContent>
@@ -99,10 +118,18 @@ export const Navbar = () => {
                         ))}
 
                         <NavbarMenuItem key="logout">
-                            <NextLink className="flex gap-2 items-center" href="#">
-                                <LogoutIcon size={22} />
-                                <span>LOGOUT</span>
-                            </NextLink>
+                            <form onSubmit={logoutForm.handleSubmit(handleLogout)}>
+                                <Button
+                                    className="ps-0"
+                                    color="danger"
+                                    isLoading={logoutForm.formState.isSubmitting}
+                                    type="submit"
+                                    variant="light"
+                                >
+                                    <LogoutIcon size={22} />
+                                    <span>LOGOUT</span>
+                                </Button>
+                            </form>
                         </NavbarMenuItem>
                     </div>
                 </NavbarMenu>
