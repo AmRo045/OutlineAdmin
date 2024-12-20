@@ -1,22 +1,14 @@
-import { Input } from "@nextui-org/input";
-import { Button } from "@nextui-org/button";
+import { redirect } from "next/navigation";
 
-export default function LoginPage() {
-    return (
-        <form className="flex flex-col items-center justify-center gap-2 min-h-[64vh]">
-            <Input
-                className="w-[264px]"
-                color="primary"
-                label="Password"
-                placeholder="Enter your password"
-                required={true}
-                type="password"
-                variant="underlined"
-            />
+import prisma from "@/prisma/db";
+import LoginForm from "@/components/login-form";
 
-            <Button className="w-[264px]" color="primary" type="submit" variant="shadow">
-                Login
-            </Button>
-        </form>
-    );
+export default async function LoginPage() {
+    const adminUser = await prisma.user.findFirst();
+
+    if (!adminUser) {
+        redirect("/admin");
+    }
+
+    return <LoginForm />;
 }

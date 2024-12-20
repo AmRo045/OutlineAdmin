@@ -43,6 +43,21 @@ export const LogoutIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, .
     );
 };
 
+export const UserPasswordIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => {
+    return (
+        <svg height={size || height} viewBox="0 0 24 24" width={size || width} {...props}>
+            <path
+                d="M12 17v4m-2-1l4-2m-4 0l4 2m-9-3v4m-2-1l4-2m-4 0l4 2m12-3v4m-2-1l4-2m-4 0l4 2M9 6a3 3 0 1 0 6 0a3 3 0 0 0-6 0m-2 8a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+            />
+        </svg>
+    );
+};
+
 export const HeartIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => {
     return (
         <svg height={size || height} viewBox="0 0 24 24" width={size || width} {...props}>
