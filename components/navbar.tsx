@@ -18,6 +18,7 @@ import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { DynamicAccessKeyIcon, GithubIcon, Logo, LogoutIcon, ServersIcon, XIcon } from "@/components/icons";
 import { logout } from "@/core/actions";
+import { UserSession } from "@/core/definitions";
 
 const navItems = [
     {
@@ -32,8 +33,12 @@ const navItems = [
     }
 ];
 
-export const Navbar = () => {
-    const isAuthorized = true;
+interface Props {
+    session: UserSession;
+}
+
+export const Navbar = ({ session }: Props) => {
+    const isAuthorized = session.isAuthorized;
 
     const logoutForm = useForm();
 

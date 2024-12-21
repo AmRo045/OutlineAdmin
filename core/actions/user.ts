@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import prisma from "@/prisma/db";
 import { createSession, deleteSession } from "@/core/session";
+import { HOME_ROUTE, LOGIN_ROUTE } from "@/core/config";
 
 export async function updatePassword(password: string): Promise<void> {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -40,11 +41,11 @@ export async function checkPassword(password: string): Promise<number | null> {
 export async function login(userId: number, redirectTo?: string): Promise<void> {
     await createSession(userId);
 
-    redirect(redirectTo ?? "/servers");
+    redirect(redirectTo ?? HOME_ROUTE);
 }
 
 export async function logout(): Promise<void> {
     await deleteSession();
 
-    redirect("/");
+    redirect(LOGIN_ROUTE);
 }

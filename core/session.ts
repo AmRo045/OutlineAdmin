@@ -2,13 +2,13 @@ import "server-only";
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 
-import { SessionPayload } from "@/core/definitions";
-import { authSessionKey } from "@/core/config";
+import { SessionPayload, UserSession } from "@/core/definitions";
+import { AUTH_SESSION_KEY } from "@/core/config";
 
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
 
-export async function encrypt(payload: SessionPayload) {
+export async function encrypt(payload: SessionPayload): Promise<string> {
     return new SignJWT(payload)
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
@@ -16,19 +16,24 @@ export async function encrypt(payload: SessionPayload) {
         .sign(encodedKey);
 }
 
-export async function decrypt(session: string | undefined = ""): Promise<SessionPayload> {
-    const { payload } = await jwtVerify(session, encodedKey, {
-        algorithms: ["HS256"]
-    });
+export async function decrypt(session: string | undefined = ""): Promise<SessionPayload | null> {
+    try {
+        const { payload } = await jwtVerify(session, encodedKey, {
+            algorithms: ["HS256"]
+        });
 
-    return payload as SessionPayload;
+        return payload as SessionPayload;
+    } catch (error) {
+        // TODO: report error
+        return null;
+    }
 }
 
-export async function createSession(userId: number) {
+export async function createSession(userId: number): Promise<void> {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const [session, cookieStore] = await Promise.all([encrypt({ userId, expiresAt }), cookies()]);
 
-    cookieStore.set(authSessionKey, session, {
+    cookieStore.set(AUTH_SESSION_KEY, session, {
         httpOnly: process.env.NODE_ENV === "production",
         secure: process.env.NODE_ENV === "production",
         expires: expiresAt,
@@ -37,18 +42,18 @@ export async function createSession(userId: number) {
     });
 }
 
-export async function refreshSession() {
+export async function refreshSession(): Promise<void> {
     const cookieStore = await cookies();
-    const session = cookieStore.get(authSessionKey)?.value;
+    const session = cookieStore.get(AUTH_SESSION_KEY)?.value;
     const payload = await decrypt(session);
 
     if (!session || !payload) {
-        return null;
+        return;
     }
 
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-    cookieStore.set(authSessionKey, session, {
+    cookieStore.set(AUTH_SESSION_KEY, session, {
         httpOnly: process.env.NODE_ENV === "production",
         secure: process.env.NODE_ENV === "production",
         expires: expiresAt,
@@ -57,8 +62,16 @@ export async function refreshSession() {
     });
 }
 
-export async function deleteSession() {
+export async function deleteSession(): Promise<void> {
     const cookieStore = await cookies();
 
-    cookieStore.delete(authSessionKey);
+    cookieStore.delete(AUTH_SESSION_KEY);
+}
+
+export async function currentSession(): Promise<UserSession> {
+    const cookie = (await cookies()).get(AUTH_SESSION_KEY)?.value;
+    const session = await decrypt(cookie);
+    const userId = session?.userId;
+
+    return { isAuthorized: !!userId, userId };
 }
