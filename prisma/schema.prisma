@@ -28,7 +28,7 @@ model Server {
   hostnameOrIp             String
   hostnameForNewAccessKeys String
   portForNewAccessKeys     Int
-  totalDataUsage           Int?
+  totalDataUsage           BigInt?
   isMetricsEnabled         Boolean
   isAvailable              Boolean     @default(true)
   apiCreatedAt             DateTime
@@ -40,17 +40,17 @@ model Server {
 model AccessKey {
   id            Int       @id @default(autoincrement())
   serverId      Int
-  apiId         Int
+  apiId         String    @unique
   name          String
   password      String
   method        String
   accessUrl     String
   port          Int
-  dataLimit     Int?
+  dataLimit     BigInt?
   dataLimitUnit String
-  dataUsage     Int       @default(0)
+  dataUsage     BigInt    @default(0)
   expiresAt     DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  server        Server    @relation(fields: [serverId], references: [id])
+  server        Server    @relation(fields: [serverId], references: [id], onDelete: Cascade)
 }

@@ -49,7 +49,7 @@ export default class ApiClient {
         return await response.json();
     }
 
-    async metricsTransfer(): Promise<ApiResponse> {
+    async metricsTransfer(): Promise<Outline.Metrics> {
         const response = await this.fetchWrapper("/metrics/transfer", "GET");
 
         return await response.json();
@@ -67,12 +67,11 @@ export default class ApiClient {
         const data: Outline.AccessKey = await response.json();
 
         data.name = data.name.length > 0 ? data.name : `Key #${data.id}`;
-        data.id = parseInt(data.id.toString());
 
         return data;
     }
 
-    async renameKey(id: number, name: string): Promise<void> {
+    async renameKey(id: string, name: string): Promise<void> {
         await this.fetchWrapper(`/access-keys/${id}/name`, "PUT", {
             name
         });
@@ -82,7 +81,7 @@ export default class ApiClient {
         await this.fetchWrapper(`/access-keys/${id}`, "DELETE");
     }
 
-    async setDataLimitForKey(id: number, limitInBytes: number): Promise<void> {
+    async setDataLimitForKey(id: string, limitInBytes: number): Promise<void> {
         await this.fetchWrapper(`/access-keys/${id}/data-limit`, "PUT", {
             limit: { bytes: limitInBytes }
         });

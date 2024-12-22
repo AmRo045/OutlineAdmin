@@ -5,6 +5,7 @@ import { Server } from "@prisma/client";
 
 import prisma from "@/prisma/db";
 import { EditServerRequest, NewServerRequest, ServerWithAccessKeysCount } from "@/core/definitions";
+import ApiClient from "@/core/outline/api-client";
 
 export async function getServers(
     filters?: { term?: string; skip?: number; take?: number },
@@ -32,6 +33,36 @@ export async function getServerById(id: number, withKeys: boolean = false): Prom
         },
         include: {
             accessKeys: withKeys
+        }
+    });
+}
+
+export async function updateMetrics(id: number): Promise<void> {
+    const server = await getServerById(id);
+
+    if (!server) {
+        return;
+    }
+
+    const outlineClient = ApiClient.fromConfig(server.managementJson);
+    const metrics = await outlineClient.metricsTransfer();
+
+    let sum = 0;
+
+    Object.entries(metrics.bytesTransferredByUserId).forEach(([id, value]: [string, number]) => {
+        prisma.accessKey.update({
+            // @ts-ignore
+            where: { apiId: id },
+            data: { dataUsage: value }
+        });
+
+        sum += value;
+    });
+
+    await prisma.server.update({
+        where: { id: server.id },
+        data: {
+            totalDataUsage: sum
         }
     });
 }

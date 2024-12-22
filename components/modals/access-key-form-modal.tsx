@@ -5,9 +5,10 @@ import { Button } from "@nextui-org/button";
 import { DatePicker, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { AccessKey } from "@prisma/client";
+import { parseAbsolute } from "@internationalized/date";
 
-import { DataLimitUnit, NewAccessKeyRequest } from "@/core/definitions";
-import { createAccessKey } from "@/core/actions/access-key";
+import { DataLimitUnit, EditAccessKeyRequest, NewAccessKeyRequest } from "@/core/definitions";
+import { createAccessKey, updateAccessKey } from "@/core/actions/access-key";
 
 interface Props {
     disclosure: UseDisclosureReturn;
@@ -16,14 +17,22 @@ interface Props {
 }
 
 export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData }: Props) {
-    const form = useForm<NewAccessKeyRequest>();
+    const form = useForm<NewAccessKeyRequest | EditAccessKeyRequest>();
 
     const [selectedDataLimitUnit, setSelectedDataLimitUnit] = useState<string>(DataLimitUnit.Bytes);
 
-    const actualSubmit = async (data: NewAccessKeyRequest) => {
+    const actualSubmit = async (data: NewAccessKeyRequest | EditAccessKeyRequest) => {
         data.serverId ??= serverId;
+        data.dataLimitUnit ??= DataLimitUnit.Bytes;
 
-        await createAccessKey(data);
+        if (accessKeyData) {
+            const updateData = data as EditAccessKeyRequest;
+
+            updateData.id = accessKeyData.id;
+            await updateAccessKey(updateData);
+        } else {
+            await createAccessKey(data);
+        }
 
         disclosure.onClose();
     };
@@ -114,10 +123,11 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
                             showMonthAndYearPickers
                             hideTimeZone={true}
                             label="Expiration date"
+                            minValue={parseAbsolute(new Date().toISOString(), "UTC")}
                             size="sm"
                             variant="faded"
                             onChange={(v) => {
-                                form.setValue("expiresAt", v.toDate("UTC"));
+                                form.setValue("expiresAt", v.toDate());
                             }}
                         />
                     </form>

@@ -21,6 +21,9 @@ import AccessKeyFormModal from "@/components/modals/access-key-form-modal";
 import ConfirmModal from "@/components/modals/confirm-modal";
 import { ArrowLeftIcon, DeleteIcon, EditIcon, EyeIcon, InfinityIcon, PlusIcon } from "@/components/icons";
 import AccessKeyServerInfo from "@/components/access-key-server-info";
+import { convertDataLimitToBytes, formatBytes } from "@/core/utils";
+import { removeAccessKey } from "@/core/actions/access-key";
+import { DataLimitUnit } from "@/core/definitions";
 
 interface Props {
     server: Server;
@@ -37,8 +40,7 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
     const handleRemoveAccessKey = async () => {
         if (!currentAccessKey) return;
 
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        console.log(`Removing access key ${currentAccessKey}`);
+        await removeAccessKey(server.id, currentAccessKey.id);
     };
 
     return (
@@ -111,7 +113,7 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
                         shadow="sm"
                     >
                         <TableHeader>
-                            <TableColumn>#</TableColumn>
+                            <TableColumn>ID</TableColumn>
                             <TableColumn>NAME</TableColumn>
                             <TableColumn align="center">DATA USAGE</TableColumn>
                             <TableColumn align="center">VALIDITY</TableColumn>
@@ -124,14 +126,33 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
                                     <TableCell>{accessKey.name}</TableCell>
                                     <TableCell>
                                         <div className="flex justify-center gap-2 items-center">
-                                            <span>0 B</span>
+                                            <span>{formatBytes(Number(accessKey.dataUsage))}</span>
                                             <span className="text-default-500">of</span>
-                                            <InfinityIcon size={20} />
+                                            {accessKey.dataLimit ? (
+                                                <span>
+                                                    {formatBytes(
+                                                        convertDataLimitToBytes(
+                                                            Number(accessKey.dataLimit),
+                                                            accessKey.dataLimitUnit as DataLimitUnit
+                                                        )
+                                                    )}
+                                                </span>
+                                            ) : (
+                                                <InfinityIcon size={20} />
+                                            )}
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Chip color="success" size="sm" variant="flat">
-                                            AVAILABLE
+                                        <Chip
+                                            color={accessKey.expiresAt ? "warning" : "success"}
+                                            size="sm"
+                                            variant="flat"
+                                        >
+                                            {accessKey.expiresAt ? (
+                                                <span>{accessKey.expiresAt.toLocaleString()}</span>
+                                            ) : (
+                                                <InfinityIcon size={20} />
+                                            )}
                                         </Chip>
                                     </TableCell>
                                     <TableCell>

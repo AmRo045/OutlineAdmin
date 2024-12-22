@@ -3,6 +3,7 @@ import React from "react";
 import { Server } from "@prisma/client";
 
 import { CopyIcon } from "@/components/icons";
+import { formatBytes } from "@/core/utils";
 
 interface Props {
     server: Server;
@@ -70,7 +71,7 @@ export default function AccessKeyServerInfo({ server, numberOfKeys }: Props) {
             <div className="flex justify-between items-center gap-2 col-span-2 md:col-span-1">
                 <span className="text-sm text-default-500">Total usage</span>
                 <Chip size="sm" variant="flat">
-                    1.65 GB
+                    {formatBytes(Number(server.totalDataUsage))}
                 </Chip>
             </div>
 

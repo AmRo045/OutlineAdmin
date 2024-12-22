@@ -23,6 +23,7 @@ import { CopyIcon, DeleteIcon, KeyIcon, PlusIcon, SettingsIcon } from "@/compone
 import { getServers, removeServer } from "@/core/actions/server";
 import NoResult from "@/components/no-result";
 import { ServerWithAccessKeysCount } from "@/core/definitions";
+import { formatBytes } from "@/core/utils";
 
 interface Props {
     data: ServerWithAccessKeysCount[];
@@ -108,7 +109,7 @@ export default function ServersList({ data }: Props) {
                     shadow="sm"
                 >
                     <TableHeader>
-                        <TableColumn>#</TableColumn>
+                        <TableColumn>ID</TableColumn>
                         <TableColumn>NAME</TableColumn>
                         <TableColumn>HOSTNAME OR IP</TableColumn>
                         <TableColumn align="center">NUMBER OF KEYS</TableColumn>
@@ -142,7 +143,7 @@ export default function ServersList({ data }: Props) {
                                 </TableCell>
                                 <TableCell>
                                     <Chip color="default" size="sm" variant="flat">
-                                        1.52 GB
+                                        {formatBytes(Number(server.totalDataUsage))}
                                     </Chip>
                                 </TableCell>
                                 <TableCell>

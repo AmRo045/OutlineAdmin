@@ -44,8 +44,12 @@ export interface NewAccessKeyRequest {
     serverId: number;
     name: string;
     dataLimitUnit: DataLimitUnit;
-    dataLimit?: number | null;
+    dataLimit?: BigInt | null;
     expiresAt?: Date | null;
+}
+
+export interface EditAccessKeyRequest extends NewAccessKeyRequest {
+    id: number;
 }
 
 export namespace Outline {
@@ -59,8 +63,12 @@ export namespace Outline {
         hostnameForAccessKeys: string;
     }
 
+    export interface Metrics {
+        bytesTransferredByUserId: { [id: string]: number };
+    }
+
     export interface AccessKey {
-        id: number;
+        id: string;
         name: string;
         password: string;
         port: number;

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { AccessKey } from "@prisma/client";
 
 import prisma from "@/prisma/db";
-import { NewAccessKeyRequest } from "@/core/definitions";
+import { EditAccessKeyRequest, NewAccessKeyRequest } from "@/core/definitions";
 import ApiClient from "@/core/outline/api-client";
 import { convertDataLimitToBytes } from "@/core/utils";
 
@@ -38,7 +38,7 @@ export async function createAccessKey(data: NewAccessKeyRequest): Promise<void> 
     if (data.dataLimit) {
         await outlineClient.setDataLimitForKey(
             newAccessKey.id,
-            convertDataLimitToBytes(data.dataLimit, data.dataLimitUnit)
+            convertDataLimitToBytes(Number(data.dataLimit), data.dataLimitUnit)
         );
     }
 
@@ -47,7 +47,7 @@ export async function createAccessKey(data: NewAccessKeyRequest): Promise<void> 
             serverId: data.serverId,
             name: data.name,
             expiresAt: data.expiresAt,
-            dataLimit: data.dataLimit,
+            dataLimit: Number(data.dataLimit),
             dataLimitUnit: data.dataLimitUnit,
             apiId: newAccessKey.id,
             accessUrl: newAccessKey.accessUrl,
@@ -59,4 +59,32 @@ export async function createAccessKey(data: NewAccessKeyRequest): Promise<void> 
 
     revalidatePath("/servers");
     revalidatePath(`/servers/${data.serverId}/access-keys`);
+}
+
+export async function updateAccessKey(data: EditAccessKeyRequest): Promise<void> {
+    await prisma.accessKey.update({
+        where: {
+            id: data.id
+        },
+        data: {
+            name: data.name,
+            expiresAt: data.expiresAt,
+            dataLimit: Number(data.dataLimit),
+            dataLimitUnit: data.dataLimitUnit
+        }
+    });
+
+    revalidatePath("/servers");
+    revalidatePath(`/servers/${data.serverId}/access-keys`);
+}
+
+export async function removeAccessKey(serverId: number, id: number): Promise<void> {
+    await prisma.accessKey.delete({
+        where: {
+            id: id
+        }
+    });
+
+    revalidatePath("/servers");
+    revalidatePath(`/servers/${serverId}/access-keys`);
 }
