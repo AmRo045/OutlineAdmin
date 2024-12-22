@@ -1,3 +1,5 @@
+"use client";
+
 import { UseDisclosureReturn } from "@nextui-org/use-disclosure";
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/modal";
 import { ReactNode, useState } from "react";

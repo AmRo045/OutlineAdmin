@@ -5,11 +5,43 @@ import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
 import { Snippet, Tab, Tabs, Tooltip } from "@nextui-org/react";
 import { Input } from "@nextui-org/input";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 import { ArrowLeftIcon } from "@/components/icons";
 import { siteConfig } from "@/config/site";
+import ApiClient from "@/core/outline/api-client";
+import { createServer } from "@/core/actions/server";
+
+interface FormProps {
+    config: string;
+}
 
 export default function AddServerPage() {
+    const router = useRouter();
+    const form = useForm<FormProps>();
+
+    const actualSubmit = async (data: FormProps) => {
+        const outlineClient = ApiClient.fromConfig(data.config);
+        const outlineServer = await outlineClient.server();
+
+        await createServer({
+            apiUrl: outlineClient.apiUrl,
+            apiCertSha256: outlineClient.certSha256,
+            apiId: outlineServer.serverId,
+            name: outlineServer.name,
+            version: outlineServer.version,
+            hostnameOrIp: outlineServer.hostnameForAccessKeys,
+            hostnameForNewAccessKeys: outlineServer.hostnameForAccessKeys,
+            portForNewAccessKeys: outlineServer.portForNewAccessKeys,
+            isMetricsEnabled: outlineServer.metricsEnabled,
+            isAvailable: true,
+            apiCreatedAt: new Date(outlineServer.createdTimestampMs)
+        });
+
+        router.push("/servers");
+    };
+
     return (
         <div className="grid gap-6">
             <section className="flex justify-start items-center gap-2">
@@ -57,22 +89,28 @@ export default function AddServerPage() {
             </section>
 
             <section className="px-10 grid gap-2">
-                <form className="grid gap-4">
+                <form className="grid gap-4" onSubmit={form.handleSubmit(actualSubmit)}>
                     <Input
                         color="primary"
                         label="Paste your installation output here"
                         placeholder={siteConfig.snippets.exampleServerConfig}
                         required={true}
                         variant="faded"
+                        {...form.register("config", {
+                            required: true,
+                            maxLength: 512
+                        })}
                     />
 
-                    <div className="flex gap-2 justify-between">
-                        <Button className="w-fit" color="primary" type="submit" variant="shadow">
+                    <div className="flex gap-2 justify-end">
+                        <Button
+                            className="w-fit"
+                            color="primary"
+                            isLoading={form.formState.isSubmitting || form.formState.isSubmitSuccessful}
+                            type="submit"
+                            variant="shadow"
+                        >
                             Add
-                        </Button>
-
-                        <Button as={Link} className="w-fit" href="/servers" variant="flat">
-                            Cancel
                         </Button>
                     </div>
                 </form>

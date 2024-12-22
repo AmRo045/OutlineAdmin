@@ -16,3 +16,21 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 }
+
+model Server {
+  id                       Int       @id @default(autoincrement())
+  apiUrl                   String
+  apiCertSha256            String
+  apiId                    String
+  name                     String
+  version                  String
+  hostnameOrIp             String
+  hostnameForNewAccessKeys String
+  portForNewAccessKeys     Int
+  totalDataUsage           Int?
+  isMetricsEnabled         Boolean
+  isAvailable              Boolean   @default(true)
+  apiCreatedAt             DateTime
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime? @updatedAt
+}
