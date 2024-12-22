@@ -1,27 +1,88 @@
 import { UseDisclosureReturn } from "@nextui-org/use-disclosure";
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/modal";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@nextui-org/button";
 import { DatePicker, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input } from "@nextui-org/react";
+import { useForm } from "react-hook-form";
+import { AccessKey } from "@prisma/client";
+
+import { DataLimitUnit, NewAccessKeyRequest } from "@/core/definitions";
+import { createAccessKey } from "@/core/actions/access-key";
 
 interface Props {
     disclosure: UseDisclosureReturn;
-    type: 0 | 1;
+    serverId: number;
+    accessKeyData?: AccessKey;
 }
 
-export default function AccessKeyFormModal({ disclosure, type }: Props) {
-    const [selectedDataLimitUnit, setSelectedDataLimitUnit] = useState<string>("Bytes");
+export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData }: Props) {
+    const form = useForm<NewAccessKeyRequest>();
+
+    const [selectedDataLimitUnit, setSelectedDataLimitUnit] = useState<string>(DataLimitUnit.Bytes);
+
+    const actualSubmit = async (data: NewAccessKeyRequest) => {
+        data.serverId ??= serverId;
+
+        await createAccessKey(data);
+
+        disclosure.onClose();
+    };
+
+    useEffect(() => {
+        form.setValue("dataLimitUnit", selectedDataLimitUnit as DataLimitUnit, { shouldDirty: true });
+    }, [selectedDataLimitUnit]);
+
+    useEffect(() => {
+        if (disclosure.isOpen) {
+            if (accessKeyData) {
+                form.reset({
+                    serverId: accessKeyData.serverId,
+                    name: accessKeyData.name,
+                    dataLimit: accessKeyData.dataLimit,
+                    dataLimitUnit: accessKeyData.dataLimitUnit as DataLimitUnit,
+                    expiresAt: accessKeyData.expiresAt
+                });
+
+                setSelectedDataLimitUnit(accessKeyData.dataLimitUnit);
+            } else {
+                form.reset();
+                form.setValue("dataLimitUnit", DataLimitUnit.Bytes);
+            }
+        }
+    }, [disclosure.isOpen]);
 
     return (
         <Modal isOpen={disclosure.isOpen} onOpenChange={disclosure.onOpenChange}>
             <ModalContent>
-                <ModalHeader>{type === 1 ? `Access Key #${2}` : "New Access Key"}</ModalHeader>
+                <ModalHeader>{accessKeyData ? `Access Key "${accessKeyData.name}"` : "New Access Key"}</ModalHeader>
                 <ModalBody>
-                    <form className="grid gap-4" id="accessKeyForm">
-                        <Input isRequired={true} label="Access key name" size="sm" variant="faded" />
+                    <form className="grid gap-4" id="accessKeyForm" onSubmit={form.handleSubmit(actualSubmit)}>
+                        <Input
+                            isInvalid={!!form.formState.errors.name}
+                            isRequired={true}
+                            label="Access key name"
+                            size="sm"
+                            variant="faded"
+                            {...form.register("name", {
+                                required: true,
+                                maxLength: 64
+                            })}
+                        />
 
                         <div className="flex gap-2">
-                            <Input label="Data limit" size="sm" type="number" variant="faded" />
+                            <Input
+                                isInvalid={!!form.formState.errors.dataLimit}
+                                label="Data limit"
+                                size="sm"
+                                type="number"
+                                variant="faded"
+                                {...form.register("dataLimit", {
+                                    required: false,
+                                    min: 0,
+                                    max: 1_000_000_000_000_000,
+                                    setValueAs: (v) => parseInt(v)
+                                })}
+                            />
 
                             <Dropdown>
                                 <DropdownTrigger>
@@ -41,10 +102,10 @@ export default function AccessKeyFormModal({ disclosure, type }: Props) {
                                     variant="flat"
                                     onSelectionChange={(v) => setSelectedDataLimitUnit(v.currentKey!)}
                                 >
-                                    <DropdownItem key="Bytes">Bytes</DropdownItem>
-                                    <DropdownItem key="KB">KB</DropdownItem>
-                                    <DropdownItem key="MB">MB</DropdownItem>
-                                    <DropdownItem key="GB">GB</DropdownItem>
+                                    <DropdownItem key={DataLimitUnit.Bytes}>{DataLimitUnit.Bytes}</DropdownItem>
+                                    <DropdownItem key={DataLimitUnit.KB}>{DataLimitUnit.KB}</DropdownItem>
+                                    <DropdownItem key={DataLimitUnit.MB}>{DataLimitUnit.MB}</DropdownItem>
+                                    <DropdownItem key={DataLimitUnit.GB}>{DataLimitUnit.GB}</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                         </div>
@@ -55,6 +116,9 @@ export default function AccessKeyFormModal({ disclosure, type }: Props) {
                             label="Expiration date"
                             size="sm"
                             variant="faded"
+                            onChange={(v) => {
+                                form.setValue("expiresAt", v.toDate("UTC"));
+                            }}
                         />
                     </form>
                 </ModalBody>
@@ -63,7 +127,13 @@ export default function AccessKeyFormModal({ disclosure, type }: Props) {
                         Cancel
                     </Button>
 
-                    <Button color="primary" form="accessKeyForm" type="submit" variant="shadow">
+                    <Button
+                        color="primary"
+                        form="accessKeyForm"
+                        isLoading={form.formState.isSubmitting || form.formState.isSubmitSuccessful}
+                        type="submit"
+                        variant="shadow"
+                    >
                         Save
                     </Button>
                 </ModalFooter>

@@ -6,9 +6,10 @@ import { CopyIcon } from "@/components/icons";
 
 interface Props {
     server: Server;
+    numberOfKeys: number;
 }
 
-export default function ServerInfo({ server }: Props) {
+export default function AccessKeyServerInfo({ server, numberOfKeys }: Props) {
     return (
         <section className="rounded-xl bg-default-100 p-4 grid grid-cols-2 gap-y-2 gap-x-8">
             <div className="flex justify-between items-center gap-2 col-span-2 md:col-span-1">
@@ -62,7 +63,7 @@ export default function ServerInfo({ server }: Props) {
             <div className="flex justify-between items-center gap-2 col-span-2 md:col-span-1">
                 <span className="text-sm text-default-500">Number of keys</span>
                 <Chip size="sm" variant="flat">
-                    124
+                    {numberOfKeys}
                 </Chip>
             </div>
 

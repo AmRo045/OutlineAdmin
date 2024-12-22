@@ -61,38 +61,35 @@ export default class ApiClient {
         return await response.json();
     }
 
-    async createKey(): Promise<ApiResponse> {
+    async createKey(): Promise<Outline.AccessKey> {
         const response = await this.fetchWrapper("/access-keys", "POST");
 
-        return await response.json();
+        const data: Outline.AccessKey = await response.json();
+
+        data.name = data.name.length > 0 ? data.name : `Key #${data.id}`;
+        data.id = parseInt(data.id.toString());
+
+        return data;
     }
 
-    async renameKey(id: number, name: string): Promise<ApiResponse> {
-        const response = await this.fetchWrapper(`/access-keys/${id}/name`, "PUT", {
+    async renameKey(id: number, name: string): Promise<void> {
+        await this.fetchWrapper(`/access-keys/${id}/name`, "PUT", {
             name
         });
-
-        return await response.json();
     }
 
-    async deleteKey(id: number): Promise<ApiResponse> {
-        const response = await this.fetchWrapper(`/access-keys/${id}`, "DELETE");
-
-        return await response.json();
+    async deleteKey(id: number): Promise<void> {
+        await this.fetchWrapper(`/access-keys/${id}`, "DELETE");
     }
 
-    async setDataLimitForKey(id: number, limitInBytes: number): Promise<ApiResponse> {
-        const response = await this.fetchWrapper(`/access-keys/${id}/data-limit`, "PUT", {
+    async setDataLimitForKey(id: number, limitInBytes: number): Promise<void> {
+        await this.fetchWrapper(`/access-keys/${id}/data-limit`, "PUT", {
             limit: { bytes: limitInBytes }
         });
-
-        return await response.json();
     }
 
-    async removeDataLimitForKey(id: number): Promise<ApiResponse> {
-        const response = await this.fetchWrapper(`/access-keys/${id}/data-limit`, "DELETE");
-
-        return await response.json();
+    async removeDataLimitForKey(id: number): Promise<void> {
+        await this.fetchWrapper(`/access-keys/${id}/data-limit`, "DELETE");
     }
 
     private async fetchWrapper(endpoint: string, method: string, body?: any): Promise<Response> {

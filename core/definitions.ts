@@ -1,4 +1,5 @@
 import { JWTPayload } from "jose";
+import { Server } from "@prisma/client";
 
 export interface SessionPayload extends JWTPayload {
     userId: number;
@@ -8,6 +9,8 @@ export interface UserSession {
     isAuthorized: boolean;
     userId: number | undefined;
 }
+
+export type ServerWithAccessKeysCount = Server & { _count?: { accessKeys: number } };
 
 export interface NewServerRequest {
     managementJson: string;
@@ -30,6 +33,21 @@ export interface EditServerRequest {
     hostnameForNewAccessKeys: string;
 }
 
+export enum DataLimitUnit {
+    Bytes = "Bytes",
+    KB = "KB",
+    MB = "MB",
+    GB = "GB"
+}
+
+export interface NewAccessKeyRequest {
+    serverId: number;
+    name: string;
+    dataLimitUnit: DataLimitUnit;
+    dataLimit?: number | null;
+    expiresAt?: Date | null;
+}
+
 export namespace Outline {
     export interface Server {
         name: string;
@@ -39,5 +57,15 @@ export namespace Outline {
         version: string;
         portForNewAccessKeys: number;
         hostnameForAccessKeys: string;
+    }
+
+    export interface AccessKey {
+        id: number;
+        name: string;
+        password: string;
+        port: number;
+        method: string;
+        accessUrl: string;
+        dataLimitInBytes?: number;
     }
 }

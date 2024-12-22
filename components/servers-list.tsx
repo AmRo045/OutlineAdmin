@@ -16,16 +16,16 @@ import React, { useEffect, useState } from "react";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
-import { Server } from "@prisma/client";
 import { useForm } from "react-hook-form";
 
 import ConfirmModal from "@/components/modals/confirm-modal";
 import { CopyIcon, DeleteIcon, KeyIcon, PlusIcon, SettingsIcon } from "@/components/icons";
 import { getServers, removeServer } from "@/core/actions/server";
 import NoResult from "@/components/no-result";
+import { ServerWithAccessKeysCount } from "@/core/definitions";
 
 interface Props {
-    data: Server[];
+    data: ServerWithAccessKeysCount[];
 }
 
 interface SearchFormProps {
@@ -33,7 +33,7 @@ interface SearchFormProps {
 }
 
 export default function ServersList({ data }: Props) {
-    const [servers, setServers] = useState<Server[]>(data);
+    const [servers, setServers] = useState<ServerWithAccessKeysCount[]>(data);
     const [serverToRemove, setServerToRemove] = useState<number | null>(null);
     const removeServerConfirmModalDisclosure = useDisclosure();
 
@@ -137,7 +137,7 @@ export default function ServersList({ data }: Props) {
                                 </TableCell>
                                 <TableCell>
                                     <Chip color="default" size="sm" variant="flat">
-                                        24
+                                        {server._count?.accessKeys}
                                     </Chip>
                                 </TableCell>
                                 <TableCell>

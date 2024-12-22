@@ -14,50 +14,50 @@ import {
 import { useState } from "react";
 import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
-import { Server } from "@prisma/client";
+import { AccessKey, Server } from "@prisma/client";
 
 import AccessKeyModal from "@/components/modals/access-key-modal";
 import AccessKeyFormModal from "@/components/modals/access-key-form-modal";
 import ConfirmModal from "@/components/modals/confirm-modal";
 import { ArrowLeftIcon, DeleteIcon, EditIcon, EyeIcon, InfinityIcon, PlusIcon } from "@/components/icons";
-import ServerInfo from "@/components/access-keys/server-info";
-
-enum AccessKeyFormType {
-    New,
-    Edit
-}
+import AccessKeyServerInfo from "@/components/access-key-server-info";
 
 interface Props {
     server: Server;
+    accessKeys: AccessKey[];
 }
 
-export default function ServerAccessKeys({ server }: Props) {
+export default function ServerAccessKeys({ server, accessKeys }: Props) {
     const accessKeyFormModalDisclosure = useDisclosure();
     const accessKeyModalDisclosure = useDisclosure();
     const removeAccessKeyConfirmModalDisclosure = useDisclosure();
 
-    const [accessKeyFormType, setAccessKeyFormType] = useState<AccessKeyFormType>(AccessKeyFormType.New);
-    const [accessKeyToRemove, setAccessKeyToRemove] = useState<string | null>(null);
-    const [currentAccessKey, setCurrentAccessKey] = useState<string>();
+    const [currentAccessKey, setCurrentAccessKey] = useState<AccessKey>();
 
     const handleRemoveAccessKey = async () => {
-        if (!accessKeyToRemove) return;
+        if (!currentAccessKey) return;
 
         await new Promise((resolve) => setTimeout(resolve, 5000));
-        console.log(`Removing access key ${accessKeyToRemove}`);
+        console.log(`Removing access key ${currentAccessKey}`);
     };
 
     return (
         <>
-            <AccessKeyModal disclosure={accessKeyModalDisclosure} value={currentAccessKey} />
+            <AccessKeyModal disclosure={accessKeyModalDisclosure} value={currentAccessKey?.accessUrl} />
 
-            <AccessKeyFormModal disclosure={accessKeyFormModalDisclosure} type={accessKeyFormType} />
+            <AccessKeyFormModal
+                accessKeyData={currentAccessKey}
+                disclosure={accessKeyFormModalDisclosure}
+                serverId={server.id}
+            />
 
             <ConfirmModal
                 body={
                     <div className="grid gap-2">
                         <span>Are you sure you want to remove this access key?</span>
-                        <p className="text-default-500 text-sm whitespace-pre-wrap break-all">{accessKeyToRemove}</p>
+                        <p className="text-default-500 text-sm whitespace-pre-wrap break-all">
+                            {currentAccessKey?.accessUrl}
+                        </p>
                     </div>
                 }
                 confirmLabel="Remove"
@@ -83,7 +83,7 @@ export default function ServerAccessKeys({ server }: Props) {
                     </Button>
                 </section>
 
-                <ServerInfo server={server} />
+                <AccessKeyServerInfo numberOfKeys={accessKeys.length} server={server} />
 
                 <section className="grid gap-6">
                     <div className="flex justify-between items-center gap-2">
@@ -94,7 +94,7 @@ export default function ServerAccessKeys({ server }: Props) {
                             startContent={<PlusIcon size={20} />}
                             variant="shadow"
                             onClick={() => {
-                                setAccessKeyFormType(AccessKeyFormType.New);
+                                setCurrentAccessKey(undefined);
                                 accessKeyFormModalDisclosure.onOpen();
                             }}
                         >
@@ -118,93 +118,91 @@ export default function ServerAccessKeys({ server }: Props) {
                             <TableColumn align="center">ACTIONS</TableColumn>
                         </TableHeader>
                         <TableBody>
-                            <TableRow key="1">
-                                <TableCell>1</TableCell>
-                                <TableCell>England</TableCell>
-                                <TableCell>
-                                    <div className="flex justify-center gap-2 items-center">
-                                        <span>0 B</span>
-                                        <span className="text-default-500">of</span>
-                                        <InfinityIcon size={20} />
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <Chip color="success" size="sm" variant="flat">
-                                        AVAILABLE
-                                    </Chip>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex gap-2 justify-center items-center">
-                                        <Tooltip
-                                            closeDelay={100}
-                                            color="primary"
-                                            content="Show the key"
-                                            delay={600}
-                                            size="sm"
-                                        >
-                                            <Button
+                            {accessKeys.map((accessKey) => (
+                                <TableRow key={accessKey.id}>
+                                    <TableCell>{accessKey.id}</TableCell>
+                                    <TableCell>{accessKey.name}</TableCell>
+                                    <TableCell>
+                                        <div className="flex justify-center gap-2 items-center">
+                                            <span>0 B</span>
+                                            <span className="text-default-500">of</span>
+                                            <InfinityIcon size={20} />
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Chip color="success" size="sm" variant="flat">
+                                            AVAILABLE
+                                        </Chip>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex gap-2 justify-center items-center">
+                                            <Tooltip
+                                                closeDelay={100}
                                                 color="primary"
-                                                isIconOnly={true}
+                                                content="Show the key"
+                                                delay={600}
                                                 size="sm"
-                                                variant="light"
-                                                onClick={() => {
-                                                    setCurrentAccessKey(
-                                                        "ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTpFUlNKSVc5MWMwZURPSElTQzlxTjUx@192.168.12.5:23924/?outline=1"
-                                                    );
-                                                    accessKeyModalDisclosure.onOpen();
-                                                }}
                                             >
-                                                <EyeIcon size={24} />
-                                            </Button>
-                                        </Tooltip>
+                                                <Button
+                                                    color="primary"
+                                                    isIconOnly={true}
+                                                    size="sm"
+                                                    variant="light"
+                                                    onClick={() => {
+                                                        setCurrentAccessKey(accessKey);
+                                                        accessKeyModalDisclosure.onOpen();
+                                                    }}
+                                                >
+                                                    <EyeIcon size={24} />
+                                                </Button>
+                                            </Tooltip>
 
-                                        <Tooltip
-                                            closeDelay={100}
-                                            color="primary"
-                                            content="Edit the key"
-                                            delay={600}
-                                            size="sm"
-                                        >
-                                            <Button
-                                                as={Link}
+                                            <Tooltip
+                                                closeDelay={100}
                                                 color="primary"
-                                                isIconOnly={true}
+                                                content="Edit the key"
+                                                delay={600}
                                                 size="sm"
-                                                variant="light"
-                                                onClick={() => {
-                                                    setAccessKeyFormType(AccessKeyFormType.Edit);
-                                                    accessKeyFormModalDisclosure.onOpen();
-                                                }}
                                             >
-                                                <EditIcon size={24} />
-                                            </Button>
-                                        </Tooltip>
+                                                <Button
+                                                    as={Link}
+                                                    color="primary"
+                                                    isIconOnly={true}
+                                                    size="sm"
+                                                    variant="light"
+                                                    onClick={() => {
+                                                        setCurrentAccessKey(accessKey);
+                                                        accessKeyFormModalDisclosure.onOpen();
+                                                    }}
+                                                >
+                                                    <EditIcon size={24} />
+                                                </Button>
+                                            </Tooltip>
 
-                                        <Tooltip
-                                            closeDelay={100}
-                                            color="danger"
-                                            content="Remove the key"
-                                            delay={600}
-                                            size="sm"
-                                        >
-                                            <Button
+                                            <Tooltip
+                                                closeDelay={100}
                                                 color="danger"
-                                                isIconOnly={true}
+                                                content="Remove the key"
+                                                delay={600}
                                                 size="sm"
-                                                variant="light"
-                                                onClick={() => {
-                                                    setAccessKeyToRemove(
-                                                        "ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTpFUlNKSVc5MWMwZURPSElTQzlxTjUx@192.168.12.5:23924/?outline=1"
-                                                    );
-                                                    removeAccessKeyConfirmModalDisclosure.onOpen();
-                                                }}
                                             >
-                                                <DeleteIcon size={24} />
-                                            </Button>
-                                        </Tooltip>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
+                                                <Button
+                                                    color="danger"
+                                                    isIconOnly={true}
+                                                    size="sm"
+                                                    variant="light"
+                                                    onClick={() => {
+                                                        setCurrentAccessKey(accessKey);
+                                                        removeAccessKeyConfirmModalDisclosure.onOpen();
+                                                    }}
+                                                >
+                                                    <DeleteIcon size={24} />
+                                                </Button>
+                                            </Tooltip>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
                         </TableBody>
                     </Table>
                 </section>

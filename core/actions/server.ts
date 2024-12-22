@@ -4,9 +4,12 @@ import { revalidatePath } from "next/cache";
 import { Server } from "@prisma/client";
 
 import prisma from "@/prisma/db";
-import { EditServerRequest, NewServerRequest } from "@/core/definitions";
+import { EditServerRequest, NewServerRequest, ServerWithAccessKeysCount } from "@/core/definitions";
 
-export async function getServers(filters?: { term?: string; skip?: number; take?: number }): Promise<Server[]> {
+export async function getServers(
+    filters?: { term?: string; skip?: number; take?: number },
+    withKeysCount: boolean = false
+): Promise<ServerWithAccessKeysCount[]> {
     const { term, skip = 0, take = 10 } = filters || {};
 
     return prisma.server.findMany({
@@ -15,14 +18,20 @@ export async function getServers(filters?: { term?: string; skip?: number; take?
         },
         skip,
         take,
-        orderBy: [{ id: "desc" }]
+        orderBy: [{ id: "desc" }],
+        include: {
+            _count: withKeysCount ? { select: { accessKeys: true } } : undefined
+        }
     });
 }
 
-export async function getServerById(id: number): Promise<Server | null> {
+export async function getServerById(id: number, withKeys: boolean = false): Promise<Server | null> {
     return prisma.server.findFirst({
         where: {
             id
+        },
+        include: {
+            accessKeys: withKeys
         }
     });
 }

@@ -18,7 +18,7 @@ model User {
 }
 
 model Server {
-  id                       Int       @id @default(autoincrement())
+  id                       Int         @id @default(autoincrement())
   apiUrl                   String
   managementJson           String
   apiCertSha256            String
@@ -30,8 +30,27 @@ model Server {
   portForNewAccessKeys     Int
   totalDataUsage           Int?
   isMetricsEnabled         Boolean
-  isAvailable              Boolean   @default(true)
+  isAvailable              Boolean     @default(true)
   apiCreatedAt             DateTime
-  createdAt                DateTime  @default(now())
-  updatedAt                DateTime? @updatedAt
+  createdAt                DateTime    @default(now())
+  updatedAt                DateTime?   @updatedAt
+  accessKeys               AccessKey[]
+}
+
+model AccessKey {
+  id            Int       @id @default(autoincrement())
+  serverId      Int
+  apiId         Int
+  name          String
+  password      String
+  method        String
+  accessUrl     String
+  port          Int
+  dataLimit     Int?
+  dataLimitUnit String
+  dataUsage     Int       @default(0)
+  expiresAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  server        Server    @relation(fields: [serverId], references: [id])
 }

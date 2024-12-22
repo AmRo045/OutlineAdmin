@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo --experimental-https",
+    "dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 next dev --turbo",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_TLS_REJECT_UNAUTHORIZED=0 next start",
     "lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix",
     "format": "prettier --write ./app ./types ./config ./components ./styles"
   },
