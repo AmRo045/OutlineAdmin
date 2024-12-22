@@ -23,6 +23,12 @@ export interface NewServerRequest {
     apiId: string;
 }
 
+export interface EditServerRequest {
+    name: string;
+    portForNewAccessKeys: number;
+    hostnameForNewAccessKeys: string;
+}
+
 export namespace Outline {
     export interface Server {
         name: string;

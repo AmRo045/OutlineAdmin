@@ -162,7 +162,7 @@ export default function ServersList({ data }: Props) {
                                             <Button
                                                 as={Link}
                                                 color="primary"
-                                                href={`/servers/${1}/access-keys`}
+                                                href={`/servers/${server.id}/access-keys`}
                                                 isIconOnly={true}
                                                 size="sm"
                                                 variant="light"
@@ -181,7 +181,7 @@ export default function ServersList({ data }: Props) {
                                             <Button
                                                 as={Link}
                                                 color="primary"
-                                                href={`/servers/${1}/settings`}
+                                                href={`/servers/${server.id}/settings`}
                                                 isIconOnly={true}
                                                 size="sm"
                                                 variant="light"
