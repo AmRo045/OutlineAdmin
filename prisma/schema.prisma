@@ -20,6 +20,7 @@ model User {
 model Server {
   id                       Int       @id @default(autoincrement())
   apiUrl                   String
+  managementJson           String
   apiCertSha256            String
   apiId                    String
   name                     String

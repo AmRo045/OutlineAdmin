@@ -10,6 +10,7 @@ export interface UserSession {
 }
 
 export interface NewServerRequest {
+    managementJson: string;
     isMetricsEnabled: boolean;
     apiCertSha256: string;
     isAvailable: boolean;

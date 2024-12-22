@@ -3,7 +3,6 @@ import React from "react";
 import { Server } from "@prisma/client";
 
 import { CopyIcon } from "@/components/icons";
-import { siteConfig } from "@/config/site";
 
 interface Props {
     server: Server;
@@ -112,10 +111,10 @@ export default function ServerInfo({ server }: Props) {
                     copyIcon={<CopyIcon size={16} />}
                     hideSymbol={true}
                     size="sm"
-                    title={siteConfig.snippets.exampleServerConfig}
+                    title={server.managementJson}
                     variant="flat"
                 >
-                    {siteConfig.snippets.exampleServerConfig}
+                    {server.managementJson}
                 </Snippet>
             </div>
         </section>

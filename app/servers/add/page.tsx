@@ -26,6 +26,7 @@ export default function AddServerPage() {
         const outlineServer = await outlineClient.server();
 
         await createServer({
+            managementJson: data.config,
             apiUrl: outlineClient.apiUrl,
             apiCertSha256: outlineClient.certSha256,
             apiId: outlineServer.serverId,
