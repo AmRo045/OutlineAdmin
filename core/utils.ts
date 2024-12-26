@@ -15,6 +15,15 @@ export function convertDataLimitToBytes(value: number, unit: DataLimitUnit): num
     return value * getDataLimitUnitFactor(unit);
 }
 
+export function getCurrentDateAsString(): string {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = ("0" + date.getMonth()).slice(-2);
+    const day = ("0" + date.getDay()).slice(-2);
+
+    return `${year}-${month}-${day}`;
+}
+
 export function formatBytes(bytes: number): string {
     const units = ["B", "KB", "MB", "GB", "TB", "PB"];
     let unitIndex = 0;

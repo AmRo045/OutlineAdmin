@@ -2,10 +2,9 @@ import { UseDisclosureReturn } from "@nextui-org/use-disclosure";
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/modal";
 import React, { useEffect, useState } from "react";
 import { Button } from "@nextui-org/button";
-import { DatePicker, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input } from "@nextui-org/react";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { AccessKey } from "@prisma/client";
-import { parseAbsolute } from "@internationalized/date";
 
 import { DataLimitUnit, EditAccessKeyRequest, NewAccessKeyRequest } from "@/core/definitions";
 import { createAccessKey, updateAccessKey } from "@/core/actions/access-key";
@@ -54,8 +53,15 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
 
                 setSelectedDataLimitUnit(accessKeyData.dataLimitUnit);
             } else {
-                form.reset();
-                form.setValue("dataLimitUnit", DataLimitUnit.Bytes);
+                form.reset({
+                    serverId: serverId,
+                    name: "",
+                    dataLimit: null,
+                    dataLimitUnit: DataLimitUnit.Bytes,
+                    expiresAt: null
+                });
+
+                setSelectedDataLimitUnit(DataLimitUnit.Bytes);
             }
         }
     }, [disclosure.isOpen]);
@@ -118,18 +124,6 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
                                 </DropdownMenu>
                             </Dropdown>
                         </div>
-
-                        <DatePicker
-                            showMonthAndYearPickers
-                            hideTimeZone={true}
-                            label="Expiration date"
-                            minValue={parseAbsolute(new Date().toISOString(), "UTC")}
-                            size="sm"
-                            variant="faded"
-                            onChange={(v) => {
-                                form.setValue("expiresAt", v.toDate("UTC"));
-                            }}
-                        />
                     </form>
                 </ModalBody>
                 <ModalFooter className="flex justify-between gap-2 mt-4">
