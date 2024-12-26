@@ -46,6 +46,7 @@ export async function createAccessKey(data: NewAccessKeyRequest): Promise<void> 
         data: {
             serverId: data.serverId,
             name: data.name,
+            prefix: data.prefix,
             expiresAt: data.expiresAt,
             dataLimit: Number(data.dataLimit),
             dataLimitUnit: data.dataLimitUnit,
@@ -69,6 +70,7 @@ export async function updateAccessKey(data: EditAccessKeyRequest): Promise<void>
         data: {
             name: data.name,
             expiresAt: data.expiresAt,
+            prefix: data.prefix,
             dataLimit: Number(data.dataLimit),
             dataLimitUnit: data.dataLimitUnit
         }

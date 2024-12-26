@@ -42,6 +42,7 @@ model AccessKey {
   serverId      Int
   apiId         String    @unique
   name          String
+  prefix        String?
   password      String
   method        String
   accessUrl     String

@@ -35,10 +35,29 @@ export interface NewAccessKeyRequest {
     dataLimitUnit: DataLimitUnit;
     dataLimit?: BigInt | null;
     expiresAt?: Date | null;
+    prefix?: string | null;
 }
 
 export interface EditAccessKeyRequest extends NewAccessKeyRequest {
     id: number;
+}
+
+export enum AccessKeyPrefixType {
+    None = "None",
+    HttpRequest = "HttpRequest",
+    HttpResponse = "HttpResponse",
+    DnsOverTcpRequest = "DnsOverTcpRequest",
+    TlsClientHello = "TlsClientHello",
+    TlsServerHello = "TlsServerHello",
+    TlsApplicationData = "TlsApplicationData",
+    Ssh = "Ssh"
+}
+
+export interface AccessKeyPrefixData {
+    type: AccessKeyPrefixType;
+    jsonEncodedValue: string;
+    urlEncodedValue: string;
+    recommendedPorts: { number: number; description: string }[];
 }
 
 export namespace Outline {
