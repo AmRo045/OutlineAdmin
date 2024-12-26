@@ -127,7 +127,7 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
                             size="sm"
                             variant="faded"
                             onChange={(v) => {
-                                form.setValue("expiresAt", v.toDate());
+                                form.setValue("expiresAt", v.toDate("UTC"));
                             }}
                         />
                     </form>
