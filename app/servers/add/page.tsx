@@ -10,35 +10,15 @@ import { useRouter } from "next/navigation";
 
 import { ArrowLeftIcon } from "@/components/icons";
 import { siteConfig } from "@/config/site";
-import ApiClient from "@/core/outline/api-client";
 import { createServer } from "@/core/actions/server";
-
-interface FormProps {
-    config: string;
-}
+import { NewServerRequest } from "@/core/definitions";
 
 export default function AddServerPage() {
     const router = useRouter();
-    const form = useForm<FormProps>();
+    const form = useForm<NewServerRequest>();
 
-    const actualSubmit = async (data: FormProps) => {
-        const outlineClient = ApiClient.fromConfig(data.config);
-        const outlineServer = await outlineClient.server();
-
-        await createServer({
-            managementJson: data.config,
-            apiUrl: outlineClient.apiUrl,
-            apiCertSha256: outlineClient.certSha256,
-            apiId: outlineServer.serverId,
-            name: outlineServer.name,
-            version: outlineServer.version,
-            hostnameOrIp: outlineServer.hostnameForAccessKeys,
-            hostnameForNewAccessKeys: outlineServer.hostnameForAccessKeys,
-            portForNewAccessKeys: outlineServer.portForNewAccessKeys,
-            isMetricsEnabled: outlineServer.metricsEnabled,
-            isAvailable: true,
-            apiCreatedAt: new Date(outlineServer.createdTimestampMs)
-        });
+    const actualSubmit = async (data: NewServerRequest) => {
+        await createServer(data);
 
         router.push("/servers");
     };
@@ -94,10 +74,10 @@ export default function AddServerPage() {
                     <Input
                         color="primary"
                         label="Paste your installation output here"
-                        placeholder={siteConfig.snippets.exampleServerConfig}
+                        placeholder={siteConfig.snippets.exampleServerManagementJson}
                         required={true}
                         variant="faded"
-                        {...form.register("config", {
+                        {...form.register("managementJson", {
                             required: true,
                             maxLength: 512
                         })}

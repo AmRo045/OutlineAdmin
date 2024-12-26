@@ -14,17 +14,6 @@ export type ServerWithAccessKeysCount = Server & { _count?: { accessKeys: number
 
 export interface NewServerRequest {
     managementJson: string;
-    isMetricsEnabled: boolean;
-    apiCertSha256: string;
-    isAvailable: boolean;
-    apiUrl: string;
-    portForNewAccessKeys: number;
-    hostnameForNewAccessKeys: string;
-    name: string;
-    apiCreatedAt: Date;
-    hostnameOrIp: string;
-    version: string;
-    apiId: string;
 }
 
 export interface EditServerRequest {

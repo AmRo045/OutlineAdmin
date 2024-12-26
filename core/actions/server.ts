@@ -68,8 +68,24 @@ export async function updateMetrics(id: number): Promise<void> {
 }
 
 export async function createServer(data: NewServerRequest): Promise<void> {
+    const outlineClient = ApiClient.fromConfig(data.managementJson);
+    const outlineServer = await outlineClient.server();
+
     await prisma.server.create({
-        data
+        data: {
+            managementJson: data.managementJson,
+            apiUrl: outlineClient.apiUrl,
+            apiCertSha256: outlineClient.certSha256,
+            apiId: outlineServer.serverId,
+            name: outlineServer.name,
+            version: outlineServer.version,
+            hostnameOrIp: outlineServer.hostnameForAccessKeys,
+            hostnameForNewAccessKeys: outlineServer.hostnameForAccessKeys,
+            portForNewAccessKeys: outlineServer.portForNewAccessKeys,
+            isMetricsEnabled: outlineServer.metricsEnabled,
+            isAvailable: true,
+            apiCreatedAt: new Date(outlineServer.createdTimestampMs)
+        }
     });
 
     revalidatePath("/servers");
