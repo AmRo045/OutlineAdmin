@@ -5,28 +5,50 @@ import { DataLimitUnit, Outline } from "@/core/definitions";
 import { convertDataLimitToUnit } from "@/core/utils";
 
 const syncServer = async (outlineClient: ApiClient, server: Server): Promise<void> => {
-    console.log("Getting server info from remote server...");
-    const remoteServerInfo = await outlineClient.server();
+    const maxAttempts = 3;
+    let attempts = 0;
 
-    console.log("Getting server usage metrics...");
-    const metrics = await outlineClient.metricsTransfer();
+    let remoteServerInfo: Outline.Server | undefined;
 
-    const allMetrics = Object.values(metrics.bytesTransferredByUserId);
-    const totalUsageMetrics = allMetrics.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
-
-    console.log("Updating server info in local database...");
-    await prisma.server.update({
-        where: { id: server.id },
-        data: {
-            name: remoteServerInfo.name,
-            hostnameForNewAccessKeys: remoteServerInfo.hostnameForAccessKeys,
-            portForNewAccessKeys: remoteServerInfo.portForNewAccessKeys,
-            isMetricsEnabled: remoteServerInfo.metricsEnabled,
-            totalDataUsage: totalUsageMetrics
+    do {
+        try {
+            console.log("Getting server info from remote server...");
+            remoteServerInfo = await outlineClient.server();
+        } catch (error) {
+            console.log(`Attempt # ${attempts} failed: ${error}`);
+            attempts++;
         }
-    });
+    } while (!remoteServerInfo && attempts < maxAttempts);
 
-    await syncAccessKeys(outlineClient, metrics, server.id);
+    if (remoteServerInfo) {
+        console.log("Getting server usage metrics...");
+        const metrics = await outlineClient.metricsTransfer();
+
+        const allMetrics = Object.values(metrics.bytesTransferredByUserId);
+        const totalUsageMetrics = allMetrics.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+
+        console.log("Updating server info in local database...");
+        await prisma.server.update({
+            where: { id: server.id },
+            data: {
+                name: remoteServerInfo.name,
+                hostnameForNewAccessKeys: remoteServerInfo.hostnameForAccessKeys,
+                portForNewAccessKeys: remoteServerInfo.portForNewAccessKeys,
+                isMetricsEnabled: remoteServerInfo.metricsEnabled,
+                totalDataUsage: totalUsageMetrics
+            }
+        });
+
+        await syncAccessKeys(outlineClient, metrics, server.id);
+    } else {
+        console.log("Changing server status to unavailable...");
+        await prisma.server.update({
+            where: { id: server.id },
+            data: {
+                isAvailable: false
+            }
+        });
+    }
 };
 
 const syncAccessKeys = async (outlineClient: ApiClient, metrics: Outline.Metrics, serverId: number): Promise<void> => {
@@ -52,7 +74,7 @@ const syncAccessKeys = async (outlineClient: ApiClient, metrics: Outline.Metrics
 
         if (localAccessKey) {
             // this means we need to update the access key
-            console.log(`Updating access key (${remoteAccessKey.name}) info in local database...`);
+            console.log(`Updating access key info in local database...`);
 
             await prisma.accessKey.update({
                 where: { id: localAccessKey.id },
@@ -64,7 +86,7 @@ const syncAccessKeys = async (outlineClient: ApiClient, metrics: Outline.Metrics
             });
         } else {
             // and this means we need to create the access key
-            console.log(`Creating missing access key (${remoteAccessKey.name}) in local database...`);
+            console.log(`Creating missing access key in local database...`);
 
             await prisma.accessKey.create({
                 data: {
