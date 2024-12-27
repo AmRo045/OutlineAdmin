@@ -4,7 +4,7 @@ import { Divider, Tooltip, useDisclosure } from "@nextui-org/react";
 import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
 import { Input } from "@nextui-org/input";
-import React from "react";
+import React, { useState } from "react";
 import { Server } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -13,6 +13,7 @@ import { ArrowLeftIcon } from "@/components/icons";
 import { EditServerRequest } from "@/core/definitions";
 import { removeServer, updateServer } from "@/core/actions/server";
 import ConfirmModal from "@/components/modals/confirm-modal";
+import MessageModal from "@/components/message-modal";
 
 interface Props {
     server: Server;
@@ -20,7 +21,11 @@ interface Props {
 
 export default function ServerEditForm({ server }: Props) {
     const router = useRouter();
+    const updateErrorModalDisclosure = useDisclosure();
     const removeServerConfirmModalDisclosure = useDisclosure();
+
+    const [serverError, setServerError] = useState<string>();
+
     const form = useForm<EditServerRequest>({
         defaultValues: {
             name: server.name,
@@ -30,7 +35,12 @@ export default function ServerEditForm({ server }: Props) {
     });
 
     const actualSubmit = async (data: EditServerRequest) => {
-        await updateServer(server.id, data);
+        try {
+            await updateServer(server.id, data);
+        } catch (error) {
+            setServerError((error as object).toString());
+            updateErrorModalDisclosure.onOpen();
+        }
     };
 
     const handleRemoveServer = async () => {
@@ -41,6 +51,17 @@ export default function ServerEditForm({ server }: Props) {
 
     return (
         <>
+            <MessageModal
+                body={
+                    <div className="grid gap-2">
+                        <span>Could not update server. Something went wrong.</span>
+                        <pre className="text-sm break-words whitespace-pre-wrap text-danger-500">{serverError}</pre>
+                    </div>
+                }
+                disclosure={updateErrorModalDisclosure}
+                title="Server Error!"
+            />
+
             <ConfirmModal
                 body={
                     <div className="grid gap-2">
@@ -56,6 +77,7 @@ export default function ServerEditForm({ server }: Props) {
                 title="Remove Server"
                 onConfirm={handleRemoveServer}
             />
+
             <div className="grid gap-6">
                 <section className="flex justify-start items-center gap-2">
                     <Tooltip closeDelay={100} color="default" content="Servers" delay={600} size="sm">

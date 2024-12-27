@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { Server } from "@prisma/client";
+import { notFound } from "next/navigation";
 
 import prisma from "@/prisma/db";
 import { EditServerRequest, NewServerRequest, ServerWithAccessKeysCount } from "@/core/definitions";
@@ -92,6 +93,18 @@ export async function createServer(data: NewServerRequest): Promise<void> {
 }
 
 export async function updateServer(id: number, data: EditServerRequest): Promise<void> {
+    const server = await getServerById(id);
+
+    if (!server) {
+        notFound();
+    }
+
+    const outlineClient = ApiClient.fromConfig(server.managementJson);
+
+    await outlineClient.setServerName(data.name);
+    await outlineClient.setHostNameForNewKeys(data.hostnameForNewAccessKeys);
+    await outlineClient.setPortForNewKeys(data.portForNewAccessKeys);
+
     await prisma.server.update({
         where: { id },
         data: {

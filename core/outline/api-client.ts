@@ -25,28 +25,22 @@ export default class ApiClient {
         return await response.json();
     }
 
-    async setHostNameForNewKeys(hostnameOrIpAddress: string): Promise<ApiResponse> {
-        const response = await this.fetchWrapper("/server/hostname-for-access-keys", "PUT", {
+    async setHostNameForNewKeys(hostnameOrIpAddress: string): Promise<void> {
+        await this.fetchWrapper("/server/hostname-for-access-keys", "PUT", {
             hostname: hostnameOrIpAddress
         });
-
-        return await response.json();
     }
 
-    async setServerName(name: string): Promise<ApiResponse> {
-        const response = await this.fetchWrapper("/name", "PUT", {
+    async setServerName(name: string): Promise<void> {
+        await this.fetchWrapper("/name", "PUT", {
             name
         });
-
-        return await response.json();
     }
 
-    async setPortForNewKeys(port: number): Promise<ApiResponse> {
-        const response = await this.fetchWrapper("/server/port-for-new-access-keys", "PUT", {
+    async setPortForNewKeys(port: number): Promise<void> {
+        await this.fetchWrapper("/server/port-for-new-access-keys", "PUT", {
             port
         });
-
-        return await response.json();
     }
 
     async metricsTransfer(): Promise<Outline.Metrics> {
