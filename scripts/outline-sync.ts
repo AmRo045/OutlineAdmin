@@ -15,7 +15,7 @@ const syncServer = async (outlineClient: ApiClient, server: Server): Promise<voi
             console.log("Getting server info from remote server...");
             remoteServerInfo = await outlineClient.server();
         } catch (error) {
-            console.log(`Attempt # ${attempts} failed: ${error}`);
+            console.log(`Attempt #${attempts + 1} failed: ${error}\n`);
             attempts++;
         }
     } while (!remoteServerInfo && attempts < maxAttempts);
@@ -35,7 +35,8 @@ const syncServer = async (outlineClient: ApiClient, server: Server): Promise<voi
                 hostnameForNewAccessKeys: remoteServerInfo.hostnameForAccessKeys,
                 portForNewAccessKeys: remoteServerInfo.portForNewAccessKeys,
                 isMetricsEnabled: remoteServerInfo.metricsEnabled,
-                totalDataUsage: totalUsageMetrics
+                totalDataUsage: totalUsageMetrics,
+                isAvailable: true
             }
         });
 
@@ -150,9 +151,16 @@ const run = async () => {
 
 run()
     .then(() => {
-        console.log("\nScript executed successfully 😎");
+        console.log("\n");
+        console.log("═════════════════════════════════════");
+        console.log("   Script executed successfully 😎   ");
+        console.log("═════════════════════════════════════");
     })
     .catch((error) => {
-        console.log("\nScript failed successfully 🥺\n");
+        console.log("\n");
+        console.log("═══════════════════════════════════");
+        console.log("   Script failed successfully 🥺   ");
+        console.log("═══════════════════════════════════");
+        console.log("\n");
         console.error(error);
     });
