@@ -1,5 +1,10 @@
 import { JWTPayload } from "jose";
 import { Server } from "@prisma/client";
+import { SVGProps } from "react";
+
+export type IconSvgProps = SVGProps<SVGSVGElement> & {
+    size?: number;
+};
 
 export interface SessionPayload extends JWTPayload {
     userId: number;

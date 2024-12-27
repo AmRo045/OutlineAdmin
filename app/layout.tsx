@@ -6,11 +6,10 @@ import { ReactNode } from "react";
 
 import { Providers } from "./providers";
 
-import { siteConfig } from "@/config/site";
-import { fontSans } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 import { AmRoLogo, HeartIcon } from "@/components/icons";
 import { currentSession } from "@/core/session";
+import { app } from "@/core/config";
 
 export const viewport: Viewport = {
     themeColor: [
@@ -38,7 +37,7 @@ export default async function RootLayout({ children }: Props) {
                 <link href="/favicon.svg" rel="icon" sizes="any" type="image/svg+xml" />
             </head>
 
-            <body className={clsx("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
+            <body className={clsx("min-h-screen bg-background font-sans antialiased", app.fonts.fontSans.variable)}>
                 <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
                     <div className="relative flex flex-col h-screen">
                         <Navbar session={session} />
@@ -49,7 +48,7 @@ export default async function RootLayout({ children }: Props) {
                             <Link
                                 isExternal
                                 className="flex items-center gap-1 text-current"
-                                href={siteConfig.links.me}
+                                href={app.links.me}
                                 title="AmRo045 Page"
                             >
                                 <span className="text-default-600">Made with</span>

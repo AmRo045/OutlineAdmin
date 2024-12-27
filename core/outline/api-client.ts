@@ -102,7 +102,7 @@ export default class ApiClient {
         const response = await fetch(url, options);
 
         if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            throw new Error(`HTTP error - Status code: ${response.status} (${response.statusText})`);
         }
 
         return response;

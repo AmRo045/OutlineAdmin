@@ -14,11 +14,11 @@ import { Link } from "@nextui-org/link";
 import NextLink from "next/link";
 import { useForm } from "react-hook-form";
 
-import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { DynamicAccessKeyIcon, GithubIcon, Logo, LogoutIcon, ServersIcon, XIcon } from "@/components/icons";
 import { logout } from "@/core/actions";
 import { UserSession } from "@/core/definitions";
+import { app } from "@/core/config";
 
 const navItems = [
     {
@@ -71,11 +71,11 @@ export const Navbar = ({ session }: Props) => {
 
             <NavbarContent className="hidden sm:flex basis-1/5 sm:basis-full" justify="end">
                 <NavbarItem className="hidden sm:flex gap-2">
-                    <Link isExternal aria-label="Twitter" href={siteConfig.links.x}>
+                    <Link isExternal aria-label="X (Twitter)" href={app.links.x}>
                         <XIcon className="text-default-500" />
                     </Link>
 
-                    <Link isExternal aria-label="Github" href={siteConfig.links.github}>
+                    <Link isExternal aria-label="Github" href={app.links.github}>
                         <GithubIcon className="text-default-500" />
                     </Link>
 
@@ -101,7 +101,7 @@ export const Navbar = ({ session }: Props) => {
             </NavbarContent>
 
             <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-                <Link isExternal aria-label="Github" href={siteConfig.links.github}>
+                <Link isExternal aria-label="Github" href={app.links.github}>
                     <GithubIcon className="text-default-500" />
                 </Link>
 

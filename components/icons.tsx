@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { IconSvgProps } from "@/types";
+import { IconSvgProps } from "@/core/definitions";
 
 export const AmRoLogo: React.FC<IconSvgProps> = ({ size = 36, width, height, ...props }) => (
     <svg height={size || height} width={size || width} {...props} viewBox="0 0 2048 2048">

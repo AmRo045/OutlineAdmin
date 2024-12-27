@@ -19,6 +19,7 @@ export default function MessageModal({ disclosure, title, body, isDismissable = 
             isDismissable={isDismissable}
             isKeyboardDismissDisabled={!isDismissable}
             isOpen={disclosure.isOpen}
+            scrollBehavior="inside"
             onOpenChange={disclosure.onOpenChange}
         >
             <ModalContent>

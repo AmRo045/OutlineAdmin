@@ -9,9 +9,9 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
 import { ArrowLeftIcon } from "@/components/icons";
-import { siteConfig } from "@/config/site";
 import { createServer } from "@/core/actions/server";
 import { NewServerRequest } from "@/core/definitions";
+import { app } from "@/core/config";
 
 export default function AddServerPage() {
     const router = useRouter();
@@ -47,7 +47,7 @@ export default function AddServerPage() {
                                 color="default"
                                 variant="flat"
                             >
-                                {siteConfig.snippets.newOutlineServer}
+                                {app.snippets.newOutlineServer}
                             </Snippet>
                         </div>
                     </Tab>
@@ -62,7 +62,7 @@ export default function AddServerPage() {
                                 color="default"
                                 variant="flat"
                             >
-                                {siteConfig.snippets.existingServer}
+                                {app.snippets.existingServer}
                             </Snippet>
                         </div>
                     </Tab>
@@ -74,7 +74,7 @@ export default function AddServerPage() {
                     <Input
                         color="primary"
                         label="Paste your installation output here"
-                        placeholder={siteConfig.snippets.exampleServerManagementJson}
+                        placeholder={app.snippets.exampleServerManagementJson}
                         required={true}
                         variant="faded"
                         {...form.register("managementJson", {

@@ -13,7 +13,7 @@ import { ArrowLeftIcon } from "@/components/icons";
 import { EditServerRequest } from "@/core/definitions";
 import { removeServer, updateServer } from "@/core/actions/server";
 import ConfirmModal from "@/components/modals/confirm-modal";
-import MessageModal from "@/components/message-modal";
+import MessageModal from "@/components/modals/message-modal";
 
 interface Props {
     server: Server;
