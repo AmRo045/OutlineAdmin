@@ -13,6 +13,7 @@ import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
 import NextLink from "next/link";
 import { useForm } from "react-hook-form";
+import { usePathname } from "next/navigation";
 
 import { ThemeSwitch } from "@/components/theme-switch";
 import { DynamicAccessKeyIcon, GithubIcon, Logo, LogoutIcon, ServersIcon, XIcon } from "@/components/icons";
@@ -23,13 +24,13 @@ import { app } from "@/core/config";
 const navItems = [
     {
         label: "Servers",
-        href: "/servers",
-        icon: <ServersIcon size={22} />
+        pathName: "/servers",
+        icon: <ServersIcon size={24} />
     },
     {
         label: "Dynamic Access Keys",
-        href: "/dynamic-access-keys",
-        icon: <DynamicAccessKeyIcon size={22} />
+        pathName: "/dynamic-access-keys",
+        icon: <DynamicAccessKeyIcon size={24} />
     }
 ];
 
@@ -38,6 +39,7 @@ interface Props {
 }
 
 export const Navbar = ({ session }: Props) => {
+    const currentPathname = usePathname();
     const isAuthorized = session.isAuthorized;
 
     const logoutForm = useForm();
@@ -58,8 +60,11 @@ export const Navbar = ({ session }: Props) => {
                 {isAuthorized && (
                     <ul className="hidden lg:flex gap-4 justify-start ml-2">
                         {navItems.map((item) => (
-                            <NavbarItem key={item.href}>
-                                <NextLink className="flex gap-2 items-center" href={item.href}>
+                            <NavbarItem key={item.pathName} isActive={currentPathname.startsWith(item.pathName)}>
+                                <NextLink
+                                    className={`flex gap-2 items-center ${currentPathname.startsWith(item.pathName) ? "text-primary-500" : null}`}
+                                    href={item.pathName}
+                                >
                                     {item.icon}
                                     <span>{item.label.toUpperCase()}</span>
                                 </NextLink>
@@ -114,8 +119,8 @@ export const Navbar = ({ session }: Props) => {
                 <NavbarMenu>
                     <div className="mx-4 mt-2 flex flex-col gap-2">
                         {navItems.map((item) => (
-                            <NavbarMenuItem key={item.href}>
-                                <NextLink className="flex gap-2 items-center" href={item.href}>
+                            <NavbarMenuItem key={item.pathName}>
+                                <NextLink className="flex gap-2 items-center" href={item.pathName}>
                                     {item.icon}
                                     <span>{item.label.toUpperCase()}</span>
                                 </NextLink>

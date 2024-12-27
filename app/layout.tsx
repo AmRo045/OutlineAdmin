@@ -29,10 +29,7 @@ export default async function RootLayout({ children }: Props) {
         <html suppressHydrationWarning lang="en">
             <head>
                 <title>{process.env.APP_NAME}</title>
-                <meta
-                    content="Outline Admin is a web interface for the Outline Manager API, providing a simple and user-friendly UI for managing VPN servers."
-                    name="description"
-                />
+                <meta content={process.env.APP_DESCRIPTION} name="description" />
                 <meta content="width=device-width, initial-scale=1.0" name="viewport" />
                 <link href="/favicon.svg" rel="icon" sizes="any" type="image/svg+xml" />
             </head>
