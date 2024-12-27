@@ -6,7 +6,7 @@ import { AccessKey } from "@prisma/client";
 import prisma from "@/prisma/db";
 import { EditAccessKeyRequest, NewAccessKeyRequest } from "@/core/definitions";
 import ApiClient from "@/core/outline/api-client";
-import { convertDataLimitToBytes } from "@/core/utils";
+import { convertDataLimitToUnit } from "@/core/utils";
 
 export async function getAccessKeys(
     serverId: number,
@@ -38,7 +38,7 @@ export async function createAccessKey(data: NewAccessKeyRequest): Promise<void> 
     if (data.dataLimit) {
         await outlineClient.setDataLimitForKey(
             newAccessKey.id,
-            convertDataLimitToBytes(Number(data.dataLimit), data.dataLimitUnit)
+            convertDataLimitToUnit(Number(data.dataLimit), data.dataLimitUnit)
         );
     }
 

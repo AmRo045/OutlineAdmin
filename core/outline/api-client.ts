@@ -49,10 +49,16 @@ export default class ApiClient {
         return await response.json();
     }
 
-    async keys(): Promise<ApiResponse> {
+    async keys(): Promise<Outline.AccessKey[]> {
         const response = await this.fetchWrapper("/access-keys", "GET");
 
-        return await response.json();
+        const result = await response.json();
+
+        return result.accessKeys.map((accessKey: any) => {
+            accessKey.dataLimitInBytes = accessKey.dataLimit?.bytes;
+
+            return accessKey;
+        });
     }
 
     async createKey(): Promise<Outline.AccessKey> {

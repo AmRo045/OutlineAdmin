@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix",
-    "format": "prettier --write ./app ./types ./config ./components ./styles"
+    "format": "prettier --write ./app ./types ./config ./components ./styles",
+    "sync": "bun run ./scripts/outline-sync.ts"
   },
   "dependencies": {
     "@nextui-org/button": "2.0.38",

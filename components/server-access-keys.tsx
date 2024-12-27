@@ -21,7 +21,7 @@ import AccessKeyFormModal from "@/components/modals/access-key-form-modal";
 import ConfirmModal from "@/components/modals/confirm-modal";
 import { ArrowLeftIcon, DeleteIcon, EditIcon, EyeIcon, InfinityIcon, PlusIcon } from "@/components/icons";
 import AccessKeyServerInfo from "@/components/access-key-server-info";
-import { convertDataLimitToBytes, formatBytes } from "@/core/utils";
+import { convertDataLimitToUnit, formatBytes } from "@/core/utils";
 import { removeAccessKey } from "@/core/actions/access-key";
 import { DataLimitUnit } from "@/core/definitions";
 import NoResult from "@/components/no-result";
@@ -133,7 +133,7 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
                                             {accessKey.dataLimit ? (
                                                 <span>
                                                     {formatBytes(
-                                                        convertDataLimitToBytes(
+                                                        convertDataLimitToUnit(
                                                             Number(accessKey.dataLimit),
                                                             accessKey.dataLimitUnit as DataLimitUnit
                                                         )

@@ -11,7 +11,7 @@ export function getDataLimitUnitFactor(unit: DataLimitUnit): number {
     return unitFactors.get(unit) ?? 1;
 }
 
-export function convertDataLimitToBytes(value: number, unit: DataLimitUnit): number {
+export function convertDataLimitToUnit(value: number, unit: DataLimitUnit): number {
     return value * getDataLimitUnitFactor(unit);
 }
 
