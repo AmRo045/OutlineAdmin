@@ -99,7 +99,7 @@ export default function ServerEditForm({ server }: Props) {
 
                     <Input
                         className="w-[320px]"
-                        description="This will not affect the existing access keys"
+                        description="This will not affect the existing access keys. Make sure the port is not in use by other programs"
                         isInvalid={!!form.formState.errors.portForNewAccessKeys}
                         label="Port for new access keys (Max: 65535)"
                         required={true}
