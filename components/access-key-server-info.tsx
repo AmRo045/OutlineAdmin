@@ -49,8 +49,8 @@ export default function AccessKeyServerInfo({ server, numberOfKeys }: Props) {
 
             <div className="flex justify-between items-center gap-2 col-span-2 md:col-span-1">
                 <span className="text-sm text-default-500">Status</span>
-                <Chip color="success" size="sm" variant="flat">
-                    AVAILABLE
+                <Chip color={server.isAvailable ? "success" : "danger"} size="sm" variant="flat">
+                    {server.isAvailable ? "Available" : "Not Available"}
                 </Chip>
             </div>
 
