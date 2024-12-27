@@ -24,6 +24,7 @@ import AccessKeyServerInfo from "@/components/access-key-server-info";
 import { convertDataLimitToBytes, formatBytes } from "@/core/utils";
 import { removeAccessKey } from "@/core/actions/access-key";
 import { DataLimitUnit } from "@/core/definitions";
+import NoResult from "@/components/no-result";
 
 interface Props {
     server: Server;
@@ -117,9 +118,10 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
                             <TableColumn>NAME</TableColumn>
                             <TableColumn align="center">DATA USAGE</TableColumn>
                             <TableColumn align="center">VALIDITY</TableColumn>
+                            <TableColumn align="center">PREFIX</TableColumn>
                             <TableColumn align="center">ACTIONS</TableColumn>
                         </TableHeader>
-                        <TableBody>
+                        <TableBody emptyContent={<NoResult />}>
                             {accessKeys.map((accessKey) => (
                                 <TableRow key={accessKey.id}>
                                     <TableCell>{accessKey.id}</TableCell>
@@ -153,6 +155,11 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
                                             ) : (
                                                 <InfinityIcon size={20} />
                                             )}
+                                        </Chip>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Chip color={accessKey.prefix ? "success" : "default"} size="sm" variant="flat">
+                                            {accessKey.prefix ? accessKey.prefix : "None"}
                                         </Chip>
                                     </TableCell>
                                     <TableCell>
