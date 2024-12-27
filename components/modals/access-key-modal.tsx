@@ -1,7 +1,5 @@
 import { UseDisclosureReturn } from "@nextui-org/use-disclosure";
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/modal";
-import { Button } from "@nextui-org/button";
-import { Snippet } from "@nextui-org/react";
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Snippet } from "@nextui-org/react";
 import React, { useEffect, useRef } from "react";
 
 import { CopyIcon } from "@/components/icons";

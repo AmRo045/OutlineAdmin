@@ -1,7 +1,9 @@
 "use client";
 
 import {
+    Button,
     Chip,
+    Link,
     Table,
     TableBody,
     TableCell,
@@ -12,8 +14,6 @@ import {
     useDisclosure
 } from "@nextui-org/react";
 import { useState } from "react";
-import { Button } from "@nextui-org/button";
-import { Link } from "@nextui-org/link";
 import { AccessKey, Server } from "@prisma/client";
 
 import AccessKeyModal from "@/components/modals/access-key-modal";

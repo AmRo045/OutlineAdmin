@@ -2,8 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { Input } from "@nextui-org/input";
-import { Button } from "@nextui-org/button";
+import { Button, Input } from "@nextui-org/react";
 
 import { UserPasswordIcon } from "@/components/icons";
 import { updatePassword } from "@/core/actions";

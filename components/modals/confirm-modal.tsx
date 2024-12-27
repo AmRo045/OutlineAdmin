@@ -1,9 +1,8 @@
 "use client";
 
 import { UseDisclosureReturn } from "@nextui-org/use-disclosure";
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/modal";
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
 import { ReactNode, useState } from "react";
-import { Button } from "@nextui-org/button";
 
 interface Props {
     disclosure: UseDisclosureReturn;

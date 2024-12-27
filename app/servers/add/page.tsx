@@ -1,10 +1,7 @@
 "use client";
 
 import React from "react";
-import { Button } from "@nextui-org/button";
-import { Link } from "@nextui-org/link";
-import { Snippet, Tab, Tabs, Tooltip } from "@nextui-org/react";
-import { Input } from "@nextui-org/input";
+import { Button, Input, Link, Snippet, Tab, Tabs, Tooltip } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 

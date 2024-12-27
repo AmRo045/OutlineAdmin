@@ -1,8 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { Input } from "@nextui-org/input";
-import { Button } from "@nextui-org/button";
+import { Button, Input } from "@nextui-org/react";
 
 import { checkPassword, login } from "@/core/actions";
 

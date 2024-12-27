@@ -1,7 +1,10 @@
 "use client";
 
 import {
+    Button,
     Chip,
+    Input,
+    Link,
     Snippet,
     Table,
     TableBody,
@@ -13,9 +16,6 @@ import {
     useDisclosure
 } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
-import { Input } from "@nextui-org/input";
-import { Button } from "@nextui-org/button";
-import { Link } from "@nextui-org/link";
 import { useForm } from "react-hook-form";
 
 import ConfirmModal from "@/components/modals/confirm-modal";
@@ -67,8 +67,8 @@ export default function ServersList({ data }: Props) {
                     <div className="grid gap-2">
                         <span>Are you sure you want to remove this server?</span>
                         <p className="text-default-500 text-sm">
-                            Please note that this action will only remove the server from the {process.env.APP_NAME}'s
-                            database. The server itself will not be affected.
+                            Please note that this action will only remove the server from the {process.env.APP_NAME}
+                            &apos;s database. The server itself will not be affected.
                         </p>
                     </div>
                 }

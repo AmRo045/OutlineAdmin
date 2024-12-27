@@ -1,9 +1,6 @@
 "use client";
 
-import { Divider, Tooltip, useDisclosure } from "@nextui-org/react";
-import { Button } from "@nextui-org/button";
-import { Link } from "@nextui-org/link";
-import { Input } from "@nextui-org/input";
+import { Button, Divider, Input, Link, Tooltip, useDisclosure } from "@nextui-org/react";
 import React, { useState } from "react";
 import { Server } from "@prisma/client";
 import { useForm } from "react-hook-form";
@@ -67,8 +64,8 @@ export default function ServerEditForm({ server }: Props) {
                     <div className="grid gap-2">
                         <span>Are you sure you want to remove this server?</span>
                         <p className="text-default-500 text-sm">
-                            Please note that this action will only remove the server from the {process.env.APP_NAME}'s
-                            database. The server itself will not be affected.
+                            Please note that this action will only remove the server from the {process.env.APP_NAME}
+                            &apos;s database. The server itself will not be affected.
                         </p>
                     </div>
                 }
@@ -152,7 +149,7 @@ export default function ServerEditForm({ server }: Props) {
                 <div className="px-10 grid gap-4">
                     <span className="text-lg">Remove The Server</span>
                     <p className="text-default-500 text-sm">
-                        Please note that this action will only remove the server from the {process.env.APP_NAME}'s
+                        Please note that this action will only remove the server from the {process.env.APP_NAME}&apos;s
                         database. The server itself will not be affected.
                     </p>
                     <Button

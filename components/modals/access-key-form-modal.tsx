@@ -1,8 +1,20 @@
 import { UseDisclosureReturn } from "@nextui-org/use-disclosure";
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/modal";
 import React, { useEffect, useState } from "react";
-import { Button } from "@nextui-org/button";
-import { Chip, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input } from "@nextui-org/react";
+import {
+    Button,
+    Chip,
+    Divider,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
+    Input,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader
+} from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { AccessKey } from "@prisma/client";
 

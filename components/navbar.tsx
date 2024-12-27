@@ -1,6 +1,8 @@
 "use client";
 
 import {
+    Button,
+    Link,
     Navbar as NextUINavbar,
     NavbarBrand,
     NavbarContent,
@@ -8,9 +10,7 @@ import {
     NavbarMenu,
     NavbarMenuItem,
     NavbarMenuToggle
-} from "@nextui-org/navbar";
-import { Button } from "@nextui-org/button";
-import { Link } from "@nextui-org/link";
+} from "@nextui-org/react";
 import NextLink from "next/link";
 import { useForm } from "react-hook-form";
 import { usePathname } from "next/navigation";
