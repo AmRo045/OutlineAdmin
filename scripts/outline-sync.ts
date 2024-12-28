@@ -1,8 +1,10 @@
 import prisma from "@/prisma/db";
 import ApiClient from "@/core/outline/api-client";
-import { Server } from "@prisma/client";
+import { AccessKey, Server } from "@prisma/client";
 import { DataLimitUnit, Outline } from "@/core/definitions";
 import { convertDataLimitToUnit } from "@/core/utils";
+
+const DISABLED_ACCESS_KEY_LIMIT_IN_BYTES = 1000;
 
 const syncServer = async (outlineClient: ApiClient, server: Server): Promise<void> => {
     const maxAttempts = 3;
@@ -15,7 +17,7 @@ const syncServer = async (outlineClient: ApiClient, server: Server): Promise<voi
             console.log("Getting server info from remote server...");
             remoteServerInfo = await outlineClient.server();
         } catch (error) {
-            console.log(`Attempt #${attempts + 1} failed: ${error}\n`);
+            console.error(`Attempt #${attempts + 1} failed: ${error}\n`);
             attempts++;
         }
     } while (!remoteServerInfo && attempts < maxAttempts);
@@ -85,6 +87,11 @@ const syncAccessKeys = async (outlineClient: ApiClient, metrics: Outline.Metrics
                     dataUsage: metrics.bytesTransferredByUserId[remoteAccessKey.id]
                 }
             });
+
+            if (isAccessKeyExpired(localAccessKey)) {
+                console.log("Disabling access key due to expiration date...");
+                await disableExpiredAccessKey(outlineClient, localAccessKey);
+            }
         } else {
             // and this means we need to create the access key
             console.log(`Creating missing access key in local database...`);
@@ -135,6 +142,32 @@ const syncAccessKeys = async (outlineClient: ApiClient, metrics: Outline.Metrics
     }
 };
 
+const isAccessKeyExpired = (accessKey: AccessKey) => {
+    if (!accessKey.expiresAt) {
+        return false;
+    }
+
+    console.log("Checking for access key expiration date...");
+    return accessKey.expiresAt <= new Date();
+};
+
+const disableExpiredAccessKey = async (outlineClient: ApiClient, accessKey: AccessKey) => {
+    try {
+        await outlineClient.removeDataLimitForKey(accessKey.apiId);
+        await outlineClient.setDataLimitForKey(accessKey.apiId, DISABLED_ACCESS_KEY_LIMIT_IN_BYTES);
+
+        await prisma.accessKey.update({
+            where: { id: accessKey.id },
+            data: {
+                dataLimit: DISABLED_ACCESS_KEY_LIMIT_IN_BYTES,
+                dataLimitUnit: DataLimitUnit.Bytes
+            }
+        });
+    } catch (error) {
+        console.error(`Attempt to disabling access key failed: ${error}\n`);
+    }
+};
+
 const main = async () => {
     console.log("Loading servers from local database...");
     const servers = await prisma.server.findMany();
@@ -152,15 +185,15 @@ const main = async () => {
 main()
     .then(() => {
         console.log("\n");
-        console.log("═════════════════════════════════════");
-        console.log("   Script executed successfully 😎   ");
-        console.log("═════════════════════════════════════");
+        console.log("══════════════════════════════════════════════════");
+        console.log("   Outline Sync Script Executed Successfully 😎   ");
+        console.log("══════════════════════════════════════════════════");
     })
     .catch((error) => {
         console.log("\n");
-        console.log("═══════════════════════════════════");
-        console.log("   Script failed successfully 🥺   ");
-        console.log("═══════════════════════════════════");
+        console.log("════════════════════════════════════════════════");
+        console.log("   Outline Sync Script Failed Successfully 🥺   ");
+        console.log("════════════════════════════════════════════════");
         console.log("\n");
         console.error(error);
     });

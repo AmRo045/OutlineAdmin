@@ -87,7 +87,7 @@ export default class ApiClient {
         });
     }
 
-    async removeDataLimitForKey(id: number): Promise<void> {
+    async removeDataLimitForKey(id: string): Promise<void> {
         await this.fetchWrapper(`/access-keys/${id}/data-limit`, "DELETE");
     }
 
