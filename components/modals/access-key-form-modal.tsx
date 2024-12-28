@@ -99,7 +99,7 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
     }, [disclosure.isOpen]);
 
     return (
-        <Modal isOpen={disclosure.isOpen} onOpenChange={disclosure.onOpenChange}>
+        <Modal isDismissable={false} isOpen={disclosure.isOpen} onOpenChange={disclosure.onOpenChange}>
             <ModalContent>
                 <ModalHeader>{accessKeyData ? `Access Key "${accessKeyData.name}"` : "New Access Key"}</ModalHeader>
                 <ModalBody>
