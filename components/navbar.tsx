@@ -62,7 +62,7 @@ export const Navbar = ({ session }: Props) => {
                         {navItems.map((item) => (
                             <NavbarItem key={item.pathName} isActive={currentPathname.startsWith(item.pathName)}>
                                 <NextLink
-                                    className={`flex gap-2 items-center ${currentPathname.startsWith(item.pathName) ? "text-primary-500" : null}`}
+                                    className={`flex gap-2 items-center ${currentPathname.startsWith(item.pathName) ? "text-primary-500" : "text-default-500"}`}
                                     href={item.pathName}
                                 >
                                     {item.icon}
