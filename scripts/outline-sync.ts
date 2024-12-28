@@ -79,10 +79,15 @@ const syncAccessKeys = async (outlineClient: ApiClient, metrics: Outline.Metrics
             // this means we need to update the access key
             console.log(`Updating access key info in local database...`);
 
+            let accessKeyName = remoteAccessKey.name;
+
+            if (accessKeyName.length === 0) {
+                accessKeyName = `Key #${remoteAccessKey.id}`;
+            }
             await prisma.accessKey.update({
                 where: { id: localAccessKey.id },
                 data: {
-                    name: remoteAccessKey.name,
+                    name: accessKeyName,
                     dataLimit: dataLimit,
                     dataUsage: metrics.bytesTransferredByUserId[remoteAccessKey.id]
                 }

@@ -7,6 +7,8 @@ const main = async () => {
         await runCommand("bun", ["sync"]);
     }, outlineSyncJobInterval);
 
+    await runCommand("bun", ["sync"]);
+
     try {
         await runCommand("next", ["dev", "--turbo"]);
     } catch (error) {
