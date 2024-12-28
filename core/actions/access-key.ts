@@ -63,6 +63,29 @@ export async function createAccessKey(data: NewAccessKeyRequest): Promise<void> 
 }
 
 export async function updateAccessKey(data: EditAccessKeyRequest): Promise<void> {
+    const server = await prisma.server.findFirstOrThrow({
+        where: { id: data.serverId }
+    });
+
+    const outlineClient = ApiClient.fromConfig(server.managementJson);
+
+    const accessKey = await prisma.accessKey.findFirstOrThrow({
+        where: {
+            id: data.id
+        }
+    });
+
+    await outlineClient.renameKey(accessKey.apiId, data.name);
+
+    if (data.dataLimit) {
+        await outlineClient.setDataLimitForKey(
+            accessKey.apiId,
+            convertDataLimitToUnit(Number(data.dataLimit), data.dataLimitUnit)
+        );
+    } else {
+        await outlineClient.removeDataLimitForKey(accessKey.apiId);
+    }
+
     await prisma.accessKey.update({
         where: {
             id: data.id
@@ -80,7 +103,25 @@ export async function updateAccessKey(data: EditAccessKeyRequest): Promise<void>
     revalidatePath(`/servers/${data.serverId}/access-keys`);
 }
 
-export async function removeAccessKey(serverId: number, id: number): Promise<void> {
+export async function removeAccessKey(serverId: number, id: number, apiId?: string): Promise<void> {
+    const server = await prisma.server.findFirstOrThrow({
+        where: { id: serverId }
+    });
+
+    const outlineClient = ApiClient.fromConfig(server.managementJson);
+
+    if (apiId) {
+        await outlineClient.deleteKey(apiId);
+    } else {
+        const accessKey = await prisma.accessKey.findFirstOrThrow({
+            where: {
+                id: id
+            }
+        });
+
+        await outlineClient.deleteKey(accessKey.apiId);
+    }
+
     await prisma.accessKey.delete({
         where: {
             id: id

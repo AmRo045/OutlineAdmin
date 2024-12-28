@@ -13,7 +13,7 @@ import {
     Tooltip,
     useDisclosure
 } from "@nextui-org/react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { AccessKey, Server } from "@prisma/client";
 
 import AccessKeyModal from "@/components/modals/access-key-modal";
@@ -26,6 +26,7 @@ import { removeAccessKey } from "@/core/actions/access-key";
 import { DataLimitUnit } from "@/core/definitions";
 import NoResult from "@/components/no-result";
 import AccessKeyValidityChip from "@/components/access-key-validity-chip";
+import MessageModal from "@/components/modals/message-modal";
 
 interface Props {
     server: Server;
@@ -36,13 +37,19 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
     const accessKeyFormModalDisclosure = useDisclosure();
     const accessKeyModalDisclosure = useDisclosure();
     const removeAccessKeyConfirmModalDisclosure = useDisclosure();
+    const apiErrorModalDisclosure = useDisclosure();
 
+    const [serverError, setServerError] = useState<string>();
     const [currentAccessKey, setCurrentAccessKey] = useState<AccessKey>();
 
     const handleRemoveAccessKey = async () => {
         if (!currentAccessKey) return;
-
-        await removeAccessKey(server.id, currentAccessKey.id);
+        try {
+            await removeAccessKey(server.id, currentAccessKey.id, currentAccessKey.apiId);
+        } catch (error) {
+            setServerError((error as object).toString());
+            apiErrorModalDisclosure.onOpen();
+        }
     };
 
     return (
@@ -53,6 +60,17 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
                 accessKeyData={currentAccessKey}
                 disclosure={accessKeyFormModalDisclosure}
                 serverId={server.id}
+            />
+
+            <MessageModal
+                body={
+                    <div className="grid gap-2">
+                        <span>Could not delete the access key. Something went wrong.</span>
+                        <pre className="text-sm break-words whitespace-pre-wrap text-danger-500">{serverError}</pre>
+                    </div>
+                }
+                disclosure={apiErrorModalDisclosure}
+                title="Server Error!"
             />
 
             <ConfirmModal

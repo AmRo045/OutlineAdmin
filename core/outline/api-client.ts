@@ -77,7 +77,7 @@ export default class ApiClient {
         });
     }
 
-    async deleteKey(id: number): Promise<void> {
+    async deleteKey(id: string): Promise<void> {
         await this.fetchWrapper(`/access-keys/${id}`, "DELETE");
     }
 

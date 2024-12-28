@@ -31,23 +31,31 @@ interface Props {
 export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData }: Props) {
     const form = useForm<NewAccessKeyRequest | EditAccessKeyRequest>();
 
+    const [serverError, setServerError] = useState<string>();
+
     const [selectedDataLimitUnit, setSelectedDataLimitUnit] = useState<string>(DataLimitUnit.Bytes);
     const [selectedPrefix, setSelectedPrefix] = useState<string | null>(null);
 
     const actualSubmit = async (data: NewAccessKeyRequest | EditAccessKeyRequest) => {
-        data.serverId ??= serverId;
-        data.dataLimitUnit ??= DataLimitUnit.Bytes;
+        setServerError(() => "");
 
-        if (accessKeyData) {
-            const updateData = data as EditAccessKeyRequest;
+        try {
+            data.serverId ??= serverId;
+            data.dataLimitUnit ??= DataLimitUnit.Bytes;
 
-            updateData.id = accessKeyData.id;
-            await updateAccessKey(updateData);
-        } else {
-            await createAccessKey(data);
+            if (accessKeyData) {
+                const updateData = data as EditAccessKeyRequest;
+
+                updateData.id = accessKeyData.id;
+                await updateAccessKey(updateData);
+            } else {
+                await createAccessKey(data);
+            }
+
+            disclosure.onClose();
+        } catch (error) {
+            setServerError(() => (error as object).toString());
         }
-
-        disclosure.onClose();
     };
 
     useEffect(() => {
@@ -60,6 +68,8 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
 
     useEffect(() => {
         if (disclosure.isOpen) {
+            setServerError("");
+
             if (accessKeyData) {
                 form.reset({
                     serverId: accessKeyData.serverId,
@@ -93,6 +103,13 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
             <ModalContent>
                 <ModalHeader>{accessKeyData ? `Access Key "${accessKeyData.name}"` : "New Access Key"}</ModalHeader>
                 <ModalBody>
+                    {serverError && (
+                        <div className="text-sm grid gap-2">
+                            <span>Could not {accessKeyData ? "edit" : "create"} access key. Something went wrong.</span>
+                            <pre className="break-words whitespace-pre-wrap text-danger-500">{serverError}</pre>
+                        </div>
+                    )}
+
                     <form className="grid gap-4" id="accessKeyForm" onSubmit={form.handleSubmit(actualSubmit)}>
                         <Input
                             isInvalid={!!form.formState.errors.name}
@@ -198,7 +215,7 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
                     <Button
                         color="primary"
                         form="accessKeyForm"
-                        isLoading={form.formState.isSubmitting || form.formState.isSubmitSuccessful}
+                        isLoading={!serverError && (form.formState.isSubmitting || form.formState.isSubmitSuccessful)}
                         type="submit"
                         variant="shadow"
                     >
