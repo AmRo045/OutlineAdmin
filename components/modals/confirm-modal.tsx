@@ -35,7 +35,7 @@ export default function ConfirmModal({
                 {title && <ModalHeader>{title}</ModalHeader>}
                 {body && <ModalBody>{body}</ModalBody>}
                 <ModalFooter className="flex justify-between gap-2 mt-4">
-                    <Button isDisabled={isPerformingIntendedAction} variant="flat" onClick={disclosure.onClose}>
+                    <Button isDisabled={isPerformingIntendedAction} variant="flat" onPress={disclosure.onClose}>
                         Cancel
                     </Button>
 
@@ -43,7 +43,7 @@ export default function ConfirmModal({
                         color="danger"
                         isLoading={isPerformingIntendedAction}
                         variant="shadow"
-                        onClick={async () => {
+                        onPress={async () => {
                             setIsPerformingIntendedAction((prev) => !prev);
                             await onConfirm();
                             setIsPerformingIntendedAction((prev) => !prev);

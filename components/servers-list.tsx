@@ -206,7 +206,7 @@ export default function ServersList({ data }: Props) {
                                                 isIconOnly={true}
                                                 size="sm"
                                                 variant="light"
-                                                onClick={() => {
+                                                onPress={() => {
                                                     setServerToRemove(server.id);
                                                     removeServerConfirmModalDisclosure.onOpen();
                                                 }}

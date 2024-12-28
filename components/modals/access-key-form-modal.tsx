@@ -208,7 +208,7 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
                     </form>
                 </ModalBody>
                 <ModalFooter className="flex justify-between gap-2 mt-4">
-                    <Button variant="flat" onClick={disclosure.onClose}>
+                    <Button variant="flat" onPress={disclosure.onClose}>
                         Cancel
                     </Button>
 

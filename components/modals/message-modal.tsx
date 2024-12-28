@@ -25,7 +25,7 @@ export default function MessageModal({ disclosure, title, body, isDismissable = 
                 {title && <ModalHeader>{title}</ModalHeader>}
                 {body && <ModalBody>{body}</ModalBody>}
                 <ModalFooter className="flex justify-end gap-2 mt-4">
-                    <Button variant="flat" onClick={disclosure.onClose}>
+                    <Button variant="flat" onPress={disclosure.onClose}>
                         Ok
                     </Button>
                 </ModalFooter>

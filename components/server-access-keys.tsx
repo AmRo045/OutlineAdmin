@@ -115,7 +115,7 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
                             color="primary"
                             startContent={<PlusIcon size={20} />}
                             variant="shadow"
-                            onClick={() => {
+                            onPress={() => {
                                 setCurrentAccessKey(undefined);
                                 accessKeyFormModalDisclosure.onOpen();
                             }}
@@ -185,7 +185,7 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
                                                     isIconOnly={true}
                                                     size="sm"
                                                     variant="light"
-                                                    onClick={() => {
+                                                    onPress={() => {
                                                         setCurrentAccessKey(accessKey);
                                                         accessKeyModalDisclosure.onOpen();
                                                     }}
@@ -207,7 +207,7 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
                                                     isIconOnly={true}
                                                     size="sm"
                                                     variant="light"
-                                                    onClick={() => {
+                                                    onPress={() => {
                                                         setCurrentAccessKey(accessKey);
                                                         accessKeyFormModalDisclosure.onOpen();
                                                     }}
@@ -228,7 +228,7 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
                                                     isIconOnly={true}
                                                     size="sm"
                                                     variant="light"
-                                                    onClick={() => {
+                                                    onPress={() => {
                                                         setCurrentAccessKey(accessKey);
                                                         removeAccessKeyConfirmModalDisclosure.onOpen();
                                                     }}

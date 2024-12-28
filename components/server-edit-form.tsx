@@ -156,7 +156,7 @@ export default function ServerEditForm({ server }: Props) {
                         className="w-fit"
                         color="danger"
                         variant="shadow"
-                        onClick={removeServerConfirmModalDisclosure.onOpen}
+                        onPress={removeServerConfirmModalDisclosure.onOpen}
                     >
                         Remove
                     </Button>

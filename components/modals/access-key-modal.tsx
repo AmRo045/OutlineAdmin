@@ -44,7 +44,7 @@ export default function AccessKeyModal({ disclosure, value }: Props) {
                     </Snippet>
                 </ModalBody>
                 <ModalFooter>
-                    <Button variant="flat" onClick={disclosure.onClose}>
+                    <Button variant="flat" onPress={disclosure.onClose}>
                         Ok
                     </Button>
                 </ModalFooter>
