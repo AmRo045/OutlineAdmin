@@ -135,7 +135,7 @@ const syncAccessKeys = async (outlineClient: ApiClient, metrics: Outline.Metrics
     }
 };
 
-const run = async () => {
+const main = async () => {
     console.log("Loading servers from local database...");
     const servers = await prisma.server.findMany();
 
@@ -149,7 +149,7 @@ const run = async () => {
     }
 };
 
-run()
+main()
     .then(() => {
         console.log("\n");
         console.log("═════════════════════════════════════");
