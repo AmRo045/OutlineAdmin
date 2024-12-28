@@ -25,6 +25,7 @@ import { convertDataLimitToUnit, formatBytes } from "@/core/utils";
 import { removeAccessKey } from "@/core/actions/access-key";
 import { DataLimitUnit } from "@/core/definitions";
 import NoResult from "@/components/no-result";
+import AccessKeyValidityChip from "@/components/access-key-validity-chip";
 
 interface Props {
     server: Server;
@@ -144,18 +145,8 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
                                             )}
                                         </div>
                                     </TableCell>
-                                    <TableCell>
-                                        <Chip
-                                            color={accessKey.expiresAt ? "warning" : "success"}
-                                            size="sm"
-                                            variant="flat"
-                                        >
-                                            {accessKey.expiresAt ? (
-                                                <span>{accessKey.expiresAt.toLocaleString()}</span>
-                                            ) : (
-                                                <InfinityIcon size={20} />
-                                            )}
-                                        </Chip>
+                                    <TableCell width={160}>
+                                        <AccessKeyValidityChip value={accessKey.expiresAt} />
                                     </TableCell>
                                     <TableCell>
                                         <Chip color={accessKey.prefix ? "success" : "default"} size="sm" variant="flat">

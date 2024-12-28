@@ -21,6 +21,7 @@
     "framer-motion": "~11.1.9",
     "intl-messageformat": "^10.7.10",
     "jose": "^5.9.6",
+    "moment": "^2.30.1",
     "next": "14.2.15",
     "next-themes": "^0.2.1",
     "qr-code-styling": "^1.8.4",

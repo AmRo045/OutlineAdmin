@@ -1,4 +1,20 @@
+import moment from "moment";
+
 import { DataLimitUnit } from "@/core/definitions";
+
+export const formatAsDuration = (start: Date, end: Date): string => {
+    const momentStart = moment(start);
+    const momentEnd = moment(end);
+
+    const duration = moment.duration(momentEnd.diff(momentStart));
+
+    const days = duration.days();
+    const hours = duration.hours();
+    const minutes = duration.minutes();
+    const seconds = duration.seconds();
+
+    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+};
 
 export function getDataLimitUnitFactor(unit: DataLimitUnit): number {
     const unitFactors: Map<DataLimitUnit, number> = new Map([
