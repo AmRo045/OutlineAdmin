@@ -1,6 +1,7 @@
 import { Chip, Snippet, Tooltip } from "@nextui-org/react";
 import React from "react";
 import { Server } from "@prisma/client";
+import moment from "moment";
 
 import { CopyIcon } from "@/components/icons";
 import { formatBytes } from "@/core/utils";
@@ -77,9 +78,9 @@ export default function AccessKeyServerInfo({ server, numberOfKeys }: Props) {
 
             <div className="flex justify-between items-center gap-2 col-span-2 md:col-span-1">
                 <span className="text-sm text-default-500">Creation date</span>
-                <Tooltip closeDelay={200} content="3 weeks ago" delay={600} size="sm">
+                <Tooltip closeDelay={200} content={moment(server.apiCreatedAt).fromNow()} delay={600} size="sm">
                     <Chip size="sm" variant="flat">
-                        {server.apiCreatedAt.toLocaleDateString()}
+                        {moment(server.apiCreatedAt).format("YYYY-MM-DD HH:mm:ss")}
                     </Chip>
                 </Tooltip>
             </div>
