@@ -1,5 +1,5 @@
 import { JWTPayload } from "jose";
-import { Server } from "@prisma/client";
+import { AccessKey, DynamicAccessKey, Server } from "@prisma/client";
 import { SVGProps } from "react";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
@@ -16,6 +16,10 @@ export interface UserSession {
 }
 
 export type ServerWithAccessKeysCount = Server & { _count?: { accessKeys: number } };
+export type ServerWithAccessKeys = Server & { accessKeys: AccessKey[] };
+
+export type DynamicAccessKeyWithAccessKeysCount = DynamicAccessKey & { _count?: { accessKeys: number } };
+export type DynamicAccessKeyWithAccessKeys = DynamicAccessKey & { accessKeys: AccessKey[] };
 
 export interface NewServerRequest {
     managementJson: string;
@@ -58,11 +62,40 @@ export enum AccessKeyPrefixType {
     Ssh = "Ssh"
 }
 
+export enum LoadBalancerAlgorithm {
+    UserIpAddress = "UserIpAddress",
+    RandomKeyOnEachConnection = "RandomKeyOnEachConnection",
+    RandomServerKeyOnEachConnection = "RandomServerKeyOnEachConnection"
+}
+
+export interface NewDynamicAccessKeyRequest {
+    name: string;
+    path: string;
+    loadBalancerAlgorithm: string;
+    expiresAt?: Date | null;
+    prefix?: string | null;
+}
+
+export interface EditDynamicAccessKeyRequest extends NewDynamicAccessKeyRequest {
+    id: number;
+}
+
 export interface AccessKeyPrefixData {
     type: AccessKeyPrefixType;
     jsonEncodedValue: string;
     urlEncodedValue: string;
     recommendedPorts: { number: number; description: string }[];
+}
+
+export interface DynamicAccessKeyApiResponse {
+    server: string;
+    server_port: number;
+    password: string;
+    method: string;
+    prefix?: string;
+    error?: {
+        message?: string;
+    };
 }
 
 export namespace Outline {

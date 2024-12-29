@@ -55,5 +55,20 @@ model AccessKey {
   updatedAt     DateTime  @updatedAt
   server        Server    @relation(fields: [serverId], references: [id], onDelete: Cascade)
 
+  dynamicAccessKeys DynamicAccessKey[] @relation("AccessKeyDynamicAccessKeys")
+
   @@unique([serverId, apiId])
+}
+
+model DynamicAccessKey {
+  id                    Int       @id @default(autoincrement())
+  name                  String
+  path                  String    @unique
+  loadBalancerAlgorithm String
+  prefix                String?
+  expiresAt             DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  accessKeys AccessKey[] @relation("AccessKeyDynamicAccessKeys")
 }

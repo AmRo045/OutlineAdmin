@@ -67,3 +67,30 @@ export function getFormattedDate(data?: Date): string {
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+
+const crc32Table: number[] = (() => {
+    const table = [];
+
+    for (let i = 0; i < 256; i++) {
+        let c = i;
+
+        for (let j = 0; j < 8; j++) {
+            c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+        }
+        table[i] = c;
+    }
+
+    return table;
+})();
+
+export const crc32 = (str: string): number => {
+    let crc = 0 ^ -1;
+
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+
+        crc = (crc >>> 8) ^ crc32Table[(crc ^ char) & 0xff];
+    }
+
+    return (crc ^ -1) >>> 0;
+};
