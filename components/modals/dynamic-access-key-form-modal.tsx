@@ -49,6 +49,8 @@ export default function DynamicAccessKeyFormModal({ disclosure, dynamicAccessKey
 
             if (!data.path) {
                 data.path = uuidv4();
+            } else {
+                data.path = data.path.replace(/^\//, "");
             }
 
             if (dynamicAccessKeyData) {

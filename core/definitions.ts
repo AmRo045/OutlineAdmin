@@ -1,5 +1,5 @@
 import { JWTPayload } from "jose";
-import { DynamicAccessKey, Server } from "@prisma/client";
+import { AccessKey, DynamicAccessKey, Server } from "@prisma/client";
 import { SVGProps } from "react";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
@@ -18,6 +18,7 @@ export interface UserSession {
 export type ServerWithAccessKeysCount = Server & { _count?: { accessKeys: number } };
 
 export type DynamicAccessKeyWithAccessKeysCount = DynamicAccessKey & { _count?: { accessKeys: number } };
+export type DynamicAccessKeyWithAccessKeys = DynamicAccessKey & { accessKeys: AccessKey[] };
 
 export interface NewServerRequest {
     managementJson: string;

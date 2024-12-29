@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import prisma from "@/prisma/db";
 import {
+    DynamicAccessKeyWithAccessKeys,
     DynamicAccessKeyWithAccessKeysCount,
     EditDynamicAccessKeyRequest,
     NewDynamicAccessKeyRequest
@@ -24,6 +25,20 @@ export async function getDynamicAccessKeys(
         orderBy: [{ id: "desc" }],
         include: {
             _count: withKeysCount ? { select: { accessKeys: true } } : undefined
+        }
+    });
+}
+
+export async function getDynamicAccessKeyByPath(
+    path: string,
+    withKeys: boolean = false
+): Promise<DynamicAccessKeyWithAccessKeys | null> {
+    return prisma.dynamicAccessKey.findFirst({
+        where: {
+            path
+        },
+        include: {
+            accessKeys: withKeys
         }
     });
 }

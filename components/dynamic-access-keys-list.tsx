@@ -65,7 +65,7 @@ export default function DynamicAccessKeysList({ data }: Props) {
     const getCurrentAccessKeyUrl = () => {
         if (!currentDynamicAccessKey) return;
 
-        return `${window.location.origin}/dak/${currentDynamicAccessKey.path}`;
+        return `${window.location.origin}/api/dak/${currentDynamicAccessKey.path}`;
     };
 
     useEffect(() => {
@@ -122,7 +122,10 @@ export default function DynamicAccessKeysList({ data }: Props) {
                         color="primary"
                         startContent={<PlusIcon size={20} />}
                         variant="shadow"
-                        onPress={dynamicAccessKeyFormModalDisclosure.onOpen}
+                        onPress={() => {
+                            setCurrentDynamicAccessKey(undefined);
+                            dynamicAccessKeyFormModalDisclosure.onOpen();
+                        }}
                     >
                         Create
                     </Button>
