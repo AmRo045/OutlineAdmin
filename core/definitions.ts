@@ -1,5 +1,5 @@
 import { JWTPayload } from "jose";
-import { Server } from "@prisma/client";
+import { DynamicAccessKey, Server } from "@prisma/client";
 import { SVGProps } from "react";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
@@ -16,6 +16,8 @@ export interface UserSession {
 }
 
 export type ServerWithAccessKeysCount = Server & { _count?: { accessKeys: number } };
+
+export type DynamicAccessKeyWithAccessKeysCount = DynamicAccessKey & { _count?: { accessKeys: number } };
 
 export interface NewServerRequest {
     managementJson: string;
@@ -56,6 +58,24 @@ export enum AccessKeyPrefixType {
     TlsServerHello = "TlsServerHello",
     TlsApplicationData = "TlsApplicationData",
     Ssh = "Ssh"
+}
+
+export enum LoadBalancerAlgorithm {
+    UserIpAddress = "UserIpAddress",
+    RandomKeyOnEachConnection = "RandomKeyOnEachConnection",
+    RandomServerKeyOnEachConnection = "RandomServerKeyOnEachConnection"
+}
+
+export interface NewDynamicAccessKeyRequest {
+    name: string;
+    path: string;
+    loadBalancerAlgorithm: string;
+    expiresAt?: Date | null;
+    prefix?: string | null;
+}
+
+export interface EditDynamicAccessKeyRequest extends NewDynamicAccessKeyRequest {
+    id: number;
 }
 
 export interface AccessKeyPrefixData {
