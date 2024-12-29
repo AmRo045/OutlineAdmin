@@ -29,6 +29,20 @@ export async function getDynamicAccessKeys(
     });
 }
 
+export async function getDynamicAccessKeyById(
+    id: number,
+    withKeys: boolean = false
+): Promise<DynamicAccessKeyWithAccessKeys | null> {
+    return prisma.dynamicAccessKey.findFirst({
+        where: {
+            id
+        },
+        include: {
+            accessKeys: withKeys
+        }
+    });
+}
+
 export async function getDynamicAccessKeyByPath(
     path: string,
     withKeys: boolean = false
@@ -41,6 +55,22 @@ export async function getDynamicAccessKeyByPath(
             accessKeys: withKeys
         }
     });
+}
+
+export async function syncDynamicAccessKeyAccessKeys(
+    dynamicAccessKeyId: number,
+    accessKeyIds: number[]
+): Promise<void> {
+    await prisma.dynamicAccessKey.update({
+        where: { id: dynamicAccessKeyId },
+        data: {
+            accessKeys: {
+                set: accessKeyIds.map((id) => ({ id }))
+            }
+        }
+    });
+
+    revalidatePath("/dynamic-access-keys");
 }
 
 export async function createDynamicAccessKey(data: NewDynamicAccessKeyRequest): Promise<void> {

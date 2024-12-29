@@ -16,6 +16,7 @@ export interface UserSession {
 }
 
 export type ServerWithAccessKeysCount = Server & { _count?: { accessKeys: number } };
+export type ServerWithAccessKeys = Server & { accessKeys: AccessKey[] };
 
 export type DynamicAccessKeyWithAccessKeysCount = DynamicAccessKey & { _count?: { accessKeys: number } };
 export type DynamicAccessKeyWithAccessKeys = DynamicAccessKey & { accessKeys: AccessKey[] };

@@ -5,7 +5,12 @@ import { Server } from "@prisma/client";
 import { notFound } from "next/navigation";
 
 import prisma from "@/prisma/db";
-import { EditServerRequest, NewServerRequest, ServerWithAccessKeysCount } from "@/core/definitions";
+import {
+    EditServerRequest,
+    NewServerRequest,
+    ServerWithAccessKeys,
+    ServerWithAccessKeysCount
+} from "@/core/definitions";
 import ApiClient from "@/core/outline/api-client";
 
 export async function getServers(
@@ -23,6 +28,26 @@ export async function getServers(
         orderBy: [{ id: "desc" }],
         include: {
             _count: withKeysCount ? { select: { accessKeys: true } } : undefined
+        }
+    });
+}
+
+export async function getServersWithAccessKeys(filters?: {
+    term?: string;
+    skip?: number;
+    take?: number;
+}): Promise<ServerWithAccessKeys[]> {
+    const { term, skip = 0, take = 10 } = filters || {};
+
+    return prisma.server.findMany({
+        where: {
+            OR: term ? [{ hostnameOrIp: { contains: term } }, { name: { contains: term } }] : undefined
+        },
+        skip,
+        take,
+        orderBy: [{ id: "desc" }],
+        include: {
+            accessKeys: true
         }
     });
 }

@@ -19,7 +19,7 @@ import { DynamicAccessKey } from "@prisma/client";
 import { Link } from "@nextui-org/link";
 
 import ConfirmModal from "@/components/modals/confirm-modal";
-import { DeleteIcon, EditIcon, EyeIcon, InfoIcon, PlusIcon } from "@/components/icons";
+import { DeleteIcon, EditIcon, EyeIcon, InfoIcon, KeyIcon, PlusIcon } from "@/components/icons";
 import NoResult from "@/components/no-result";
 import { DynamicAccessKeyWithAccessKeysCount } from "@/core/definitions";
 import { getDynamicAccessKeys, removeDynamicAccessKey } from "@/core/actions/dynamic-access-key";
@@ -199,6 +199,25 @@ export default function DynamicAccessKeysList({ data }: Props) {
                                                 }}
                                             >
                                                 <EyeIcon size={24} />
+                                            </Button>
+                                        </Tooltip>
+
+                                        <Tooltip
+                                            closeDelay={100}
+                                            color="primary"
+                                            content="Manage access keys"
+                                            delay={600}
+                                            size="sm"
+                                        >
+                                            <Button
+                                                as={Link}
+                                                color="primary"
+                                                href={`/dynamic-access-keys/${dynamicAccessKey.id}/access-keys`}
+                                                isIconOnly={true}
+                                                size="sm"
+                                                variant="light"
+                                            >
+                                                <KeyIcon size={24} />
                                             </Button>
                                         </Tooltip>
 
