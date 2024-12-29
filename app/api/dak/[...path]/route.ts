@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
+import { AccessKey } from "@prisma/client";
 
 import { getDynamicAccessKeyByPath } from "@/core/actions/dynamic-access-key";
 import { AccessKeyPrefixes } from "@/core/outline/access-key-prefix";
+import prisma from "@/prisma/db";
+import { DynamicAccessKeyApiResponse, DynamicAccessKeyWithAccessKeys, LoadBalancerAlgorithm } from "@/core/definitions";
+import { crc32 } from "@/core/utils";
 
 interface ContextProps {
     params: {
@@ -33,7 +37,7 @@ export async function GET(req: Request, context: ContextProps) {
     if (dynamicAccessKey.accessKeys.length === 0) {
         return NextResponse.json({
             error: {
-                message: "There is no assigned access key with this path"
+                message: "There is no associated access key to this dynamic access key"
             }
         });
     }
@@ -45,13 +49,72 @@ export async function GET(req: Request, context: ContextProps) {
         "127.0.0.1"
     ).split(",")[0];
 
-    // todo: selected the access key based on load balancer algorithm
-
-    return NextResponse.json({
-        server: "dummy.vpn.ir",
-        server_port: 6565,
-        password: "password",
-        method: "aes",
-        prefix: AccessKeyPrefixes[0].jsonEncodedValue
+    const selectedAccessKey = await selectAccessKey(dynamicAccessKey, clientIp);
+    const selectedServer = await prisma.server.findFirstOrThrow({
+        where: { id: selectedAccessKey.serverId }
     });
+
+    const result: DynamicAccessKeyApiResponse = {
+        server: selectedServer.hostnameOrIp,
+        server_port: selectedAccessKey.port,
+        password: selectedAccessKey.password,
+        method: selectedAccessKey.method
+    };
+
+    if (dynamicAccessKey.prefix) {
+        const prefix = AccessKeyPrefixes.find((x) => x.type === dynamicAccessKey.prefix);
+
+        if (prefix) {
+            return NextResponse.json({ ...result, prefix: prefix.jsonEncodedValue });
+        }
+    }
+
+    return NextResponse.json(result);
 }
+
+const selectAccessKey = async (
+    dynamicAccessKey: DynamicAccessKeyWithAccessKeys,
+    clientIp: string
+): Promise<AccessKey> => {
+    const accessKeys = dynamicAccessKey.accessKeys;
+
+    switch (dynamicAccessKey.loadBalancerAlgorithm) {
+        case LoadBalancerAlgorithm.UserIpAddress:
+            return selectedAccessKeyByClientIp(accessKeys, clientIp);
+
+        case LoadBalancerAlgorithm.RandomServerKeyOnEachConnection:
+            return selectRandomServerKey(accessKeys);
+
+        case LoadBalancerAlgorithm.RandomKeyOnEachConnection:
+        default:
+            return accessKeys[Math.floor(Math.random() * accessKeys.length)];
+    }
+};
+
+const selectedAccessKeyByClientIp = (accessKeys: AccessKey[], clientIp: string) => {
+    const hash = crc32(clientIp);
+    const index = hash % accessKeys.length;
+
+    return accessKeys[index];
+};
+
+const selectRandomServerKey = (accessKeys: AccessKey[]) => {
+    // Group keys by serverId
+    const uniqueServers: Map<number, AccessKey[]> = accessKeys.reduce((map, key) => {
+        const serverId = key.serverId;
+
+        if (!map.has(serverId)) {
+            map.set(serverId, []);
+        }
+        map.get(serverId)!.push(key);
+
+        return map;
+    }, new Map<number, AccessKey[]>());
+
+    // Select a random group (server)
+    const serverGroups = Array.from(uniqueServers.values());
+    const selectedServer = serverGroups[Math.floor(Math.random() * serverGroups.length)];
+
+    // Select a random key from the selected server
+    return selectedServer[Math.floor(Math.random() * selectedServer.length)];
+};

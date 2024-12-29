@@ -86,6 +86,17 @@ export interface AccessKeyPrefixData {
     recommendedPorts: { number: number; description: string }[];
 }
 
+export interface DynamicAccessKeyApiResponse {
+    server: string;
+    server_port: number;
+    password: string;
+    method: string;
+    prefix?: string;
+    error?: {
+        message?: string;
+    };
+}
+
 export namespace Outline {
     export interface Server {
         name: string;
