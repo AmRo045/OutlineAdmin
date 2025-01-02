@@ -11,7 +11,7 @@ import {
     ServerWithAccessKeys,
     ServerWithAccessKeysCount
 } from "@/core/definitions";
-import ApiClient from "@/core/outline/api-client";
+import OutlineClient from "@/core/outline/outline-client";
 
 export async function getServers(
     filters?: { term?: string; skip?: number; take?: number },
@@ -70,7 +70,7 @@ export async function updateMetrics(id: number): Promise<void> {
         return;
     }
 
-    const outlineClient = ApiClient.fromConfig(server.managementJson);
+    const outlineClient = OutlineClient.fromConfig(server.managementJson);
     const metrics = await outlineClient.metricsTransfer();
 
     let sum = 0;
@@ -94,7 +94,7 @@ export async function updateMetrics(id: number): Promise<void> {
 }
 
 export async function createServer(data: NewServerRequest): Promise<void> {
-    const outlineClient = ApiClient.fromConfig(data.managementJson);
+    const outlineClient = OutlineClient.fromConfig(data.managementJson);
     const outlineServer = await outlineClient.server();
 
     await prisma.server.create({
@@ -124,7 +124,7 @@ export async function updateServer(id: number, data: EditServerRequest): Promise
         notFound();
     }
 
-    const outlineClient = ApiClient.fromConfig(server.managementJson);
+    const outlineClient = OutlineClient.fromConfig(server.managementJson);
 
     await outlineClient.setServerName(data.name);
     await outlineClient.setHostNameForNewKeys(data.hostnameForNewAccessKeys);

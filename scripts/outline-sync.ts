@@ -1,12 +1,12 @@
 import prisma from "@/prisma/db";
-import ApiClient from "@/core/outline/api-client";
+import OutlineClient from "@/core/outline/outline-client";
 import { AccessKey, Server } from "@prisma/client";
 import { DataLimitUnit, Outline } from "@/core/definitions";
 import { convertDataLimitToUnit } from "@/core/utils";
 
 const DISABLED_ACCESS_KEY_LIMIT_IN_BYTES = 1000;
 
-const syncServer = async (outlineClient: ApiClient, server: Server): Promise<void> => {
+const syncServer = async (outlineClient: OutlineClient, server: Server): Promise<void> => {
     const maxAttempts = 3;
     let attempts = 0;
 
@@ -54,7 +54,11 @@ const syncServer = async (outlineClient: ApiClient, server: Server): Promise<voi
     }
 };
 
-const syncAccessKeys = async (outlineClient: ApiClient, metrics: Outline.Metrics, serverId: number): Promise<void> => {
+const syncAccessKeys = async (
+    outlineClient: OutlineClient,
+    metrics: Outline.Metrics,
+    serverId: number
+): Promise<void> => {
     console.log("\nLoading servers access keys from local database...");
     const localAccessKeys = await prisma.accessKey.findMany({
         where: {
@@ -156,7 +160,7 @@ const isAccessKeyExpired = (accessKey: AccessKey) => {
     return accessKey.expiresAt <= new Date();
 };
 
-const disableExpiredAccessKey = async (outlineClient: ApiClient, accessKey: AccessKey) => {
+const disableExpiredAccessKey = async (outlineClient: OutlineClient, accessKey: AccessKey) => {
     try {
         await outlineClient.removeDataLimitForKey(accessKey.apiId);
         await outlineClient.setDataLimitForKey(accessKey.apiId, DISABLED_ACCESS_KEY_LIMIT_IN_BYTES);
@@ -181,7 +185,7 @@ const main = async () => {
     for (const server of servers) {
         console.log(`\n=====>{${server.name} - ${server.apiId}}`);
 
-        const outlineClient = ApiClient.fromConfig(server.managementJson);
+        const outlineClient = OutlineClient.fromConfig(server.managementJson);
 
         await syncServer(outlineClient, server);
     }

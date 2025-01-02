@@ -5,7 +5,7 @@ import { AccessKey } from "@prisma/client";
 
 import prisma from "@/prisma/db";
 import { EditAccessKeyRequest, NewAccessKeyRequest } from "@/core/definitions";
-import ApiClient from "@/core/outline/api-client";
+import OutlineClient from "@/core/outline/outline-client";
 import { convertDataLimitToUnit } from "@/core/utils";
 
 export async function getAccessKeys(
@@ -29,7 +29,7 @@ export async function createAccessKey(data: NewAccessKeyRequest): Promise<void> 
         where: { id: data.serverId }
     });
 
-    const outlineClient = ApiClient.fromConfig(server.managementJson);
+    const outlineClient = OutlineClient.fromConfig(server.managementJson);
 
     const newAccessKey = await outlineClient.createKey();
 
@@ -67,7 +67,7 @@ export async function updateAccessKey(data: EditAccessKeyRequest): Promise<void>
         where: { id: data.serverId }
     });
 
-    const outlineClient = ApiClient.fromConfig(server.managementJson);
+    const outlineClient = OutlineClient.fromConfig(server.managementJson);
 
     const accessKey = await prisma.accessKey.findFirstOrThrow({
         where: {
@@ -108,7 +108,7 @@ export async function removeAccessKey(serverId: number, id: number, apiId?: stri
         where: { id: serverId }
     });
 
-    const outlineClient = ApiClient.fromConfig(server.managementJson);
+    const outlineClient = OutlineClient.fromConfig(server.managementJson);
 
     if (apiId) {
         await outlineClient.deleteKey(apiId);

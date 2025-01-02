@@ -1,22 +1,15 @@
 import { Outline } from "@/core/definitions";
 
-interface ApiResponse {
-    statusCode: number;
-    result?: any;
-    message?: string;
-    errors?: any[];
-}
-
-export default class ApiClient {
+export default class OutlineClient {
     constructor(
         public apiUrl: string,
         public certSha256: string
     ) {}
 
-    static fromConfig(config: string): ApiClient {
+    static fromConfig(config: string): OutlineClient {
         const json = JSON.parse(config) as { apiUrl: string; certSha256: string };
 
-        return new ApiClient(json.apiUrl, json.certSha256);
+        return new OutlineClient(json.apiUrl, json.certSha256);
     }
 
     async server(): Promise<Outline.Server> {
