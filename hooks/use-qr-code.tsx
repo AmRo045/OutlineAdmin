@@ -8,7 +8,7 @@ const defaultOptions: Partial<Options> = {
     qrOptions: {
         typeNumber: 8,
         mode: "Byte",
-        errorCorrectionLevel: "M"
+        errorCorrectionLevel: "L"
     },
     imageOptions: {
         hideBackgroundDots: true,

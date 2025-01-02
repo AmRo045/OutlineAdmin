@@ -19,7 +19,7 @@ export default function AccessKeyModal({ disclosure, value }: Props) {
         if (disclosure.isOpen) {
             qrCode(value);
         }
-    }, [disclosure.isOpen]);
+    }, [disclosure.isOpen, value]);
 
     return (
         <Modal isOpen={disclosure.isOpen} onOpenChange={disclosure.onOpenChange}>
