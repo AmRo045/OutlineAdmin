@@ -13,7 +13,7 @@ import {
     Tooltip,
     useDisclosure
 } from "@nextui-org/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AccessKey, Server } from "@prisma/client";
 
 import AccessKeyModal from "@/components/modals/access-key-modal";
@@ -21,12 +21,13 @@ import AccessKeyFormModal from "@/components/modals/access-key-form-modal";
 import ConfirmModal from "@/components/modals/confirm-modal";
 import { ArrowLeftIcon, DeleteIcon, EditIcon, EyeIcon, InfinityIcon, PlusIcon } from "@/components/icons";
 import AccessKeyServerInfo from "@/components/access-key-server-info";
-import { appendNameToAccessKey, convertDataLimitToUnit, formatBytes } from "@/core/utils";
+import { convertDataLimitToUnit, formatBytes } from "@/core/utils";
 import { removeAccessKey } from "@/core/actions/access-key";
 import { DataLimitUnit } from "@/core/definitions";
 import NoResult from "@/components/no-result";
 import AccessKeyValidityChip from "@/components/access-key-validity-chip";
 import MessageModal from "@/components/modals/message-modal";
+import { AccessKeyPrefixes } from "@/core/outline/access-key-prefix";
 
 interface Props {
     server: Server;
@@ -40,6 +41,7 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
     const apiErrorModalDisclosure = useDisclosure();
 
     const [serverError, setServerError] = useState<string>();
+    const [formattedAccessKey, setFormattedAccessKey] = useState<string>();
     const [currentAccessKey, setCurrentAccessKey] = useState<AccessKey>();
 
     const handleRemoveAccessKey = async () => {
@@ -52,12 +54,27 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
         }
     };
 
+    useEffect(() => {
+        if (!currentAccessKey) return;
+
+        let prefixUrlValue = "";
+
+        if (currentAccessKey.prefix) {
+            const prefix = AccessKeyPrefixes.find((x) => x.type === currentAccessKey.prefix);
+
+            if (prefix) {
+                prefixUrlValue = `?prefix=${prefix.urlEncodedValue}`;
+            }
+        }
+
+        setFormattedAccessKey(
+            `${currentAccessKey.accessUrl}${prefixUrlValue}#${encodeURIComponent(currentAccessKey.name)}`
+        );
+    }, [currentAccessKey]);
+
     return (
         <>
-            <AccessKeyModal
-                disclosure={accessKeyModalDisclosure}
-                value={currentAccessKey ? appendNameToAccessKey(currentAccessKey) : undefined}
-            />
+            <AccessKeyModal disclosure={accessKeyModalDisclosure} value={formattedAccessKey} />
 
             <AccessKeyFormModal
                 accessKeyData={currentAccessKey}
