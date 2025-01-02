@@ -21,7 +21,7 @@ import AccessKeyFormModal from "@/components/modals/access-key-form-modal";
 import ConfirmModal from "@/components/modals/confirm-modal";
 import { ArrowLeftIcon, DeleteIcon, EditIcon, EyeIcon, InfinityIcon, PlusIcon } from "@/components/icons";
 import AccessKeyServerInfo from "@/components/access-key-server-info";
-import { convertDataLimitToUnit, formatBytes } from "@/core/utils";
+import { appendNameToAccessKey, convertDataLimitToUnit, formatBytes } from "@/core/utils";
 import { removeAccessKey } from "@/core/actions/access-key";
 import { DataLimitUnit } from "@/core/definitions";
 import NoResult from "@/components/no-result";
@@ -54,7 +54,10 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
 
     return (
         <>
-            <AccessKeyModal disclosure={accessKeyModalDisclosure} value={currentAccessKey?.accessUrl} />
+            <AccessKeyModal
+                disclosure={accessKeyModalDisclosure}
+                value={currentAccessKey ? appendNameToAccessKey(currentAccessKey) : undefined}
+            />
 
             <AccessKeyFormModal
                 accessKeyData={currentAccessKey}

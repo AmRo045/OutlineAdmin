@@ -1,4 +1,5 @@
 import moment from "moment";
+import { AccessKey } from "@prisma/client";
 
 import { DataLimitUnit } from "@/core/definitions";
 
@@ -38,6 +39,10 @@ export function getCurrentDateAsString(): string {
     const day = ("0" + date.getDay()).slice(-2);
 
     return `${year}-${month}-${day}`;
+}
+
+export function appendNameToAccessKey(accessKey: AccessKey): string {
+    return `${accessKey.accessUrl}#${encodeURIComponent(accessKey.name)}`;
 }
 
 export function formatBytes(bytes: number): string {
