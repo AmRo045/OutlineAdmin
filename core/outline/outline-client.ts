@@ -84,21 +84,42 @@ export default class OutlineClient {
         await this.fetchWrapper(`/access-keys/${id}/data-limit`, "DELETE");
     }
 
-    private async fetchWrapper(endpoint: string, method: string, body?: any): Promise<Response> {
+    private async fetchWrapper(
+        endpoint: string,
+        method: string,
+        body?: any,
+        timeout: number = 8 * 1000
+    ): Promise<Response> {
         const headers: HeadersInit = {
             "Content-Type": "application/json",
             Accept: "application/json"
         };
 
+        const controller = new AbortController();
+        const signal = controller.signal;
+
         const options: RequestInit = {
             method,
             headers,
-            body: body ? JSON.stringify(body) : undefined
+            signal
         };
+
+        if (body && (method === "POST" || method === "PUT" || method === "PATCH")) {
+            options.body = JSON.stringify(body);
+        }
 
         const url = `${this.apiUrl}${endpoint}`;
 
-        const response = await fetch(url, options);
+        const fetchPromise = fetch(url, options);
+
+        const timeoutPromise = new Promise<Response>((_, reject) =>
+            setTimeout(() => {
+                controller.abort();
+                reject(new Error("Request timed out"));
+            }, timeout)
+        );
+
+        const response = await Promise.race([fetchPromise, timeoutPromise]);
 
         if (!response.ok) {
             throw new Error(`HTTP error - Status code: ${response.status} (${response.statusText})`);
