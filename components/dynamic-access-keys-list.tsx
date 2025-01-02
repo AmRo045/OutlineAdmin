@@ -66,8 +66,9 @@ export default function DynamicAccessKeysList({ data }: Props) {
         if (!currentDynamicAccessKey) return;
 
         const swappedProtocol = window.location.origin.replace("http://", "ssconf://").replace("https://", "ssconf://");
+        const name = encodeURIComponent(currentDynamicAccessKey.name);
 
-        return `${swappedProtocol}/api/dak/${currentDynamicAccessKey.path}`;
+        return `${swappedProtocol}/api/dak/${currentDynamicAccessKey.path}#${name}`;
     };
 
     useEffect(() => {
