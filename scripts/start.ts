@@ -3,9 +3,7 @@ import { runCommand } from "@/scripts/utils";
 const outlineSyncJobInterval = 60 * 1000; // every minute
 
 const main = async () => {
-    setInterval(async () => {
-        await runCommand("bun", ["sync"]);
-    }, outlineSyncJobInterval);
+    setInterval(() => runCommand("bun", ["sync"]), outlineSyncJobInterval);
 
     runCommand("bun", ["sync"]).then();
 
