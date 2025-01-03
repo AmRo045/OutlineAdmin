@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "bun run scripts/start.ts",
     "lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix",
-    "format": "prettier --write ./app ./core ./components ./styles",
-    "sync": "bun run ./scripts/outline-sync.ts"
+    "format": "prettier --write ./app ./core ./components ./styles ./scripts ./hooks",
+    "sync": "bun run ./scripts/outline-sync.ts",
+    "setup": "bun run ./scripts/setup.ts"
   },
   "dependencies": {
     "@nextui-org/react": "^2.6.10",
