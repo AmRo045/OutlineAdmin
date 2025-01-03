@@ -1,8 +1,8 @@
 import prisma from "@/prisma/db";
-import OutlineClient from "@/core/outline/outline-client";
+import OutlineClient from "@/src/core/outline/outline-client";
 import { AccessKey, Server } from "@prisma/client";
-import { DataLimitUnit, Outline } from "@/core/definitions";
-import { convertDataLimitToUnit } from "@/core/utils";
+import { DataLimitUnit, Outline } from "@/src/core/definitions";
+import { convertDataLimitToUnit } from "@/src/core/utils";
 
 const DISABLED_ACCESS_KEY_LIMIT_IN_BYTES = 1000;
 
