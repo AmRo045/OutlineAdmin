@@ -17,10 +17,13 @@ import {
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { AccessKey } from "@prisma/client";
+import moment from "moment";
 
+import { DeleteIcon } from "@/src/components/icons";
 import { AccessKeyPrefixType, DataLimitUnit, EditAccessKeyRequest, NewAccessKeyRequest } from "@/src/core/definitions";
 import { createAccessKey, updateAccessKey } from "@/src/core/actions/access-key";
 import { AccessKeyPrefixes } from "@/src/core/outline/access-key-prefix";
+import CustomDatePicker from "@/src/components/custom-date-picker";
 
 interface Props {
     disclosure: UseDisclosureReturn;
@@ -33,6 +36,7 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
 
     const [serverError, setServerError] = useState<string>();
 
+    const [selectedExpirationDate, setSelectedExpirationDate] = useState<string>();
     const [selectedDataLimitUnit, setSelectedDataLimitUnit] = useState<string>(DataLimitUnit.Bytes);
     const [selectedPrefix, setSelectedPrefix] = useState<string | null>(null);
 
@@ -59,6 +63,16 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
     };
 
     useEffect(() => {
+        let value = null;
+
+        if (selectedExpirationDate) {
+            value = moment(selectedExpirationDate, "YYYY-MM-DD").toDate();
+        }
+
+        form.setValue("expiresAt", value, { shouldDirty: true });
+    }, [selectedExpirationDate]);
+
+    useEffect(() => {
         form.setValue("dataLimitUnit", selectedDataLimitUnit as DataLimitUnit, { shouldDirty: true });
     }, [selectedDataLimitUnit]);
 
@@ -80,6 +94,12 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
                     prefix: accessKeyData.prefix
                 });
 
+                if (accessKeyData.expiresAt) {
+                    setSelectedExpirationDate(moment(accessKeyData.expiresAt).format("YYYY-MM-DD"));
+                } else {
+                    setSelectedExpirationDate(undefined);
+                }
+
                 setSelectedDataLimitUnit(accessKeyData.dataLimitUnit);
                 setSelectedPrefix(accessKeyData.prefix);
             } else {
@@ -92,6 +112,7 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
                     prefix: null
                 });
 
+                setSelectedExpirationDate(undefined);
                 setSelectedDataLimitUnit(DataLimitUnit.Bytes);
                 setSelectedPrefix(null);
             }
@@ -162,6 +183,27 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
                                     <DropdownItem key={DataLimitUnit.GB}>{DataLimitUnit.GB}</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
+                        </div>
+
+                        <div className="flex gap-2">
+                            {selectedExpirationDate && (
+                                <Button
+                                    color="danger"
+                                    isIconOnly={true}
+                                    radius="sm"
+                                    size="lg"
+                                    variant="faded"
+                                    onPress={() => setSelectedExpirationDate(undefined)}
+                                >
+                                    <DeleteIcon size={18} />
+                                </Button>
+                            )}
+
+                            <CustomDatePicker
+                                label="Expiration Date:"
+                                value={selectedExpirationDate}
+                                onChange={(value) => setSelectedExpirationDate(value)}
+                            />
                         </div>
 
                         <Dropdown>
