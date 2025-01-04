@@ -18,6 +18,7 @@ import {
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { DynamicAccessKey } from "@prisma/client";
+import moment from "moment/moment";
 
 import {
     AccessKeyPrefixType,
@@ -27,6 +28,8 @@ import {
 } from "@/src/core/definitions";
 import { AccessKeyPrefixes } from "@/src/core/outline/access-key-prefix";
 import { createDynamicAccessKey, updateDynamicAccessKey } from "@/src/core/actions/dynamic-access-key";
+import { DeleteIcon } from "@/src/components/icons";
+import CustomDatePicker from "@/src/components/custom-date-picker";
 
 interface Props {
     disclosure: UseDisclosureReturn;
@@ -38,6 +41,7 @@ export default function DynamicAccessKeyFormModal({ disclosure, dynamicAccessKey
 
     const [serverError, setServerError] = useState<string>();
 
+    const [selectedExpirationDate, setSelectedExpirationDate] = useState<string>();
     const [selectedLoadBalancer, setSelectedLoadBalancer] = useState<string | null>(null);
     const [selectedPrefix, setSelectedPrefix] = useState<string | null>(null);
 
@@ -69,6 +73,16 @@ export default function DynamicAccessKeyFormModal({ disclosure, dynamicAccessKey
     };
 
     useEffect(() => {
+        let value = null;
+
+        if (selectedExpirationDate) {
+            value = moment(selectedExpirationDate, "YYYY-MM-DD").toDate();
+        }
+
+        form.setValue("expiresAt", value, { shouldDirty: true });
+    }, [selectedExpirationDate]);
+
+    useEffect(() => {
         if (selectedLoadBalancer) {
             form.setValue("loadBalancerAlgorithm", selectedLoadBalancer, { shouldDirty: true });
         } else {
@@ -95,6 +109,12 @@ export default function DynamicAccessKeyFormModal({ disclosure, dynamicAccessKey
                     prefix: dynamicAccessKeyData.prefix
                 });
 
+                if (dynamicAccessKeyData.expiresAt) {
+                    setSelectedExpirationDate(moment(dynamicAccessKeyData.expiresAt).format("YYYY-MM-DD"));
+                } else {
+                    setSelectedExpirationDate(undefined);
+                }
+
                 setSelectedLoadBalancer(dynamicAccessKeyData.loadBalancerAlgorithm);
                 setSelectedPrefix(dynamicAccessKeyData.prefix);
             } else {
@@ -106,6 +126,7 @@ export default function DynamicAccessKeyFormModal({ disclosure, dynamicAccessKey
                     prefix: null
                 });
 
+                setSelectedExpirationDate(undefined);
                 setSelectedLoadBalancer(null);
                 setSelectedPrefix(null);
             }
@@ -156,6 +177,27 @@ export default function DynamicAccessKeyFormModal({ disclosure, dynamicAccessKey
                                 maxLength: 120
                             })}
                         />
+
+                        <div className="flex gap-2">
+                            {selectedExpirationDate && (
+                                <Button
+                                    color="danger"
+                                    isIconOnly={true}
+                                    radius="sm"
+                                    size="lg"
+                                    variant="faded"
+                                    onPress={() => setSelectedExpirationDate(undefined)}
+                                >
+                                    <DeleteIcon size={18} />
+                                </Button>
+                            )}
+
+                            <CustomDatePicker
+                                label="Expiration Date:"
+                                value={selectedExpirationDate}
+                                onChange={(value) => setSelectedExpirationDate(value)}
+                            />
+                        </div>
 
                         <Dropdown>
                             <DropdownTrigger>

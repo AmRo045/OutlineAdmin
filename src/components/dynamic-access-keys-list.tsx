@@ -177,7 +177,7 @@ export default function DynamicAccessKeysList({ data }: Props) {
                                         {dynamicAccessKey.loadBalancerAlgorithm}
                                     </Chip>
                                 </TableCell>
-                                <TableCell>
+                                <TableCell width={160}>
                                     <AccessKeyValidityChip value={dynamicAccessKey.expiresAt} />
                                 </TableCell>
                                 <TableCell>
