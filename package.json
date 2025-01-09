@@ -1,13 +1,13 @@
 {
-  "name": "next-app-template",
-  "version": "0.0.1",
+  "name": "outline-admin",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "bun run scripts/start-dev.ts",
     "build": "next build",
     "start": "bun run scripts/start.ts",
     "lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix",
-    "format": "prettier --write ./app ./core ./components src/styles ./scripts src/hooks",
+    "format": "prettier --write ./src ./scripts",
     "sync": "bun run ./scripts/outline-sync.ts",
     "setup": "bun run ./scripts/setup.ts"
   },

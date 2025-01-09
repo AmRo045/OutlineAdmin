@@ -1,14 +1,14 @@
-import { runCommand } from "@/scripts/utils";
+import { runCommand } from "./utils";
 
 const outlineSyncJobInterval = 120 * 1000; // every 2 minutes
 
 const main = async () => {
-    setInterval(() => runCommand("bun", ["sync"]), outlineSyncJobInterval);
-
-    runCommand("bun", ["sync"]).then();
+    // setInterval(() => runCommand("bun", ["sync"]), outlineSyncJobInterval);
+    //
+    // runCommand("bun", ["sync"]).then();
 
     try {
-        await runCommand("next", ["start"]);
+        await runCommand("bun", ["server.js"]);
     } catch (error) {
         console.error("Failed to start dev server:", error);
         process.exit(1);
