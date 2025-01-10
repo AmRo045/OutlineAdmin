@@ -84,11 +84,16 @@ export const HeartIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ..
     );
 };
 
-export const TwitterIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => {
+export const HeartIconDuotone: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => {
     return (
         <svg height={size || height} viewBox="0 0 24 24" width={size || width} {...props}>
             <path
-                d="M19.633 7.997c.013.175.013.349.013.523 0 5.325-4.053 11.461-11.46 11.461-2.282 0-4.402-.661-6.186-1.809.324.037.636.05.973.05a8.07 8.07 0 0 0 5.001-1.721 4.036 4.036 0 0 1-3.767-2.793c.249.037.499.062.761.062.361 0 .724-.05 1.061-.137a4.027 4.027 0 0 1-3.23-3.953v-.05c.537.299 1.16.486 1.82.511a4.022 4.022 0 0 1-1.796-3.354c0-.748.199-1.434.548-2.032a11.457 11.457 0 0 0 8.306 4.215c-.062-.3-.1-.611-.1-.923a4.026 4.026 0 0 1 4.028-4.028c1.16 0 2.207.486 2.943 1.272a7.957 7.957 0 0 0 2.556-.973 4.02 4.02 0 0 1-1.771 2.22 8.073 8.073 0 0 0 2.319-.624 8.645 8.645 0 0 1-2.019 2.083z"
+                d="M2 9.137C2 14 6.02 16.591 8.962 18.911C10 19.729 11 20.5 12 20.5s2-.77 3.038-1.59C17.981 16.592 22 14 22 9.138S16.5.825 12 5.501C7.5.825 2 4.274 2 9.137"
+                fill="currentColor"
+                opacity=".5"
+            />
+            <path
+                d="M16.5 13.287c-2.475-2.716-5.5-.712-5.5 2.112c0 2.56 1.814 4.035 3.358 5.292l.044.036l.427.35c.571.475 1.121.923 1.671.923s1.1-.448 1.671-.923C19.789 19.73 22 18.224 22 15.399c0-.927-.326-1.767-.853-2.38c-1.075-1.251-2.985-1.556-4.647.268"
                 fill="currentColor"
             />
         </svg>
@@ -97,44 +102,14 @@ export const TwitterIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, 
 
 export const GithubIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => {
     return (
-        <svg height={size || height} viewBox="0 0 24 24" width={size || width} {...props}>
-            <mask height="24" id="lineMdGithubLoop0" width="24" x="0" y="0">
-                <g fill="#fff">
-                    <ellipse cx="9.5" cy="9" rx="1.5" ry="1" />
-                    <ellipse cx="14.5" cy="9" rx="1.5" ry="1" />
-                </g>
-            </mask>
-            <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
+        <svg height={size || height} viewBox="0 0 256 256" width={size || width} {...props}>
+            <g fill="currentColor">
                 <path
-                    d="M12 4c1.67 0 2.61 0.4 3 0.5c0.53 -0.43 1.94 -1.5 3.5 -1.5c0.34 1 0.29 2.22 0 3c0.75 1 1 2 1 3.5c0 2.19 -0.48 3.58 -1.5 4.5c-1.02 0.92 -2.11 1.37 -3.5 1.5c0.65 0.54 0.5 1.87 0.5 2.5c0 0.73 0 3 0 3M12 4c-1.67 0 -2.61 0.4 -3 0.5c-0.53 -0.43 -1.94 -1.5 -3.5 -1.5c-0.34 1 -0.29 2.22 0 3c-0.75 1 -1 2 -1 3.5c0 2.19 0.48 3.58 1.5 4.5c1.02 0.92 2.11 1.37 3.5 1.5c-0.65 0.54 -0.5 1.87 -0.5 2.5c0 0.73 0 3 0 3"
-                    strokeDasharray="32"
-                    strokeDashoffset="32"
-                >
-                    <animate attributeName="stroke-dashoffset" dur="0.7s" fill="freeze" values="32;0" />
-                </path>
-                <path
-                    d="M9 19c-1.406 0-2.844-.563-3.688-1.188C4.47 17.188 4.22 16.157 3 15.5"
-                    strokeDasharray="10"
-                    strokeDashoffset="10"
-                >
-                    <animate
-                        attributeName="d"
-                        dur="3s"
-                        repeatCount="indefinite"
-                        values="M9 19c-1.406 0-2.844-.563-3.688-1.188C4.47 17.188 4.22 16.157 3 15.5;M9 19c-1.406 0-3-.5-4-.5-.532 0-1 0-2-.5;M9 19c-1.406 0-2.844-.563-3.688-1.188C4.47 17.188 4.22 16.157 3 15.5"
-                    />
-                    <animate attributeName="stroke-dashoffset" begin="0.8s" dur="0.2s" fill="freeze" values="10;0" />
-                </path>
-            </g>
-            <rect fill="currentColor" height="4" mask="url(#lineMdGithubLoop0)" width="8" x="8" y="11">
-                <animate
-                    attributeName="y"
-                    dur="10s"
-                    keyTimes="0;0.45;0.46;0.54;0.55;1"
-                    repeatCount="indefinite"
-                    values="11;11;7;7;11;11"
+                    d="M208 104v8a48 48 0 0 1-48 48h-24a32 32 0 0 1 32 32v40h-64v-40a32 32 0 0 1 32-32h-24a48 48 0 0 1-48-48v-8a49.3 49.3 0 0 1 8.51-27.3A51.92 51.92 0 0 1 76 32a52 52 0 0 1 43.83 24h32.34A52 52 0 0 1 196 32a51.92 51.92 0 0 1 3.49 44.7A49.3 49.3 0 0 1 208 104"
+                    opacity=".2"
                 />
-            </rect>
+                <path d="M208.3 75.68A59.74 59.74 0 0 0 202.93 28a8 8 0 0 0-6.93-4a59.75 59.75 0 0 0-48 24h-24a59.75 59.75 0 0 0-48-24a8 8 0 0 0-6.93 4a59.78 59.78 0 0 0-5.38 47.68A58.14 58.14 0 0 0 56 104v8a56.06 56.06 0 0 0 48.44 55.47A39.8 39.8 0 0 0 96 192v8H72a24 24 0 0 1-24-24a40 40 0 0 0-40-40a8 8 0 0 0 0 16a24 24 0 0 1 24 24a40 40 0 0 0 40 40h24v16a8 8 0 0 0 16 0v-40a24 24 0 0 1 48 0v40a8 8 0 0 0 16 0v-40a39.8 39.8 0 0 0-8.44-24.53A56.06 56.06 0 0 0 216 112v-8a58 58 0 0 0-7.7-28.32M200 112a40 40 0 0 1-40 40h-48a40 40 0 0 1-40-40v-8a41.74 41.74 0 0 1 6.9-22.48a8 8 0 0 0 1.1-7.69a43.8 43.8 0 0 1 .79-33.58a43.88 43.88 0 0 1 32.32 20.06a8 8 0 0 0 6.71 3.69h32.35a8 8 0 0 0 6.74-3.69a43.87 43.87 0 0 1 32.32-20.06a43.8 43.8 0 0 1 .77 33.58a8.09 8.09 0 0 0 1 7.65a41.76 41.76 0 0 1 7 22.52Z" />
+            </g>
         </svg>
     );
 };
@@ -561,33 +536,13 @@ export const XIcon = ({ size = 24, width, height, ...props }: IconSvgProps) => (
         width={size || width}
         {...props}
     >
-        <g fill="currentColor">
-            <path d="M1 2h2.5L3.5 2h-2.5zM5.5 2h2.5L7.2 2h-2.5z">
-                <animate
-                    attributeName="d"
-                    dur="0.4s"
-                    fill="freeze"
-                    values="M1 2h2.5L3.5 2h-2.5zM5.5 2h2.5L7.2 2h-2.5z;M1 2h2.5L18.5 22h-2.5zM5.5 2h2.5L23 22h-2.5z"
-                />
-            </path>
-            <path d="M3 2h5v0h-5zM16 22h5v0h-5z">
-                <animate
-                    attributeName="d"
-                    begin="0.4s"
-                    dur="0.4s"
-                    fill="freeze"
-                    values="M3 2h5v0h-5zM16 22h5v0h-5z;M3 2h5v2h-5zM16 22h5v-2h-5z"
-                />
-            </path>
-            <path d="M18.5 2h3.5L22 2h-3.5z">
-                <animate
-                    attributeName="d"
-                    begin="0.5s"
-                    dur="0.4s"
-                    fill="freeze"
-                    values="M18.5 2h3.5L22 2h-3.5z;M18.5 2h3.5L5 22h-3.5z"
-                />
-            </path>
-        </g>
+        <path
+            d="m13.081 10.712l-4.786-6.71a.6.6 0 0 0-.489-.252H5.28a.6.6 0 0 0-.488.948l6.127 8.59m2.162-2.576l6.127 8.59a.6.6 0 0 1-.488.948h-2.526a.6.6 0 0 1-.489-.252l-4.786-6.71m2.162-2.576l5.842-6.962m-8.004 9.538L5.077 20.25"
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+        />
     </svg>
 );

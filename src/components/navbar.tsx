@@ -2,7 +2,6 @@
 
 import {
     Button,
-    Link,
     Navbar as NextUINavbar,
     NavbarBrand,
     NavbarContent,
@@ -15,11 +14,9 @@ import NextLink from "next/link";
 import { useForm } from "react-hook-form";
 import { usePathname } from "next/navigation";
 
-import { ThemeSwitch } from "@/src/components/theme-switch";
-import { DynamicAccessKeyIcon, GithubIcon, Logo, LogoutIcon, ServersIcon, XIcon } from "@/src/components/icons";
+import { DynamicAccessKeyIcon, Logo, LogoutIcon, ServersIcon } from "@/src/components/icons";
 import { logout } from "@/src/core/actions";
 import { UserSession } from "@/src/core/definitions";
-import { app } from "@/src/core/config";
 
 const navItems = [
     {
@@ -75,18 +72,6 @@ export const Navbar = ({ session }: Props) => {
             </NavbarContent>
 
             <NavbarContent className="hidden sm:flex basis-1/5 sm:basis-full" justify="end">
-                <NavbarItem className="hidden sm:flex gap-2">
-                    <Link isExternal aria-label="X (Twitter)" href={app.links.x}>
-                        <XIcon className="text-default-500" />
-                    </Link>
-
-                    <Link isExternal aria-label="Github" href={app.links.github}>
-                        <GithubIcon className="text-default-500" />
-                    </Link>
-
-                    <ThemeSwitch />
-                </NavbarItem>
-
                 {isAuthorized && (
                     <NavbarItem className="hidden md:flex">
                         <form onSubmit={logoutForm.handleSubmit(handleLogout)}>
@@ -106,12 +91,6 @@ export const Navbar = ({ session }: Props) => {
             </NavbarContent>
 
             <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-                <Link isExternal aria-label="Github" href={app.links.github}>
-                    <GithubIcon className="text-default-500" />
-                </Link>
-
-                <ThemeSwitch />
-
                 {isAuthorized && <NavbarMenuToggle />}
             </NavbarContent>
 

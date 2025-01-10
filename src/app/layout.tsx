@@ -1,17 +1,16 @@
 import "@/src/styles/globals.css";
 
 import { Metadata, Viewport } from "next";
-import { Link } from "@nextui-org/link";
 import clsx from "clsx";
 import { ReactNode } from "react";
 
 import { Providers } from "./providers";
 
 import { Navbar } from "@/src/components/navbar";
-import { AmRoLogo, HeartIcon } from "@/src/components/icons";
 import { currentSession } from "@/src/core/session";
 import { app } from "@/src/core/config";
 import { createPageTitle } from "@/src/core/utils";
+import { Footer } from "@/src/components/footer";
 
 export const viewport: Viewport = {
     themeColor: [
@@ -46,20 +45,7 @@ export default async function RootLayout({ children }: Props) {
 
                         <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">{children}</main>
 
-                        <footer className="w-full flex items-center justify-center py-3">
-                            <Link
-                                isExternal
-                                className="flex items-center gap-1 text-current"
-                                href={app.links.me}
-                                title="AmRo045 Page"
-                            >
-                                <span className="text-default-600">Made with</span>
-                                <HeartIcon className="fill-red-500" size={20} />
-                                <span className="text-default-600">by</span>
-                                <AmRoLogo className="fill-primary" size={24} />
-                                <span className="text-default-600">for FREE internet</span>
-                            </Link>
-                        </footer>
+                        <Footer />
                     </div>
                 </Providers>
             </body>
