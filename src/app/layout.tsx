@@ -1,6 +1,6 @@
 import "@/src/styles/globals.css";
 
-import { Viewport } from "next";
+import { Metadata, Viewport } from "next";
 import { Link } from "@nextui-org/link";
 import clsx from "clsx";
 import { ReactNode } from "react";
@@ -11,12 +11,18 @@ import { Navbar } from "@/src/components/navbar";
 import { AmRoLogo, HeartIcon } from "@/src/components/icons";
 import { currentSession } from "@/src/core/session";
 import { app } from "@/src/core/config";
+import { createPageTitle } from "@/src/core/utils";
 
 export const viewport: Viewport = {
     themeColor: [
         { media: "(prefers-color-scheme: light)", color: "white" },
         { media: "(prefers-color-scheme: dark)", color: "black" }
     ]
+};
+
+export const metadata: Metadata = {
+    title: createPageTitle(),
+    description: process.env.APP_DESCRIPTION
 };
 
 interface Props {
@@ -26,12 +32,10 @@ interface Props {
 export default async function RootLayout({ children }: Props) {
     const session = await currentSession();
 
+    // noinspection HtmlRequiredTitleElement
     return (
         <html suppressHydrationWarning lang="en">
             <head>
-                <title>{process.env.APP_NAME}</title>
-                <meta content={process.env.APP_DESCRIPTION} name="description" />
-                <meta content="width=device-width, initial-scale=1.0" name="viewport" />
                 <link href="/favicon.svg" rel="icon" sizes="any" type="image/svg+xml" />
             </head>
 

@@ -94,3 +94,13 @@ export const crc32 = (str: string): number => {
 
     return (crc ^ -1) >>> 0;
 };
+
+export const createPageTitle = (title?: string) => {
+    const appTitle = process.env.APP_NAME;
+
+    if (title) {
+        return `${title} • ${appTitle}`;
+    }
+
+    return appTitle;
+};

@@ -1,8 +1,14 @@
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
 import ServerAccessKeys from "@/src/components/server-access-keys";
 import { getServerById } from "@/src/core/actions/server";
 import { getAccessKeys } from "@/src/core/actions/access-key";
+import { createPageTitle } from "@/src/core/utils";
+
+export const metadata: Metadata = {
+    title: createPageTitle("Server Access Keys")
+};
 
 interface Props {
     params: {
