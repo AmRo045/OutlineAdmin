@@ -2,7 +2,7 @@ import { spawn } from "child_process";
 
 export const runCommand = (command: string, args: string[]): Promise<void> => {
     return new Promise((resolve, reject) => {
-        const process = spawn(command, args, { stdio: "inherit" });
+        const process = spawn(command, args, { stdio: "inherit", shell: true });
 
         process.on("error", (error) => {
             console.error(`Error executing command: ${command}`, error);
