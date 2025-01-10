@@ -1,15 +1,16 @@
 {
-  "name": "next-app-template",
-  "version": "0.0.1",
+  "name": "outline-admin",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bun run scripts/start-dev.ts",
+    "compile": "tsc -p tsconfig.scripts.json && tscpaths -p tsconfig.scripts.tscpaths.json -s ./dist -o ./dist",
+    "dev": "node ./dist/scripts/start-dev.js",
     "build": "next build",
-    "start": "bun run scripts/start.ts",
-    "lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix",
-    "format": "prettier --write ./app ./core ./components src/styles ./scripts src/hooks",
-    "sync": "bun run ./scripts/outline-sync.ts",
-    "setup": "bun run ./scripts/setup.ts"
+    "start": "node ./dist/scripts/start.js",
+    "lint": "eslint ./scripts ./src --ext .ts,.tsx -c .eslintrc.json --fix",
+    "format": "prettier --write ./src/**/*.{ts,tsx,json} ./scripts/**/*.{ts,tsx,json}",
+    "sync": "node ./dist/scripts/outline-sync.js",
+    "setup": "node ./dist/scripts/setup.js"
   },
   "dependencies": {
     "@nextui-org/react": "^2.6.10",
@@ -19,7 +20,7 @@
     "@react-aria/visually-hidden": "3.8.12",
     "bcrypt": "^5.1.1",
     "clsx": "2.1.1",
-    "framer-motion": "~11.1.9",
+    "framer-motion": "^11.16.4",
     "intl-messageformat": "^10.7.10",
     "jose": "^5.9.6",
     "moment": "^2.30.1",
@@ -55,6 +56,7 @@
     "prisma": "^6.1.0",
     "tailwind-variants": "0.1.20",
     "tailwindcss": "3.4.3",
+    "tscpaths": "^0.0.9",
     "typescript": "5.6.3"
   }
 }

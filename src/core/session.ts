@@ -23,6 +23,7 @@ export async function decrypt(session: string | undefined = ""): Promise<Session
         });
 
         return payload as SessionPayload;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
         // TODO: report error
         return null;

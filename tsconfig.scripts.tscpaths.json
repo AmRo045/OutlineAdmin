@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./dist",
+    "outDir": "./dist",
+    "rootDir": "./dist",
+    "module": "CommonJS",
+    "target": "ES2020",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@/*": ["./*"]
+    }
+  }
+}
