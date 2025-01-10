@@ -3,9 +3,9 @@ import { runCommand } from "@/scripts/utils";
 const outlineSyncJobInterval = 60 * 1000; // every minute
 
 const main = async () => {
-    setInterval(() => runCommand("npm", ["run", "sync"]), outlineSyncJobInterval);
+    setInterval(() => runCommand("bun", ["sync"]), outlineSyncJobInterval);
 
-    runCommand("npm", ["run", "sync"]).then();
+    runCommand("bun", ["sync"]).then();
 
     try {
         await runCommand("next", ["dev", "--turbo"]);

@@ -2,23 +2,9 @@ import prisma from "@/prisma/db";
 import OutlineClient from "@/src/core/outline/outline-client";
 import { AccessKey, Server } from "@prisma/client";
 import { DataLimitUnit, Outline } from "@/src/core/definitions";
+import { convertDataLimitToUnit } from "@/src/core/utils";
 
 const DISABLED_ACCESS_KEY_LIMIT_IN_BYTES = 1000;
-
-function getDataLimitUnitFactor(unit: DataLimitUnit): number {
-    const unitFactors: Map<DataLimitUnit, number> = new Map([
-        [DataLimitUnit.Bytes, 1],
-        [DataLimitUnit.KB, 1024],
-        [DataLimitUnit.MB, 1000 * 1000],
-        [DataLimitUnit.GB, 1000 * 1000 * 1000]
-    ]);
-
-    return unitFactors.get(unit) ?? 1;
-}
-
-function convertDataLimitToUnit(value: number, unit: DataLimitUnit): number {
-    return value * getDataLimitUnitFactor(unit);
-}
 
 const syncServer = async (outlineClient: OutlineClient, server: Server): Promise<void> => {
     const maxAttempts = 3;
