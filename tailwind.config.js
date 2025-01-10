@@ -4,8 +4,8 @@ import { join } from "node:path";
 /** @type {import("tailwindcss").Config} */
 module.exports = {
     content: [
-        join(__dirname, "./src/**/*.{js,ts,jsx,tsx,mdx}"),
-        join(__dirname, "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}")
+        join(__dirname, "src/(app|components|hooks)/**/*.{js,ts,jsx,tsx}"),
+        join(__dirname, "node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}")
     ],
     theme: {
         extend: {
