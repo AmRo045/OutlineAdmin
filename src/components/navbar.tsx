@@ -45,6 +45,10 @@ export const Navbar = ({ session }: Props) => {
         await logout();
     };
 
+    if (!isAuthorized) {
+        return <></>;
+    }
+
     return (
         <NextUINavbar maxWidth="xl" position="sticky">
             <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
@@ -54,75 +58,70 @@ export const Navbar = ({ session }: Props) => {
                         <p className="font-bold text-inherit">{process.env.APP_NAME?.toUpperCase()}</p>
                     </NextLink>
                 </NavbarBrand>
-                {isAuthorized && (
-                    <ul className="hidden lg:flex gap-4 justify-start ml-2">
-                        {navItems.map((item) => (
-                            <NavbarItem key={item.pathName} isActive={currentPathname.startsWith(item.pathName)}>
-                                <NextLink
-                                    className={`flex gap-2 items-center ${currentPathname.startsWith(item.pathName) ? "text-primary-500" : "text-default-500"}`}
-                                    href={item.pathName}
-                                >
-                                    {item.icon}
-                                    <span>{item.label.toUpperCase()}</span>
-                                </NextLink>
-                            </NavbarItem>
-                        ))}
-                    </ul>
-                )}
+
+                <ul className="hidden lg:flex gap-4 justify-start ml-2">
+                    {navItems.map((item) => (
+                        <NavbarItem key={item.pathName} isActive={currentPathname.startsWith(item.pathName)}>
+                            <NextLink
+                                className={`flex gap-2 items-center ${currentPathname.startsWith(item.pathName) ? "text-primary-500" : "text-default-500"}`}
+                                href={item.pathName}
+                            >
+                                {item.icon}
+                                <span>{item.label.toUpperCase()}</span>
+                            </NextLink>
+                        </NavbarItem>
+                    ))}
+                </ul>
             </NavbarContent>
 
             <NavbarContent className="hidden sm:flex basis-1/5 sm:basis-full" justify="end">
-                {isAuthorized && (
-                    <NavbarItem className="hidden md:flex">
+                <NavbarItem className="hidden md:flex">
+                    <form onSubmit={logoutForm.handleSubmit(handleLogout)}>
+                        <Button
+                            color="danger"
+                            isIconOnly={true}
+                            isLoading={logoutForm.formState.isSubmitting}
+                            size="sm"
+                            type="submit"
+                            variant="light"
+                        >
+                            <LogoutIcon size={22} />
+                        </Button>
+                    </form>
+                </NavbarItem>
+            </NavbarContent>
+
+            <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
+                <NavbarMenuToggle />
+            </NavbarContent>
+
+            <NavbarMenu>
+                <div className="mx-4 mt-2 flex flex-col gap-2">
+                    {navItems.map((item) => (
+                        <NavbarMenuItem key={item.pathName}>
+                            <NextLink className="flex gap-2 items-center" href={item.pathName}>
+                                {item.icon}
+                                <span>{item.label.toUpperCase()}</span>
+                            </NextLink>
+                        </NavbarMenuItem>
+                    ))}
+
+                    <NavbarMenuItem key="logout">
                         <form onSubmit={logoutForm.handleSubmit(handleLogout)}>
                             <Button
+                                className="ps-0"
                                 color="danger"
-                                isIconOnly={true}
                                 isLoading={logoutForm.formState.isSubmitting}
-                                size="sm"
                                 type="submit"
                                 variant="light"
                             >
                                 <LogoutIcon size={22} />
+                                <span>LOGOUT</span>
                             </Button>
                         </form>
-                    </NavbarItem>
-                )}
-            </NavbarContent>
-
-            <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-                {isAuthorized && <NavbarMenuToggle />}
-            </NavbarContent>
-
-            {isAuthorized && (
-                <NavbarMenu>
-                    <div className="mx-4 mt-2 flex flex-col gap-2">
-                        {navItems.map((item) => (
-                            <NavbarMenuItem key={item.pathName}>
-                                <NextLink className="flex gap-2 items-center" href={item.pathName}>
-                                    {item.icon}
-                                    <span>{item.label.toUpperCase()}</span>
-                                </NextLink>
-                            </NavbarMenuItem>
-                        ))}
-
-                        <NavbarMenuItem key="logout">
-                            <form onSubmit={logoutForm.handleSubmit(handleLogout)}>
-                                <Button
-                                    className="ps-0"
-                                    color="danger"
-                                    isLoading={logoutForm.formState.isSubmitting}
-                                    type="submit"
-                                    variant="light"
-                                >
-                                    <LogoutIcon size={22} />
-                                    <span>LOGOUT</span>
-                                </Button>
-                            </form>
-                        </NavbarMenuItem>
-                    </div>
-                </NavbarMenu>
-            )}
+                    </NavbarMenuItem>
+                </div>
+            </NavbarMenu>
         </NextUINavbar>
     );
 };
