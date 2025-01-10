@@ -4,7 +4,7 @@ import { Link } from "@nextui-org/link";
 import { Button, Tooltip, useDisclosure } from "@nextui-org/react";
 
 import { app } from "@/src/core/config";
-import { AmRoLogo, GithubIcon, HeartIcon, HeartIconDuotone } from "@/src/components/icons";
+import { AmRoLogo, GithubIcon, HeartIcon, HeartIconDuotone, RedditIcon } from "@/src/components/icons";
 import { ThemeSwitch } from "@/src/components/theme-switch";
 import DonationModal from "@/src/components/modals/donation-modal";
 
@@ -15,16 +15,22 @@ export const Footer = () => {
         <footer className="w-full grid place-items-center gap-8 py-3">
             <DonationModal disclosure={donationModalDisclosure} />
 
-            <div className="flex gap-4 items-center justify-center">
-                <Tooltip closeDelay={100} content="Github Page">
+            <div className="flex gap-6 items-center justify-center">
+                <Tooltip closeDelay={100} content="Donation">
+                    <Link href="#" onPress={donationModalDisclosure.onOpen}>
+                        <HeartIconDuotone className="text-default-500" size={24} />
+                    </Link>
+                </Tooltip>
+
+                <Tooltip closeDelay={100} content="Github page">
                     <Link isExternal href={app.links.github}>
                         <GithubIcon className="text-default-500" size={24} />
                     </Link>
                 </Tooltip>
 
-                <Tooltip closeDelay={100} content="Donation">
-                    <Link href="#" onPress={donationModalDisclosure.onOpen}>
-                        <HeartIconDuotone className="text-default-500" size={24} />
+                <Tooltip closeDelay={100} content="Reddit page">
+                    <Link isExternal href={app.links.outlineVpnWiki.index}>
+                        <RedditIcon className="text-default-500" size={24} />
                     </Link>
                 </Tooltip>
 

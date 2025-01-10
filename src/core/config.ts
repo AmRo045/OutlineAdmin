@@ -26,7 +26,8 @@ export const app = {
         github: "https://github.com/AmRo045/OutlineAdmin",
         x: "https://x.com/AmRo045",
         me: "https://amro045.github.io",
-        outlineWiki: {
+        outlineVpnWiki: {
+            index: "https://www.reddit.com/r/outlinevpn/wiki/index",
             dynamicAccessKeys: "https://www.reddit.com/r/outlinevpn/wiki/index/dynamic_access_keys"
         }
     },
