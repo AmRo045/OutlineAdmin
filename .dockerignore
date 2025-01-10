@@ -13,3 +13,6 @@ helm-charts
 .editorconfig
 .idea
 coverage*
+.next/cache
+*.log
+.next

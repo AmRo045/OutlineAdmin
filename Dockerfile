@@ -1,37 +1,36 @@
-FROM oven/bun:1 AS base
+FROM node:20.18-alpine AS base
 LABEL authors="AmRo045"
-WORKDIR /usr/src/app
+WORKDIR /app
 
+ENV NEXT_TELEMETRY_DISABLED 0
+ENV DATABASE_URL file:/app/data/app.db
 
 FROM base AS build
-COPY package.json bun.lockb ./
-RUN bun install --frozen-lockfile
+WORKDIR /app
+
+COPY package-lock.json package.json ./
+RUN npm install
 
 COPY . ./
 
-ENV NODE_ENV=production
-ENV DATABASE_URL="file:/usr/src/app/data/app.db"
+ENV NODE_ENV production
 
-RUN bun setup
-RUN bun prisma migrate deploy
-RUN bun prisma generate
-RUN bun run build
+RUN npx prisma migrate deploy && npx prisma generate
+
+RUN npm run compile &&  \
+    npm run setup &&  \
+    npm run build
+
 
 FROM base AS release
+WORKDIR /app
 
-WORKDIR /usr/src/app
-
-COPY --from=build /usr/src/app/.next/standalone ./
-COPY --from=build /usr/src/app/.next/static ./.next/static
-COPY --from=build /usr/src/app/public ./public
-COPY --from=build /usr/src/app/scripts ./scripts
-COPY --from=build /usr/src/app/prisma ./prisma
-COPY --from=build /usr/src/app/data/app.db ./data/app.db
-
-RUN chown -R bun:bun /usr/src/app
-
-USER bun
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
+COPY --from=build /app/public ./public
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/data/app.db ./data/app.db
 
 EXPOSE 3000
 
-CMD ["bun", "run", "start"]
+CMD ["npm", "run", "start"]
