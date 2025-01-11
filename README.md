@@ -1,53 +1,110 @@
-# Next.js & NextUI Template
+# Outline Admin
 
-This is a template for creating applications using Next.js 14 (app directory) and NextUI (v2).
+Outline Admin is a web interface for the Outline Manager API, providing a simple and user-friendly UI for managing VPN servers.
 
-[Try it on CodeSandbox](https://githubbox.com/nextui-org/next-app-template)
+## Table of Contents
 
-## Technologies Used
+1. [Features](#features)
+2. [Installation](#installation)
+   - [Using Docker](#installation---docker)
+   - [Using Docker Compose](#using-docker-compose)
+   - [Using NodeJS](#installation---nodejs)
+3. [Donation](#donation)
+4. [Screenshots](#screenshots)
 
-- [Next.js 14](https://nextjs.org/docs/getting-started)
-- [NextUI v2](https://nextui.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Tailwind Variants](https://tailwind-variants.org)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [next-themes](https://github.com/pacocoursey/next-themes)
+## Features
 
-## How to Use
+- Set expiration dates for Access Keys.
+- Generate QR codes for Access Keys.
+- Create dynamic Access Keys.
+- Add prefix to Access Keys.
 
-### Use the template with create-next-app
+## Installation
 
-To create a new project based on this template using `create-next-app`, run the following command:
+### Installation - Docker
+
+Before installing Outline Admin, ensure that Docker and Docker Compose are installed on your machine. Use the following command to start the container:
 
 ```bash
-npx create-next-app -e https://github.com/nextui-org/next-app-template
+docker run -p 3000:3000 --name outline-admin -v ./oa_data:/app/data amro045/outline-admin:latest
 ```
 
-### Install dependencies
+#### Using Docker Compose
 
-You can use one of them `npm`, `yarn`, `pnpm`, `bun`, Example using `npm`:
+To simplify the installation, you can use a Docker Compose file:
+
+```bash
+sudo bash -c "\$(wget -qO- https://raw.githubusercontent.com/AmRo045/OutlineAdmin/main/docker-compose.yml)"
+
+docker-compose up -d
+```
+
+### Installation - NodeJS
+
+Follow these steps to set up Outline Admin using NodeJS:
+
+#### Step 1: Prepare the project files
+
+```bash
+git clone https://github.com/AmRo045/OutlineAdmin.git
+cd OutlineAdmin
+cp .env.example .env
+```
+
+#### Step 2: Install dependencies
 
 ```bash
 npm install
 ```
 
-### Run the development server
+#### Step 3: Create the database
 
 ```bash
-npm run dev
+npx prisma migrate deploy 
+npx prisma generate
 ```
 
-### Setup pnpm (optional)
-
-If you are using `pnpm`, you need to add the following code to your `.npmrc` file:
+#### Step 4: Build the project
 
 ```bash
-public-hoist-pattern[]=*@nextui-org/*
+npm run compile
+npm run setup 
+npm run build
 ```
 
-After modifying the `.npmrc` file, you need to run `pnpm install` again to ensure that the dependencies are installed correctly.
+#### Step 5: Start the application
 
-## License
+```bash
+npm run start
+```
 
-Licensed under the [MIT license](https://github.com/nextui-org/next-app-template/blob/main/LICENSE).
+## Donation
+
+If you find this project useful and would like to support its development, consider making a donation. Your support is greatly appreciated!
+
+### BTC
+
+```
+bc1qjmnnw4779ntv08uuqmpqnx7hqmygl08z4z500a
+```
+
+### USDT
+
+```
+0xCcF2117F837b16fbc0FbDe0178De0a2aCbfadC58
+```
+
+### TON
+
+```
+UQByW0gL9r89D4oFagC3ZRCEctIoh6XjHu7zv5xU2wcPVATT
+```
+
+### ETH
+
+```
+0xCcF2117F837b16fbc0FbDe0178De0a2aCbfadC58
+```
+
+## Screenshots
+
