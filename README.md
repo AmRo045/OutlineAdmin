@@ -13,8 +13,9 @@ Outline Admin is a web interface for the Outline Manager API, providing a simple
    - [Using Docker](#installation---docker)
    - [Using Docker Compose](#using-docker-compose)
    - [Using NodeJS](#installation---nodejs)
-3. [Donation](#donation)
-4. [Screenshots](#screenshots)
+3. [Development](#development)
+4. [Donation](#donation)
+5. [Screenshots](#screenshots)
 
 ## Features
 
@@ -81,6 +82,10 @@ npm run build
 ```bash
 npm run start
 ```
+
+## Development
+
+add dev instructions here
 
 ## Donation
 
