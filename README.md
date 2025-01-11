@@ -38,7 +38,7 @@ docker run -p 3000:3000 --name outline-admin -v ./oa_data:/app/data amro045/outl
 To simplify the installation, you can use a Docker Compose file:
 
 ```bash
-sudo bash -c "\$(wget -qO- https://raw.githubusercontent.com/AmRo045/OutlineAdmin/main/docker-compose.yml)"
+sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/AmRo045/OutlineAdmin/main/docker-compose.yml)"
 
 docker-compose up -d
 ```
