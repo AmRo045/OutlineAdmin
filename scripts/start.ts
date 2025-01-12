@@ -1,11 +1,7 @@
-import { runCommand } from "@/scripts/utils";
-
-const outlineSyncJobInterval = 120 * 1000; // every 2 minutes
+import { runCommand, startSyncJob } from "@/scripts/utils";
 
 const main = async () => {
-    setInterval(() => runCommand("npm", ["run", "sync"]), outlineSyncJobInterval);
-
-    runCommand("npm", ["run", "sync"]).then();
+    startSyncJob();
 
     try {
         await runCommand("node", ["server.js"]);
