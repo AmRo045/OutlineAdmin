@@ -24,11 +24,17 @@ Outline Admin is a web interface for the Outline Manager API, providing a simple
 - Create dynamic Access Keys.
 - Add prefix to Access Keys.
 
+
 ## Installation
 
 ### Installation - Docker
 
 Before installing Outline Admin, ensure that Docker and Docker Compose are installed on your machine. Use the following command to start the container:
+
+```bash
+mkdir outline-admin
+cd outline-admin
+```
 
 ```bash
 docker run -p 3000:3000 --name outline-admin -v ./oa_data:/app/data amro045/outline-admin:latest
@@ -53,12 +59,13 @@ docker-compose up -d
 
 ### Installation - NodeJS
 
-Follow these steps to set up Outline Admin using NodeJS:
+To run this project on your machine, ensure you have Node.js v20 or later and npm v10 or later installed.
+Follow the steps below to set up Outline Admin using Node.js:
 
 #### Step 1: Prepare the project files
 
 ```bash
-git clone https://github.com/AmRo045/OutlineAdmin.git outline-admin
+git clone https://github.com/AmRo045/outline-admin.git
 cd outline-admin
 cp .env.example .env
 ```
@@ -92,7 +99,41 @@ npm run start
 
 ## Development
 
-add dev instructions here
+Follow the steps below:
+
+#### Step 1: Prepare the project files
+
+```bash
+git clone https://github.com/AmRo045/outline-admin.git
+cd outline-admin
+cp .env.example .env
+```
+
+#### Step 2: Install dependencies
+
+```bash
+npm install
+```
+
+#### Step 3: Create the database
+
+```bash
+npx prisma migrate 
+npx prisma generate
+```
+
+#### Step 4: Build the project
+
+```bash
+npm run compile
+npm run setup
+```
+
+#### Step 5: Start the application
+
+```bash
+npm run dev
+```
 
 ## Donation
 
