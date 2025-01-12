@@ -1,6 +1,7 @@
 "use client";
 
 import {
+    Alert,
     Button,
     Chip,
     Input,
@@ -110,6 +111,8 @@ export default function DynamicAccessKeysList({ data }: Props) {
                     </Tooltip>
                 </div>
 
+                <Alert color="warning">A valid domain name with SSL encryption is required to use this feature.</Alert>
+
                 <div className="flex justify-between items-center gap-2">
                     <form onSubmit={searchForm.handleSubmit(handleSearch)}>
                         <Input
@@ -156,7 +159,9 @@ export default function DynamicAccessKeysList({ data }: Props) {
                         {dynamicAccessKeys.map((dynamicAccessKey) => (
                             <TableRow key={dynamicAccessKey.id}>
                                 <TableCell>{dynamicAccessKey.id}</TableCell>
-                                <TableCell>{dynamicAccessKey.name}</TableCell>
+                                <TableCell>
+                                    <span className="whitespace-nowrap">{dynamicAccessKey.name}</span>
+                                </TableCell>
                                 <TableCell>{dynamicAccessKey.path}</TableCell>
                                 <TableCell>
                                     <Chip
