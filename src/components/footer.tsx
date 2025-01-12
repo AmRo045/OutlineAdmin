@@ -12,7 +12,7 @@ export const Footer = () => {
     const donationModalDisclosure = useDisclosure();
 
     return (
-        <footer className="w-full grid place-items-center gap-8 py-3">
+        <footer className="w-full grid place-items-center gap-8 py-3 mt-8">
             <DonationModal disclosure={donationModalDisclosure} />
 
             <div className="flex gap-6 items-center justify-center">

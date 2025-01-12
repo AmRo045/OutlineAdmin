@@ -37,7 +37,11 @@ export const app = {
         existingServer: `sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/AmRo045/OutlineAdmin/main/access.sh)"`,
         exampleServerManagementJson: `{"apiUrl":"https://xxx.xxx.xxx.xxx:xxxxx/xxxxxxxxxxxxxxxxxxxxxx","certSha256":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}`
     },
+
     donation: {
-        ton: "UQByW0gL9r89D4oFagC3ZRCEctIoh6XjHu7zv5xU2wcPVATT"
+        BTC: "bc1qjmnnw4779ntv08uuqmpqnx7hqmygl08z4z500a",
+        USDT: "0xCcF2117F837b16fbc0FbDe0178De0a2aCbfadC58",
+        ETH: "0xCcF2117F837b16fbc0FbDe0178De0a2aCbfadC58",
+        TON: "UQByW0gL9r89D4oFagC3ZRCEctIoh6XjHu7zv5xU2wcPVATT"
     }
 };
