@@ -50,7 +50,7 @@ cd outline-admin
 ```
 
 ```bash
-wget -O docker-compose.yml https://raw.githubusercontent.com/AmRo045/OutlineAdmin/main/docker-compose.yml
+wget -O docker-compose.yml https://raw.githubusercontent.com/AmRo045/outline-admin/main/docker-compose.yml
 ```
 
 ```bash

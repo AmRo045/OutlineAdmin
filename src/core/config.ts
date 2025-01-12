@@ -34,7 +34,7 @@ export const app = {
 
     snippets: {
         newOutlineServer: `sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)"`,
-        existingServer: `sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/AmRo045/OutlineAdmin/main/access.sh)"`,
+        existingServer: `sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/AmRo045/outline-admin/main/access.sh)"`,
         exampleServerManagementJson: `{"apiUrl":"https://xxx.xxx.xxx.xxx:xxxxx/xxxxxxxxxxxxxxxxxxxxxx","certSha256":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}`
     },
 
