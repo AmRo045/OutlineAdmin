@@ -34,6 +34,8 @@ export default function ServerEditForm({ server }: Props) {
     const actualSubmit = async (data: EditServerRequest) => {
         try {
             await updateServer(server.id, data);
+
+            router.push("/servers");
         } catch (error) {
             setServerError((error as object).toString());
             updateErrorModalDisclosure.onOpen();
@@ -136,7 +138,7 @@ export default function ServerEditForm({ server }: Props) {
                     <Button
                         className="w-fit"
                         color="primary"
-                        isLoading={form.formState.isSubmitting}
+                        isLoading={form.formState.isSubmitting || (form.formState.isSubmitSuccessful && !serverError)}
                         type="submit"
                         variant="shadow"
                     >
