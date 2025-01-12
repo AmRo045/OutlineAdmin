@@ -124,3 +124,12 @@ UQByW0gL9r89D4oFagC3ZRCEctIoh6XjHu7zv5xU2wcPVATT
 
 ## Screenshots
 
+![Login](/.github/screenshots/1-login.png)
+![Servers](/.github/screenshots/2-servers.png)
+![New server](/.github/screenshots/3-new-server.png)
+![Server settings](/.github/screenshots/4-server-settings.png)
+![Server access keys](/.github/screenshots/5-server-access-keys.png)
+![Dynamic access keys](/.github/screenshots/6-dynamic-access-keys.png)
+![Dynamic access key edit](/.github/screenshots/7-dynamic-access-key-edit.png)
+![Dynamic access key details](/.github/screenshots/8-dynamic-access-key-details.png)
+![Dynamic access key access-keys](/.github/screenshots/9-dynamic-access-key-access-keys.png)
