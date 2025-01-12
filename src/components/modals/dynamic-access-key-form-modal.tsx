@@ -19,6 +19,7 @@ import {
 import { useForm } from "react-hook-form";
 import { DynamicAccessKey } from "@prisma/client";
 import moment from "moment/moment";
+import slugify from "slugify";
 
 import {
     AccessKeyPrefixType,
@@ -54,7 +55,7 @@ export default function DynamicAccessKeyFormModal({ disclosure, dynamicAccessKey
             if (!data.path) {
                 data.path = uuidv4();
             } else {
-                data.path = data.path.replace(/^\//, "");
+                data.path = slugify(data.path);
             }
 
             if (dynamicAccessKeyData) {
