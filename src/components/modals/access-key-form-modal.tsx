@@ -24,6 +24,7 @@ import { AccessKeyPrefixType, DataLimitUnit, EditAccessKeyRequest, NewAccessKeyR
 import { createAccessKey, updateAccessKey } from "@/src/core/actions/access-key";
 import { AccessKeyPrefixes } from "@/src/core/outline/access-key-prefix";
 import CustomDatePicker from "@/src/components/custom-date-picker";
+import { syncServer } from "@/src/core/actions/server";
 
 interface Props {
     disclosure: UseDisclosureReturn;
@@ -59,6 +60,8 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
             disclosure.onClose();
         } catch (error) {
             setServerError(() => (error as object).toString());
+        } finally {
+            await syncServer(serverId);
         }
     };
 

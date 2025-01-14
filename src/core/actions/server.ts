@@ -115,9 +115,7 @@ export async function createServer(data: NewServerRequest): Promise<void> {
         }
     });
 
-    const syncService = new OutlineSyncService(server);
-
-    await syncService.sync();
+    await syncServer(server);
 
     revalidatePath("/servers");
 }
@@ -155,4 +153,25 @@ export async function removeServer(id: number): Promise<void> {
     });
 
     revalidatePath("/servers");
+}
+
+export async function syncServer(server: number | Server): Promise<void> {
+    let serverToSync: Server | null;
+
+    if (typeof server === "number") {
+        serverToSync = await getServerById(server);
+    } else {
+        serverToSync = server;
+    }
+
+    if (!serverToSync) {
+        return;
+    }
+
+    const syncService = new OutlineSyncService(serverToSync);
+
+    await syncService.sync();
+
+    revalidatePath("/servers");
+    revalidatePath(`/servers/${server.id}/access-keys`);
 }

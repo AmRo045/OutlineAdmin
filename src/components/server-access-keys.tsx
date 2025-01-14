@@ -28,6 +28,7 @@ import NoResult from "@/src/components/no-result";
 import AccessKeyValidityChip from "@/src/components/access-key-validity-chip";
 import MessageModal from "@/src/components/modals/message-modal";
 import { AccessKeyPrefixes } from "@/src/core/outline/access-key-prefix";
+import { syncServer } from "@/src/core/actions/server";
 
 interface Props {
     server: Server;
@@ -51,6 +52,8 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
         } catch (error) {
             setServerError((error as object).toString());
             apiErrorModalDisclosure.onOpen();
+        } finally {
+            await syncServer(server);
         }
     };
 
