@@ -1,15 +1,13 @@
-name: Code Quality Check
+name: Build
 
 on:
   push:
     branches:
       - main
   pull_request:
-    branches:
-      - "*"
 
 jobs:
-  prettier-check:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,5 +30,16 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run Prettier format check
-        run: npm run format:check
+      - name: Copy environment file
+        run: cp .env.example .env
+
+      - name: Set up database
+        run: |
+          npx prisma migrate deploy
+          npx prisma generate
+
+      - name: Build the project
+        run: |
+          npm run compile
+          npm run setup
+          npm run build
