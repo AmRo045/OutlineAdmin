@@ -38,6 +38,9 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           VERSION=${{ github.ref_name }}
+          # Remove leading 'v' if it exists
+          VERSION=${VERSION#v}
+          
           docker build -t amro045/outline-admin:$VERSION .
           docker push amro045/outline-admin:$VERSION
 
