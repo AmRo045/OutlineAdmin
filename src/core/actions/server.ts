@@ -12,6 +12,7 @@ import {
     ServerWithAccessKeysCount
 } from "@/src/core/definitions";
 import OutlineClient from "@/src/core/outline/outline-client";
+import { OutlineSyncService } from "@/src/core/outline/outline-sync-service";
 
 export async function getServers(
     filters?: { term?: string; skip?: number; take?: number },
@@ -97,7 +98,7 @@ export async function createServer(data: NewServerRequest): Promise<void> {
     const outlineClient = OutlineClient.fromConfig(data.managementJson);
     const outlineServer = await outlineClient.server();
 
-    await prisma.server.create({
+    const server = await prisma.server.create({
         data: {
             managementJson: data.managementJson,
             apiUrl: outlineClient.apiUrl,
@@ -114,7 +115,9 @@ export async function createServer(data: NewServerRequest): Promise<void> {
         }
     });
 
-    // TODO: sync server access-keys
+    const syncService = new OutlineSyncService(server);
+
+    await syncService.sync();
 
     revalidatePath("/servers");
 }
