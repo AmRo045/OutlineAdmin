@@ -8,7 +8,7 @@ Outline Admin is a web interface for the Outline Manager API, providing a simple
 
 ## Table of Contents
 
-1. [Features](#features)
+1. [Added Features](#added-features)
 2. [Installation](#installation)
    - [Using Docker](#installation---docker)
    - [Using Docker Compose](#using-docker-compose)
@@ -17,7 +17,7 @@ Outline Admin is a web interface for the Outline Manager API, providing a simple
 4. [Donation](#donation)
 5. [Screenshots](#screenshots)
 
-## Features
+## Added Features
 
 - Set expiration dates for Access Keys.
 - Generate QR codes for Access Keys.
@@ -29,25 +29,19 @@ Outline Admin is a web interface for the Outline Manager API, providing a simple
 
 ### Installation - Docker
 
-Before installing Outline Admin, ensure that Docker and Docker Compose are installed on your machine. Use the following command to start the container:
+Before installing Outline Admin, ensure that Docker and Docker Compose are installed on your machine. Use the following commands to start the container:
 
 ```bash
-mkdir outline-admin
-cd outline-admin
+docker volume create outline-admin-data
 ```
 
 ```bash
-docker run -p 3000:3000 --name outline-admin -v ./oa_data:/app/data amro045/outline-admin:latest
+docker run -p 3000:3000 --name outline-admin -v outline-admin-data:/app/data --restart unless-stopped amro045/outline-admin:latest
 ```
 
 #### Using Docker Compose
 
 To simplify the installation, you can use a Docker Compose file:
-
-```bash
-mkdir outline-admin
-cd outline-admin
-```
 
 ```bash
 wget -O docker-compose.yml https://raw.githubusercontent.com/AmRo045/outline-admin/main/docker-compose.yml

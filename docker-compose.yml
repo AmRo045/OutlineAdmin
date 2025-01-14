@@ -1,5 +1,3 @@
-version: "3.3"
-
 services:
     outline-admin:
         image: amro045/outline-admin:latest
@@ -7,10 +5,14 @@ services:
         ports:
             - "3000:3000"
         volumes:
-            - "./oa_data:/app/data"
+            - "outline-admin-data:/app/data"
         networks:
             - outline_admin
         restart: unless-stopped
+
+volumes:
+    outline-admin-data:
+        name: 'outline-admin-data'
 
 networks:
     outline_admin:
