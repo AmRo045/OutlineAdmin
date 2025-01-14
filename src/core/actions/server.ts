@@ -173,5 +173,5 @@ export async function syncServer(server: number | Server): Promise<void> {
     await syncService.sync();
 
     revalidatePath("/servers");
-    revalidatePath(`/servers/${server.id}/access-keys`);
+    revalidatePath(`/servers/${serverToSync.id}/access-keys`);
 }
