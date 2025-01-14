@@ -16,9 +16,7 @@ export const startSyncJob = async () => {
 
     while (canRunSyncJob) {
         try {
-            console.log("Running sync command...");
             await runCommand("npm", ["run", "sync"]);
-            console.log("Sync command completed successfully.");
         } catch (error) {
             console.error("Sync job failed:", error);
         }

@@ -114,6 +114,8 @@ export async function createServer(data: NewServerRequest): Promise<void> {
         }
     });
 
+    // TODO: sync server access-keys
+
     revalidatePath("/servers");
 }
 
