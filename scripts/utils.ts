@@ -3,10 +3,16 @@ import { spawn } from "child_process";
 export const startSyncJob = async () => {
     const syncJobInterval = 60 * 1000;
     let canRunSyncJob = true;
+    let shutdownRequestCount = 0;
 
     const handleShutdown = (signal: string) => {
         console.log(`Received ${signal}. Stopping sync job...`);
         canRunSyncJob = false;
+        shutdownRequestCount++;
+
+        if (shutdownRequestCount > 0) {
+            process.exit(0);
+        }
     };
 
     process.on("SIGINT", () => handleShutdown("SIGINT"));
