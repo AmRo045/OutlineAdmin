@@ -12,6 +12,7 @@ COPY package-lock.json package.json ./
 RUN npm install
 
 COPY . ./
+COPY .env.example ./.env
 
 ENV NODE_ENV production
 
