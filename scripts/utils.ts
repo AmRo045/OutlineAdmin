@@ -27,6 +27,7 @@ export const startSyncJob = async () => {
     }
 
     console.log("Sync job stopped.");
+    process.exit(0);
 };
 
 export const runCommand = (command: string, args: string[]): Promise<void> => {
