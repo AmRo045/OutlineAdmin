@@ -5,14 +5,10 @@ services:
         ports:
             - "3000:3000"
         volumes:
-            - "outline-admin-data:/app/data"
+            - "~/.outline-admin-data:/app/data"
         networks:
             - outline_admin
         restart: unless-stopped
-
-volumes:
-    outline-admin-data:
-        name: 'outline-admin-data'
 
 networks:
     outline_admin:
