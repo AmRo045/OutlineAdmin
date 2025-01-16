@@ -12,7 +12,7 @@ export const startSyncJob = async () => {
         canRunSyncJob = false;
         shutdownRequestCount++;
 
-        if (shutdownRequestCount > 0) {
+        if (shutdownRequestCount > 1) {
             process.exit(0);
         }
     };
