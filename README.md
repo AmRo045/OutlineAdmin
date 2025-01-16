@@ -33,7 +33,7 @@ Before installing Outline Admin, ensure that Docker and Docker Compose are insta
 
 
 ```bash
-docker run -p 3000:3000 --name outline-admin -v ~/.outline-admin-data:/app/data --restart unless-stopped amro045/outline-admin:latest
+docker run -p 3000:3000 --name outline-admin -v ./oa_data:/app/data --restart unless-stopped amro045/outline-admin:latest
 ```
 
 #### Using Docker Compose

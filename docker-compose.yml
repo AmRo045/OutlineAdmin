@@ -5,7 +5,7 @@ services:
         ports:
             - "3000:3000"
         volumes:
-            - "~/.outline-admin-data:/app/data"
+            - "./oa_data:/app/data"
         networks:
             - outline_admin
         restart: unless-stopped
