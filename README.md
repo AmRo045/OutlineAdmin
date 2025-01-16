@@ -6,16 +6,22 @@
 
 Outline Admin is a web interface for the Outline Manager API, providing a simple and user-friendly UI for managing VPN servers.
 
+
 ## Table of Contents
 
-1. [Added Features](#added-features)
-2. [Installation](#installation)
+1. [Previous Version](#previous-version)
+2. [Added Features](#added-features)
+3. [Installation](#installation)
    - [Using Docker](#installation---docker)
    - [Using Docker Compose](#using-docker-compose)
    - [Using NodeJS](#installation---nodejs)
-3. [Development](#development)
-4. [Donation](#donation)
-5. [Screenshots](#screenshots)
+4. [Development](#development)
+5. [Donation](#donation)
+6. [Screenshots](#screenshots)
+
+## Previous Version
+
+The previous PHP/Laravel version of this project has been moved to the [OutlineAdminLaravel](https://github.com/AmRo045/OutlineAdminLaravel) repository.
 
 ## Added Features
 
