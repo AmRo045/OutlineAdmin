@@ -7,6 +7,8 @@ export const startSyncJob = async () => {
 
     const handleShutdown = (signal: string) => {
         console.log(`Received ${signal}. Stopping sync job...`);
+        console.log("Press CTRL + C to terminate the process");
+
         canRunSyncJob = false;
         shutdownRequestCount++;
 
