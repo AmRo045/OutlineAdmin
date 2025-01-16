@@ -41,7 +41,7 @@ docker run -p 3000:3000 --name outline-admin -v ./oa_data:/app/data --restart un
 To simplify the installation, you can use a Docker Compose file:
 
 ```bash
-wget -O docker-compose.yml https://raw.githubusercontent.com/AmRo045/outline-admin/main/docker-compose.yml
+wget -O docker-compose.yml https://raw.githubusercontent.com/AmRo045/OutlineAdmin/main/docker-compose.yml
 ```
 
 ```bash
@@ -56,7 +56,7 @@ Follow the steps below to set up Outline Admin using Node.js:
 #### Step 1: Prepare the project files
 
 ```bash
-git clone https://github.com/AmRo045/outline-admin.git
+git clone https://github.com/AmRo045/OutlineAdmin.git
 cd outline-admin
 cp .env.example .env
 ```
@@ -95,7 +95,7 @@ Follow the steps below:
 #### Step 1: Prepare the project files
 
 ```bash
-git clone https://github.com/AmRo045/outline-admin.git
+git clone https://github.com/AmRo045/OutlineAdmin.git
 cd outline-admin
 cp .env.example .env
 ```
