@@ -16,12 +16,11 @@ COPY .env.example ./.env
 
 ENV NODE_ENV production
 
-RUN npx prisma migrate deploy && npx prisma generate
+RUN npx prisma generate
 
 RUN npm run compile &&  \
     npm run setup &&  \
     npm run build
-
 
 FROM base AS release
 WORKDIR /app
@@ -30,8 +29,9 @@ COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
 COPY --from=build /app/public ./public
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/data/app.db ./data/app.db
+COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/package.json ./package.json
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run start"]
