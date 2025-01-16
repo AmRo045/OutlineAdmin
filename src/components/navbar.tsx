@@ -17,6 +17,7 @@ import { usePathname } from "next/navigation";
 import { DynamicAccessKeyIcon, Logo, LogoutIcon, ServersIcon } from "@/src/components/icons";
 import { logout } from "@/src/core/actions";
 import { UserSession } from "@/src/core/definitions";
+import { app } from "@/src/core/config";
 
 const navItems = [
     {
@@ -55,7 +56,7 @@ export const Navbar = ({ session }: Props) => {
                 <NavbarBrand as="li" className="gap-3 max-w-fit">
                     <NextLink className="flex justify-start items-center gap-1" href="/">
                         <Logo size={32} />
-                        <p className="font-bold text-inherit">{process.env.APP_NAME?.toUpperCase()}</p>
+                        <p className="font-bold text-inherit">{app.name.toUpperCase()}</p>
                     </NextLink>
                 </NavbarBrand>
 

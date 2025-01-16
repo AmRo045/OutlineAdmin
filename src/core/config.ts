@@ -17,6 +17,10 @@ const fontMono = FontMono({
 });
 
 export const app = {
+    name: "Outline Admin",
+    description:
+        "Outline Admin is a web interface for the Outline Manager API, providing a simple and user-friendly UI for managing VPN servers.",
+
     fonts: {
         fontSans,
         fontMono

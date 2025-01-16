@@ -24,6 +24,7 @@ import { getServers, removeServer } from "@/src/core/actions/server";
 import NoResult from "@/src/components/no-result";
 import { ServerWithAccessKeysCount } from "@/src/core/definitions";
 import { formatBytes } from "@/src/core/utils";
+import { app } from "@/src/core/config";
 
 interface Props {
     data: ServerWithAccessKeysCount[];
@@ -67,7 +68,7 @@ export default function ServersList({ data }: Props) {
                     <div className="grid gap-2">
                         <span>Are you sure you want to remove this server?</span>
                         <p className="text-default-500 text-sm">
-                            Please note that this action will only remove the server from the {process.env.APP_NAME}
+                            Please note that this action will only remove the server from the {app.name}
                             &apos;s database. The server itself will not be affected.
                         </p>
                     </div>

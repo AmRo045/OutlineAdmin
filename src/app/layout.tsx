@@ -21,7 +21,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
     title: createPageTitle(),
-    description: process.env.APP_DESCRIPTION
+    description: app.description
 };
 
 interface Props {

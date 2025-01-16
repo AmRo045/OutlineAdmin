@@ -11,6 +11,7 @@ import { EditServerRequest } from "@/src/core/definitions";
 import { removeServer, updateServer } from "@/src/core/actions/server";
 import ConfirmModal from "@/src/components/modals/confirm-modal";
 import MessageModal from "@/src/components/modals/message-modal";
+import { app } from "@/src/core/config";
 
 interface Props {
     server: Server;
@@ -66,7 +67,7 @@ export default function ServerEditForm({ server }: Props) {
                     <div className="grid gap-2">
                         <span>Are you sure you want to remove this server?</span>
                         <p className="text-default-500 text-sm">
-                            Please note that this action will only remove the server from the {process.env.APP_NAME}
+                            Please note that this action will only remove the server from the {app.name}
                             &apos;s database. The server itself will not be affected.
                         </p>
                     </div>
@@ -151,8 +152,8 @@ export default function ServerEditForm({ server }: Props) {
                 <div className="px-10 grid gap-4">
                     <span className="text-lg">Remove The Server</span>
                     <p className="text-default-500 text-sm">
-                        Please note that this action will only remove the server from the {process.env.APP_NAME}&apos;s
-                        database. The server itself will not be affected.
+                        Please note that this action will only remove the server from the {app.name}&apos;s database.
+                        The server itself will not be affected.
                     </p>
                     <Button
                         className="w-fit"

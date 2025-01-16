@@ -1,6 +1,7 @@
 import moment from "moment";
 
 import { DataLimitUnit } from "@/src/core/definitions";
+import { app } from "@/src/core/config";
 
 export const formatAsDuration = (start: Date, end: Date): string => {
     const momentStart = moment(start);
@@ -96,7 +97,7 @@ export const crc32 = (str: string): number => {
 };
 
 export const createPageTitle = (title?: string) => {
-    const appTitle = process.env.APP_NAME;
+    const appTitle = app.name;
 
     if (title) {
         return `${title} • ${appTitle}`;
