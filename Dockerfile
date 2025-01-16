@@ -16,7 +16,7 @@ COPY .env.example ./.env
 
 ENV NODE_ENV production
 
-RUN npx prisma generate
+RUN npx prisma migrate deploy && npx prisma generate
 
 RUN npm run compile &&  \
     npm run setup &&  \
