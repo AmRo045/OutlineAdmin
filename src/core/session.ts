@@ -36,7 +36,7 @@ export async function createSession(userId: number): Promise<void> {
 
     cookieStore.set(AUTH_SESSION_KEY, session, {
         httpOnly: process.env.NODE_ENV === "production",
-        secure: process.env.NODE_ENV === "production",
+        secure: false, // TODO: fix this
         expires: expiresAt,
         sameSite: "lax",
         path: "/"
@@ -56,7 +56,7 @@ export async function refreshSession(): Promise<void> {
 
     cookieStore.set(AUTH_SESSION_KEY, session, {
         httpOnly: process.env.NODE_ENV === "production",
-        secure: process.env.NODE_ENV === "production",
+        secure: false, // TODO: fix this
         expires: expiresAt,
         sameSite: "lax",
         path: "/"
