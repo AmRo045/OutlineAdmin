@@ -27,8 +27,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - uses: jongwooo/next-cache@v1
-
       - name: Install dependencies
         run: npm install
 
