@@ -8,6 +8,7 @@
     "dev:next": "next dev --turbo",
     "build": "npm run compile && node ./dist/scripts/build.js",
     "start": "echo cd into .next/standalone and run node server.js",
+    "start:docker": "node ./dist/scripts/start.js",
     "lint": "eslint ./scripts ./src --ext .ts,.tsx -c .eslintrc.json --fix",
     "format": "prettier --write ./src/**/*.{ts,tsx,json} ./scripts/**/*.{ts,tsx,json}",
     "format:check": "prettier --check ./src/**/*.{ts,tsx,json} ./scripts/**/*.{ts,tsx,json}",
