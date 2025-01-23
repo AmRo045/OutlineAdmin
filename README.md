@@ -91,7 +91,8 @@ npm run build
 #### Step 5: Start the application
 
 ```bash
-npm run start
+cd .next/standalone
+node server.js
 ```
 
 ## Development
