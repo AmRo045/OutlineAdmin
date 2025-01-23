@@ -63,7 +63,7 @@ Follow the steps below to set up Outline Admin using Node.js:
 
 ```bash
 git clone https://github.com/AmRo045/OutlineAdmin.git
-cd outline-admin
+cd OutlineAdmin
 cp .env.example .env
 ```
 
@@ -102,7 +102,7 @@ Follow the steps below:
 
 ```bash
 git clone https://github.com/AmRo045/OutlineAdmin.git
-cd outline-admin
+cd OutlineAdmin
 cp .env.example .env
 ```
 
@@ -115,7 +115,7 @@ npm install
 #### Step 3: Create the database
 
 ```bash
-npx prisma migrate 
+npx prisma db push
 npx prisma generate
 ```
 
