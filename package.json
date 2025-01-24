@@ -7,6 +7,7 @@
     "dev": "npm run compile && node ./dist/scripts/start-dev.js",
     "dev:next": "next dev --turbo",
     "build": "npm run compile && node ./dist/scripts/build.js",
+    "build:docker": "node ./dist/scripts/build.js",
     "start": "echo cd into .next/standalone and run node server.js",
     "start:docker": "node ./dist/scripts/start.js",
     "lint": "eslint ./scripts ./src --ext .ts,.tsx -c .eslintrc.json --fix",

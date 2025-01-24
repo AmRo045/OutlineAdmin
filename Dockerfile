@@ -2,8 +2,8 @@ FROM node:20.18-alpine AS base
 LABEL authors="AmRo045"
 WORKDIR /app
 
-ENV NEXT_TELEMETRY_DISABLED 0
-ENV DATABASE_URL file:/app/data/app.db
+ENV NEXT_TELEMETRY_DISABLED=0
+ENV DATABASE_URL=file:/app/data/app.db
 
 FROM base AS build
 WORKDIR /app
@@ -14,13 +14,13 @@ RUN npm install
 COPY . ./
 COPY .env.example ./.env
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 RUN npx prisma migrate deploy && npx prisma generate
 
 RUN npm run compile &&  \
     npm run setup &&  \
-    npm run build
+    npm run build:docker
 
 FROM base AS release
 WORKDIR /app
