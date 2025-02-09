@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Checkbox, CheckboxGroup, Chip, Link, Tooltip } from "@nextui-org/react";
+import { Button, Checkbox, CheckboxGroup, Chip, Link, Tooltip } from "@heroui/react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";

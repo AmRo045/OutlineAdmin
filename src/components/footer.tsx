@@ -1,7 +1,7 @@
 "use client";
 
-import { Link } from "@nextui-org/link";
-import { Button, Tooltip, useDisclosure } from "@nextui-org/react";
+import { Link } from "@heroui/link";
+import { Button, Tooltip, useDisclosure } from "@heroui/react";
 
 import { app } from "@/src/core/config";
 import { AmRoLogo, GithubIcon, HeartIcon, HeartIconDuotone, RedditIcon } from "@/src/components/icons";

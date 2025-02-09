@@ -13,11 +13,11 @@ import {
     TableRow,
     Tooltip,
     useDisclosure
-} from "@nextui-org/react";
+} from "@heroui/react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { DynamicAccessKey } from "@prisma/client";
-import { Link } from "@nextui-org/link";
+import { Link } from "@heroui/link";
 
 import ConfirmModal from "@/src/components/modals/confirm-modal";
 import { DeleteIcon, EditIcon, EyeIcon, InfoIcon, KeyIcon, PlusIcon } from "@/src/components/icons";

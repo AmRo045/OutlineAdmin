@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Button, Divider } from "@nextui-org/react";
+import { Button, Divider } from "@heroui/react";
 
 export default function Error({ error, reset }: { error: Error; reset: () => void }) {
     useEffect(() => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { UseDisclosureReturn } from "@nextui-org/use-disclosure";
+import { UseDisclosureReturn } from "@heroui/use-disclosure";
 import {
     Accordion,
     AccordionItem,
@@ -11,7 +11,7 @@ import {
     ModalFooter,
     ModalHeader,
     Snippet
-} from "@nextui-org/react";
+} from "@heroui/react";
 import React, { useEffect, useRef } from "react";
 
 import { CopyIcon } from "@/src/components/icons";

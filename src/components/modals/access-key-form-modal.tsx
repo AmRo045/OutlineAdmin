@@ -1,4 +1,4 @@
-import { UseDisclosureReturn } from "@nextui-org/use-disclosure";
+import { UseDisclosureReturn } from "@heroui/use-disclosure";
 import React, { useEffect, useState } from "react";
 import {
     Button,
@@ -14,7 +14,7 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { AccessKey } from "@prisma/client";
 import moment from "moment";

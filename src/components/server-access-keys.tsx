@@ -12,7 +12,7 @@ import {
     TableRow,
     Tooltip,
     useDisclosure
-} from "@nextui-org/react";
+} from "@heroui/react";
 import React, { useEffect, useState } from "react";
 import { AccessKey, Server } from "@prisma/client";
 

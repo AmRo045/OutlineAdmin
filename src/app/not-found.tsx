@@ -1,4 +1,4 @@
-import { Divider } from "@nextui-org/react";
+import { Divider } from "@heroui/react";
 import { Metadata } from "next";
 
 import { createPageTitle } from "@/src/core/utils";

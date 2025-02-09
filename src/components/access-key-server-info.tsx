@@ -1,4 +1,4 @@
-import { Chip, Snippet, Tooltip } from "@nextui-org/react";
+import { Chip, Snippet, Tooltip } from "@heroui/react";
 import React from "react";
 import { Server } from "@prisma/client";
 import moment from "moment";

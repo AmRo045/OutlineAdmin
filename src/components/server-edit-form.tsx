@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Divider, Input, Link, Tooltip, useDisclosure } from "@nextui-org/react";
+import { Button, Divider, Input, Link, Tooltip, useDisclosure } from "@heroui/react";
 import React, { useState } from "react";
 import { Server } from "@prisma/client";
 import { useForm } from "react-hook-form";

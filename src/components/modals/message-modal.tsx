@@ -1,7 +1,7 @@
 "use client";
 
-import { UseDisclosureReturn } from "@nextui-org/use-disclosure";
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
+import { UseDisclosureReturn } from "@heroui/use-disclosure";
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/react";
 import { ReactNode } from "react";
 
 interface Props {

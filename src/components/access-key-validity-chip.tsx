@@ -1,4 +1,4 @@
-import { Chip } from "@nextui-org/react";
+import { Chip } from "@heroui/react";
 import React, { useEffect, useState } from "react";
 
 import { InfinityIcon } from "@/src/components/icons";

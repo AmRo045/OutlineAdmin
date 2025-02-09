@@ -1,5 +1,5 @@
-import { UseDisclosureReturn } from "@nextui-org/use-disclosure";
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Snippet } from "@nextui-org/react";
+import { UseDisclosureReturn } from "@heroui/use-disclosure";
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Snippet } from "@heroui/react";
 import React, { useEffect, useRef } from "react";
 
 import { CopyIcon } from "@/src/components/icons";

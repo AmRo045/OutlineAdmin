@@ -1,7 +1,7 @@
 import { parseDate } from "@internationalized/date";
-import { Button, CalendarDate, DatePicker } from "@nextui-org/react";
+import { Button, CalendarDate, DatePicker } from "@heroui/react";
 import React, { useRef } from "react";
-import { CalendarBoldIcon } from "@nextui-org/shared-icons";
+import { CalendarBoldIcon } from "@heroui/shared-icons";
 
 import { getCurrentDateAsString } from "@/src/core/utils";
 

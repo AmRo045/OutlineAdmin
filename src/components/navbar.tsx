@@ -2,14 +2,14 @@
 
 import {
     Button,
-    Navbar as NextUINavbar,
+    Navbar as HeroUINavbar,
     NavbarBrand,
     NavbarContent,
     NavbarItem,
     NavbarMenu,
     NavbarMenuItem,
     NavbarMenuToggle
-} from "@nextui-org/react";
+} from "@heroui/react";
 import NextLink from "next/link";
 import { useForm } from "react-hook-form";
 import { usePathname } from "next/navigation";
@@ -51,7 +51,7 @@ export const Navbar = ({ session }: Props) => {
     }
 
     return (
-        <NextUINavbar maxWidth="xl" position="sticky">
+        <HeroUINavbar maxWidth="xl" position="sticky">
             <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
                 <NavbarBrand as="li" className="gap-3 max-w-fit">
                     <NextLink className="flex justify-start items-center gap-1" href="/">
@@ -123,6 +123,6 @@ export const Navbar = ({ session }: Props) => {
                     </NavbarMenuItem>
                 </div>
             </NavbarMenu>
-        </NextUINavbar>
+        </HeroUINavbar>
     );
 };
