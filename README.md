@@ -51,7 +51,7 @@ wget -O docker-compose.yml https://raw.githubusercontent.com/AmRo045/OutlineAdmi
 ```
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ### Installation - NodeJS
