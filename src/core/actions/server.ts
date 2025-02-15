@@ -13,12 +13,13 @@ import {
 } from "@/src/core/definitions";
 import OutlineClient from "@/src/core/outline/outline-client";
 import { OutlineSyncService } from "@/src/core/outline/outline-sync-service";
+import { PAGE_SIZE } from "@/src/core/config";
 
 export async function getServers(
     filters?: { term?: string; skip?: number; take?: number },
     withKeysCount: boolean = false
 ): Promise<ServerWithAccessKeysCount[]> {
-    const { term, skip = 0, take = 10 } = filters || {};
+    const { term, skip = 0, take = PAGE_SIZE } = filters || {};
 
     return prisma.server.findMany({
         where: {

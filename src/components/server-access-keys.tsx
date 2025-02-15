@@ -4,6 +4,8 @@ import {
     Button,
     Chip,
     Link,
+    Pagination,
+    Spinner,
     Table,
     TableBody,
     TableCell,
@@ -22,28 +24,34 @@ import ConfirmModal from "@/src/components/modals/confirm-modal";
 import { ArrowLeftIcon, DeleteIcon, EditIcon, EyeIcon, InfinityIcon, PlusIcon } from "@/src/components/icons";
 import AccessKeyServerInfo from "@/src/components/access-key-server-info";
 import { convertDataLimitToUnit, formatBytes } from "@/src/core/utils";
-import { removeAccessKey } from "@/src/core/actions/access-key";
+import { getAccessKeys, removeAccessKey } from "@/src/core/actions/access-key";
 import { DataLimitUnit } from "@/src/core/definitions";
 import NoResult from "@/src/components/no-result";
 import AccessKeyValidityChip from "@/src/components/access-key-validity-chip";
 import MessageModal from "@/src/components/modals/message-modal";
 import { AccessKeyPrefixes } from "@/src/core/outline/access-key-prefix";
 import { syncServer } from "@/src/core/actions/server";
+import { PAGE_SIZE } from "@/src/core/config";
 
 interface Props {
     server: Server;
-    accessKeys: AccessKey[];
+    total: number;
 }
 
-export default function ServerAccessKeys({ server, accessKeys }: Props) {
+export default function ServerAccessKeys({ server, total }: Props) {
     const accessKeyFormModalDisclosure = useDisclosure();
     const accessKeyModalDisclosure = useDisclosure();
     const removeAccessKeyConfirmModalDisclosure = useDisclosure();
     const apiErrorModalDisclosure = useDisclosure();
 
+    const totalPage = Math.ceil(total / PAGE_SIZE);
+
+    const [accessKeys, setAccessKeys] = useState<AccessKey[]>([]);
     const [serverError, setServerError] = useState<string>();
     const [formattedAccessKey, setFormattedAccessKey] = useState<string>();
     const [currentAccessKey, setCurrentAccessKey] = useState<AccessKey>();
+    const [page, setPage] = useState<number>(1);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const handleRemoveAccessKey = async () => {
         if (!currentAccessKey) return;
@@ -74,6 +82,14 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
             `${currentAccessKey.accessUrl}${prefixUrlValue}#${encodeURIComponent(currentAccessKey.name)}`
         );
     }, [currentAccessKey]);
+
+    useEffect(() => {
+        setIsLoading(true);
+
+        getAccessKeys(server.id, { skip: (page - 1) * PAGE_SIZE })
+            .then(setAccessKeys)
+            .finally(() => setIsLoading(false));
+    }, [page]);
 
     return (
         <>
@@ -149,6 +165,18 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
 
                     <Table
                         aria-label="Servers list"
+                        bottomContent={
+                            totalPage > 1 && (
+                                <div className="flex justify-center">
+                                    <Pagination
+                                        initialPage={page}
+                                        total={totalPage}
+                                        variant="light"
+                                        onChange={setPage}
+                                    />
+                                </div>
+                            )
+                        }
                         color="primary"
                         isCompact={false}
                         isHeaderSticky={true}
@@ -163,7 +191,7 @@ export default function ServerAccessKeys({ server, accessKeys }: Props) {
                             <TableColumn align="center">PREFIX</TableColumn>
                             <TableColumn align="center">ACTIONS</TableColumn>
                         </TableHeader>
-                        <TableBody emptyContent={<NoResult />}>
+                        <TableBody emptyContent={<NoResult />} isLoading={isLoading} loadingContent={<Spinner />}>
                             {accessKeys.map((accessKey) => (
                                 <TableRow key={accessKey.id}>
                                     <TableCell>{accessKey.id}</TableCell>

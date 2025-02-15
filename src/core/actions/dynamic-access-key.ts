@@ -9,12 +9,13 @@ import {
     EditDynamicAccessKeyRequest,
     NewDynamicAccessKeyRequest
 } from "@/src/core/definitions";
+import { PAGE_SIZE } from "@/src/core/config";
 
 export async function getDynamicAccessKeys(
     filters?: { term?: string; skip?: number; take?: number },
     withKeysCount: boolean = false
 ): Promise<DynamicAccessKeyWithAccessKeysCount[]> {
-    const { skip = 0, take = 10, term } = filters || {};
+    const { skip = 0, take = PAGE_SIZE, term } = filters || {};
 
     return prisma.dynamicAccessKey.findMany({
         where: {
