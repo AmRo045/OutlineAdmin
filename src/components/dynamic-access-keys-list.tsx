@@ -5,6 +5,8 @@ import {
     Button,
     Chip,
     Input,
+    Pagination,
+    Spinner,
     Table,
     TableBody,
     TableCell,
@@ -23,23 +25,28 @@ import ConfirmModal from "@/src/components/modals/confirm-modal";
 import { DeleteIcon, EditIcon, EyeIcon, InfoIcon, KeyIcon, PlusIcon } from "@/src/components/icons";
 import NoResult from "@/src/components/no-result";
 import { DynamicAccessKeyWithAccessKeysCount } from "@/src/core/definitions";
-import { getDynamicAccessKeys, removeDynamicAccessKey } from "@/src/core/actions/dynamic-access-key";
+import {
+    getDynamicAccessKeys,
+    getDynamicAccessKeysCount,
+    removeDynamicAccessKey
+} from "@/src/core/actions/dynamic-access-key";
 import AccessKeyValidityChip from "@/src/components/access-key-validity-chip";
 import DynamicAccessKeyModal from "@/src/components/modals/dynamic-access-key-modal";
 import DynamicAccessKeyFormModal from "@/src/components/modals/dynamic-access-key-form-modal";
-import { app } from "@/src/core/config";
-
-interface Props {
-    data: DynamicAccessKeyWithAccessKeysCount[];
-}
+import { app, PAGE_SIZE } from "@/src/core/config";
 
 interface SearchFormProps {
     term: string;
 }
 
-export default function DynamicAccessKeysList({ data }: Props) {
-    const [dynamicAccessKeys, setDynamicAccessKeys] = useState<DynamicAccessKeyWithAccessKeysCount[]>(data);
+export default function DynamicAccessKeysList() {
+    const [dynamicAccessKeys, setDynamicAccessKeys] = useState<DynamicAccessKeyWithAccessKeysCount[]>([]);
     const [currentDynamicAccessKey, setCurrentDynamicAccessKey] = useState<DynamicAccessKey>();
+    const [page, setPage] = useState<number>(1);
+    const [totalItems, setTotalItems] = useState<number>(1);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+
+    const totalPage = Math.ceil(totalItems / PAGE_SIZE);
 
     const dynamicAccessKeyFormModalDisclosure = useDisclosure();
     const removeDynamicAccessKeyConfirmModalDisclosure = useDisclosure();
@@ -47,14 +54,16 @@ export default function DynamicAccessKeysList({ data }: Props) {
 
     const searchForm = useForm<SearchFormProps>();
     const handleSearch = async (data: SearchFormProps) => {
-        const filteredServers = await getDynamicAccessKeys(
-            {
-                term: data.term
-            },
-            true
-        );
+        const params = {
+            term: data.term
+        };
 
+        const filteredServers = await getDynamicAccessKeys(params, true);
+        const total = await getDynamicAccessKeysCount(params);
+
+        setTotalItems(total);
         setDynamicAccessKeys(filteredServers);
+        setPage(1);
     };
 
     const handleRemoveDynamicAccessKey = async () => {
@@ -73,8 +82,16 @@ export default function DynamicAccessKeysList({ data }: Props) {
     };
 
     useEffect(() => {
-        setDynamicAccessKeys(data);
-    }, [data]);
+        setIsLoading(true);
+
+        const params = { skip: (page - 1) * PAGE_SIZE, term: searchForm.getValues("term") };
+
+        getDynamicAccessKeys(params, true)
+            .then(setDynamicAccessKeys)
+            .finally(() => setIsLoading(false));
+
+        getDynamicAccessKeysCount(params).then(setTotalItems);
+    }, [page]);
 
     return (
         <>
@@ -139,6 +156,13 @@ export default function DynamicAccessKeysList({ data }: Props) {
 
                 <Table
                     aria-label="Dynamic access keys list"
+                    bottomContent={
+                        totalPage > 1 && (
+                            <div className="flex justify-center">
+                                <Pagination initialPage={page} total={totalPage} variant="light" onChange={setPage} />
+                            </div>
+                        )
+                    }
                     color="primary"
                     isCompact={false}
                     isHeaderSticky={true}
@@ -155,7 +179,7 @@ export default function DynamicAccessKeysList({ data }: Props) {
                         <TableColumn align="center">VALIDITY</TableColumn>
                         <TableColumn align="center">ACTIONS</TableColumn>
                     </TableHeader>
-                    <TableBody emptyContent={<NoResult />}>
+                    <TableBody emptyContent={<NoResult />} isLoading={isLoading} loadingContent={<Spinner />}>
                         {dynamicAccessKeys.map((dynamicAccessKey) => (
                             <TableRow key={dynamicAccessKey.id}>
                                 <TableCell>{dynamicAccessKey.id}</TableCell>

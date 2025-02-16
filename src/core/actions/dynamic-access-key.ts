@@ -30,6 +30,17 @@ export async function getDynamicAccessKeys(
     });
 }
 
+export async function getDynamicAccessKeysCount(filters?: { term?: string }): Promise<number> {
+    const { term } = filters || {};
+
+    return prisma.dynamicAccessKey.count({
+        where: {
+            OR: term ? [{ name: { contains: term } }] : undefined
+        },
+        orderBy: [{ id: "desc" }]
+    });
+}
+
 export async function getDynamicAccessKeyById(
     id: number,
     withKeys: boolean = false
