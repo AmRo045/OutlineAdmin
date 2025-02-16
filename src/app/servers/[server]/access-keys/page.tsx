@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 import ServerAccessKeys from "@/src/components/server-access-keys";
 import { getServerById } from "@/src/core/actions/server";
-import { getAccessKeys } from "@/src/core/actions/access-key";
+import { getAccessKeysCount } from "@/src/core/actions/access-key";
 import { createPageTitle } from "@/src/core/utils";
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ export default async function ServerAccessKeysPage({ params }: Props) {
         notFound();
     }
 
-    const accessKeys = await getAccessKeys(server.id);
+    const totalAccessKeys = await getAccessKeysCount(server.id);
 
-    return <ServerAccessKeys accessKeys={accessKeys} server={server} />;
+    return <ServerAccessKeys server={server} total={totalAccessKeys} />;
 }

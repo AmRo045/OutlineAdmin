@@ -15,17 +15,15 @@ import OutlineClient from "@/src/core/outline/outline-client";
 import { OutlineSyncService } from "@/src/core/outline/outline-sync-service";
 
 export async function getServers(
-    filters?: { term?: string; skip?: number; take?: number },
+    filters?: { term?: string },
     withKeysCount: boolean = false
 ): Promise<ServerWithAccessKeysCount[]> {
-    const { term, skip = 0, take = 10 } = filters || {};
+    const { term } = filters || {};
 
     return prisma.server.findMany({
         where: {
             OR: term ? [{ hostnameOrIp: { contains: term } }, { name: { contains: term } }] : undefined
         },
-        skip,
-        take,
         orderBy: [{ id: "desc" }],
         include: {
             _count: withKeysCount ? { select: { accessKeys: true } } : undefined

@@ -7,12 +7,13 @@ import prisma from "@/prisma/db";
 import { EditAccessKeyRequest, NewAccessKeyRequest } from "@/src/core/definitions";
 import OutlineClient from "@/src/core/outline/outline-client";
 import { convertDataLimitToUnit } from "@/src/core/utils";
+import { PAGE_SIZE } from "@/src/core/config";
 
 export async function getAccessKeys(
     serverId: number,
     filters?: { skip?: number; take?: number }
 ): Promise<AccessKey[]> {
-    const { skip = 0, take = 10 } = filters || {};
+    const { skip = 0, take = PAGE_SIZE } = filters || {};
 
     return prisma.accessKey.findMany({
         where: {
@@ -20,6 +21,15 @@ export async function getAccessKeys(
         },
         skip,
         take,
+        orderBy: [{ id: "desc" }]
+    });
+}
+
+export async function getAccessKeysCount(serverId: number): Promise<number> {
+    return prisma.accessKey.count({
+        where: {
+            serverId
+        },
         orderBy: [{ id: "desc" }]
     });
 }
