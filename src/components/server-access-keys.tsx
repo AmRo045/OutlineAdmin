@@ -57,11 +57,24 @@ export default function ServerAccessKeys({ server, total }: Props) {
         if (!currentAccessKey) return;
         try {
             await removeAccessKey(server.id, currentAccessKey.id, currentAccessKey.apiId);
+            await updateData();
         } catch (error) {
             setServerError((error as object).toString());
             apiErrorModalDisclosure.onOpen();
         } finally {
             await syncServer(server);
+        }
+    };
+
+    const updateData = async () => {
+        setIsLoading(true);
+
+        try {
+            const data = await getAccessKeys(server.id, { skip: (page - 1) * PAGE_SIZE });
+
+            setAccessKeys(data);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -84,11 +97,7 @@ export default function ServerAccessKeys({ server, total }: Props) {
     }, [currentAccessKey]);
 
     useEffect(() => {
-        setIsLoading(true);
-
-        getAccessKeys(server.id, { skip: (page - 1) * PAGE_SIZE })
-            .then(setAccessKeys)
-            .finally(() => setIsLoading(false));
+        updateData();
     }, [page]);
 
     return (
@@ -99,6 +108,7 @@ export default function ServerAccessKeys({ server, total }: Props) {
                 accessKeyData={currentAccessKey}
                 disclosure={accessKeyFormModalDisclosure}
                 serverId={server.id}
+                onSuccess={updateData}
             />
 
             <MessageModal
