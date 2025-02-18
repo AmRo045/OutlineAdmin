@@ -30,9 +30,10 @@ interface Props {
     disclosure: UseDisclosureReturn;
     serverId: number;
     accessKeyData?: AccessKey;
+    onSuccess?: () => void;
 }
 
-export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData }: Props) {
+export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData, onSuccess }: Props) {
     const form = useForm<NewAccessKeyRequest | EditAccessKeyRequest>();
 
     const [serverError, setServerError] = useState<string>();
@@ -58,6 +59,10 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
             }
 
             disclosure.onClose();
+
+            if (onSuccess) {
+                onSuccess();
+            }
         } catch (error) {
             setServerError(() => (error as object).toString());
         } finally {

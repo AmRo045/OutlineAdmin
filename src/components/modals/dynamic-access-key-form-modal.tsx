@@ -35,9 +35,10 @@ import CustomDatePicker from "@/src/components/custom-date-picker";
 interface Props {
     disclosure: UseDisclosureReturn;
     dynamicAccessKeyData?: DynamicAccessKey;
+    onSuccess?: () => void;
 }
 
-export default function DynamicAccessKeyFormModal({ disclosure, dynamicAccessKeyData }: Props) {
+export default function DynamicAccessKeyFormModal({ disclosure, dynamicAccessKeyData, onSuccess }: Props) {
     const form = useForm<NewDynamicAccessKeyRequest | EditDynamicAccessKeyRequest>();
 
     const [serverError, setServerError] = useState<string>();
@@ -68,6 +69,10 @@ export default function DynamicAccessKeyFormModal({ disclosure, dynamicAccessKey
             }
 
             disclosure.onClose();
+
+            if (onSuccess) {
+                onSuccess();
+            }
         } catch (error) {
             setServerError(() => (error as object).toString());
         }

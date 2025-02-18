@@ -70,6 +70,7 @@ export default function DynamicAccessKeysList() {
         if (!currentDynamicAccessKey) return;
 
         await removeDynamicAccessKey(currentDynamicAccessKey.id);
+        await updateData();
     };
 
     const getCurrentAccessKeyUrl = () => {
@@ -81,16 +82,26 @@ export default function DynamicAccessKeysList() {
         return `${swappedProtocol}/api/dak/${currentDynamicAccessKey.path}#${name}`;
     };
 
-    useEffect(() => {
-        setIsLoading(true);
-
+    const updateData = async () => {
         const params = { skip: (page - 1) * PAGE_SIZE, term: searchForm.getValues("term") };
 
-        getDynamicAccessKeys(params, true)
-            .then(setDynamicAccessKeys)
-            .finally(() => setIsLoading(false));
+        setIsLoading(true);
 
-        getDynamicAccessKeysCount(params).then(setTotalItems);
+        try {
+            const data = await getDynamicAccessKeys(params, true);
+
+            setDynamicAccessKeys(data);
+
+            const count = await getDynamicAccessKeysCount(params);
+
+            setTotalItems(count);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        updateData();
     }, [page]);
 
     return (
@@ -100,6 +111,7 @@ export default function DynamicAccessKeysList() {
             <DynamicAccessKeyFormModal
                 disclosure={dynamicAccessKeyFormModalDisclosure}
                 dynamicAccessKeyData={currentDynamicAccessKey}
+                onSuccess={updateData}
             />
 
             <ConfirmModal
