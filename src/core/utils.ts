@@ -35,8 +35,8 @@ export function convertDataLimitToUnit(value: number, unit: DataLimitUnit): numb
 export function getCurrentDateAsString(): string {
     const date = new Date();
     const year = date.getFullYear();
-    const month = ("0" + date.getMonth() + 1).slice(-2);
-    const day = ("0" + date.getDay()).slice(-2);
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
 }

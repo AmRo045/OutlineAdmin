@@ -24,8 +24,8 @@ export default function CustomDatePicker({ label, value, onChange }: Props) {
         if (!onChange) return;
 
         if (v) {
-            const month = ("0" + v.month).slice(-2);
-            const day = ("0" + v.day).slice(-2);
+            const month = String(v.month).padStart(2, "0");
+            const day = String(v.day).padStart(2, "0");
 
             const formattedDate = `${v.year}-${month}-${day}`;
 
