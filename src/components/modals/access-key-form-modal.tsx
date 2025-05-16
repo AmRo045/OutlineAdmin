@@ -25,6 +25,7 @@ import { createAccessKey, updateAccessKey } from "@/src/core/actions/access-key"
 import { AccessKeyPrefixes } from "@/src/core/outline/access-key-prefix";
 import CustomDatePicker from "@/src/components/custom-date-picker";
 import { syncServer } from "@/src/core/actions/server";
+import { MAX_DATA_LIMIT_FOR_ACCESS_KEYS } from "@/src/core/config";
 
 interface Props {
     disclosure: UseDisclosureReturn;
@@ -162,7 +163,7 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
                                 {...form.register("dataLimit", {
                                     required: false,
                                     min: 0,
-                                    max: 1_000_000_000_000_000,
+                                    max: MAX_DATA_LIMIT_FOR_ACCESS_KEYS,
                                     setValueAs: (v) => parseInt(v)
                                 })}
                             />

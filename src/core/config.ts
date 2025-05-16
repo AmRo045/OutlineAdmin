@@ -1,6 +1,7 @@
 import { Fira_Code as FontMono, Inter as FontSans } from "next/font/google";
 
 export const PAGE_SIZE = 30;
+export const MAX_DATA_LIMIT_FOR_ACCESS_KEYS = 1_000_000_000_000_000;
 
 export const AUTH_SESSION_KEY = "oa-auth-session";
 

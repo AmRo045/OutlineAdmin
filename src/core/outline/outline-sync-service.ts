@@ -4,6 +4,7 @@ import { AccessKey, Server } from "@prisma/client";
 import prisma from "@/prisma/db";
 import OutlineClient from "@/src/core/outline/outline-client";
 import { DataLimitUnit, Outline } from "@/src/core/definitions";
+import { MAX_DATA_LIMIT_FOR_ACCESS_KEYS } from "../config";
 
 export class OutlineSyncService {
     protected client: OutlineClient;
@@ -197,6 +198,8 @@ export class OutlineSyncService {
             [DataLimitUnit.GB, 1000 * 1000 * 1000]
         ]);
 
-        return value * (unitFactors.get(unit) ?? 1);
+        const safeValue = Math.min(value, MAX_DATA_LIMIT_FOR_ACCESS_KEYS);
+
+        return safeValue * (unitFactors.get(unit) ?? 1);
     }
 }
