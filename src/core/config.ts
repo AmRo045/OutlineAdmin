@@ -1,5 +1,3 @@
-import { Fira_Code as FontMono, Inter as FontSans } from "next/font/google";
-
 export const PAGE_SIZE = 30;
 export const MAX_DATA_LIMIT_FOR_ACCESS_KEYS = 1_000_000_000_000_000;
 
@@ -9,25 +7,10 @@ export const ADMIN_PASSWORD_ROUTE = "/admin";
 export const LOGIN_ROUTE = "/";
 export const HOME_ROUTE = "/servers";
 
-const fontSans = FontSans({
-    subsets: ["latin"],
-    variable: "--font-sans"
-});
-
-const fontMono = FontMono({
-    subsets: ["latin"],
-    variable: "--font-mono"
-});
-
 export const app = {
     name: "Outline Admin",
     description:
         "Outline Admin is a web interface for the Outline Manager API, providing a simple and user-friendly UI for managing VPN servers.",
-
-    fonts: {
-        fontSans,
-        fontMono
-    },
 
     links: {
         github: "https://github.com/AmRo045/OutlineAdmin",
