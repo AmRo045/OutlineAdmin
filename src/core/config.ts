@@ -18,7 +18,7 @@ export const app = {
         me: "https://amro045.github.io",
         outlineVpnWiki: {
             index: "https://www.reddit.com/r/outlinevpn/wiki/index",
-            dynamicAccessKeys: "https://www.reddit.com/r/outlinevpn/wiki/index/dynamic_access_keys"
+            dynamicAccessKeys: "https://developers.google.com/outline/docs/guides/service-providers/dynamic-access-keys"
         }
     },
 
