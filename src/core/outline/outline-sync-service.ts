@@ -1,10 +1,11 @@
 /* eslint-disable no-console */
 import { AccessKey, Server } from "@prisma/client";
 
+import { MAX_DATA_LIMIT_FOR_ACCESS_KEYS } from "../config";
+
 import prisma from "@/prisma/db";
 import OutlineClient from "@/src/core/outline/outline-client";
 import { DataLimitUnit, Outline } from "@/src/core/definitions";
-import { MAX_DATA_LIMIT_FOR_ACCESS_KEYS } from "../config";
 
 export class OutlineSyncService {
     protected client: OutlineClient;
@@ -44,6 +45,7 @@ export class OutlineSyncService {
                 where: { id: this.server.id },
                 data: {
                     name: remoteServerInfo.name,
+                    hostnameOrIp: remoteServerInfo.hostnameForAccessKeys,
                     hostnameForNewAccessKeys: remoteServerInfo.hostnameForAccessKeys,
                     portForNewAccessKeys: remoteServerInfo.portForNewAccessKeys,
                     isMetricsEnabled: remoteServerInfo.metricsEnabled,
