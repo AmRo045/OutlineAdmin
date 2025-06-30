@@ -13,9 +13,9 @@ Outline Admin is a web interface for the Outline Manager API, providing a simple
 
 1. [Added Features](#added-features)
 2. [Installation](#installation)
-   - [Using Docker](#installation---docker)
-   - [Using Docker Compose](#using-docker-compose)
-   - [Using NodeJS](#installation---nodejs)
+   - [Docker](#docker)
+   - [Docker Compose](#docker-compose)
+   - [NodeJS](#nodejs)
 3. [Development](#development)
 4. [Admin Password](#admin-password)
 5. [Donation](#donation)
@@ -23,15 +23,15 @@ Outline Admin is a web interface for the Outline Manager API, providing a simple
 
 ## Added Features
 
-- Set expiration dates for Access Keys.
-- Generate QR codes for Access Keys.
-- Create dynamic Access Keys.
-- Add prefix to Access Keys.
+- Expiration dates for Access Keys.
+- QR codes for Access Keys.
+- Dynamic Access Keys.
+- Access Key prefix.
 
 
 ## Installation
 
-### Installation - Docker
+### Docker
 
 Before installing Outline Admin, ensure that Docker and Docker Compose are installed on your machine. Use the following commands to start the container:
 
@@ -40,7 +40,7 @@ Before installing Outline Admin, ensure that Docker and Docker Compose are insta
 docker run -d -p 3000:3000 --name outline-admin -v ./oa_data:/app/data --restart unless-stopped amro045/outline-admin:latest
 ```
 
-#### Using Docker Compose
+#### Docker Compose
 
 To simplify the installation, you can use a Docker Compose file:
 
@@ -52,7 +52,7 @@ wget -O docker-compose.yml https://raw.githubusercontent.com/AmRo045/OutlineAdmi
 docker compose up -d
 ```
 
-### Installation - NodeJS
+### NodeJS
 
 To run this project on your machine, ensure you have Node.js v20 or later and npm v10 or later installed.
 Follow the steps below to set up Outline Admin using Node.js:
