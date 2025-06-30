@@ -17,8 +17,9 @@ Outline Admin is a web interface for the Outline Manager API, providing a simple
    - [Using Docker Compose](#using-docker-compose)
    - [Using NodeJS](#installation---nodejs)
 3. [Development](#development)
-4. [Donation](#donation)
-5. [Screenshots](#screenshots)
+4. [Admin Password](#admin-password)
+5. [Donation](#donation)
+6. [Screenshots](#screenshots)
 
 ## Added Features
 
@@ -128,6 +129,22 @@ npm run setup
 
 ```bash
 npm run dev
+```
+
+## Admin Password
+
+To update the admin user password, use one of the following commands.
+
+For Docker containers:
+
+```bash
+docker exec -it outline-admin npm run password:change "your new password"
+```
+
+For non-Docker setup:
+
+```bash
+npm run password:change "your new password"
 ```
 
 ## Donation
