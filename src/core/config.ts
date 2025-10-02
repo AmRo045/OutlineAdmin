@@ -1,5 +1,6 @@
 export const PAGE_SIZE = 30;
-export const MAX_DATA_LIMIT_FOR_ACCESS_KEYS = 1_000_000_000_000_000;
+export const MAX_DATA_LIMIT_FOR_ACCESS_KEYS = 100_000_000;
+export const BYTES_TO_MB_RATE = 1000 * 1000;
 
 export const AUTH_SESSION_KEY = "oa-auth-session";
 
