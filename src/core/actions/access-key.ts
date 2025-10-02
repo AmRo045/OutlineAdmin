@@ -6,8 +6,7 @@ import { AccessKey } from "@prisma/client";
 import prisma from "@/prisma/db";
 import { EditAccessKeyRequest, NewAccessKeyRequest } from "@/src/core/definitions";
 import OutlineClient from "@/src/core/outline/outline-client";
-import { convertDataLimitToUnit } from "@/src/core/utils";
-import { PAGE_SIZE } from "@/src/core/config";
+import { BYTES_TO_MB_RATE, PAGE_SIZE } from "@/src/core/config";
 
 export async function getAccessKeys(
     serverId: number,
@@ -46,10 +45,7 @@ export async function createAccessKey(data: NewAccessKeyRequest): Promise<void> 
     await outlineClient.renameKey(newAccessKey.id, data.name);
 
     if (data.dataLimit) {
-        await outlineClient.setDataLimitForKey(
-            newAccessKey.id,
-            convertDataLimitToUnit(Number(data.dataLimit), data.dataLimitUnit)
-        );
+        await outlineClient.setDataLimitForKey(newAccessKey.id, Number(data.dataLimit) * BYTES_TO_MB_RATE);
     }
 
     await prisma.accessKey.create({
@@ -58,7 +54,7 @@ export async function createAccessKey(data: NewAccessKeyRequest): Promise<void> 
             name: data.name,
             prefix: data.prefix,
             expiresAt: data.expiresAt,
-            dataLimit: Number(data.dataLimit),
+            dataLimit: Number(data.dataLimit) ?? 0,
             dataLimitUnit: data.dataLimitUnit,
             apiId: newAccessKey.id,
             accessUrl: newAccessKey.accessUrl,
@@ -88,10 +84,7 @@ export async function updateAccessKey(data: EditAccessKeyRequest): Promise<void>
     await outlineClient.renameKey(accessKey.apiId, data.name);
 
     if (data.dataLimit) {
-        await outlineClient.setDataLimitForKey(
-            accessKey.apiId,
-            convertDataLimitToUnit(Number(data.dataLimit), data.dataLimitUnit)
-        );
+        await outlineClient.setDataLimitForKey(accessKey.apiId, Number(data.dataLimit) * BYTES_TO_MB_RATE);
     } else {
         await outlineClient.removeDataLimitForKey(accessKey.apiId);
     }
@@ -104,7 +97,7 @@ export async function updateAccessKey(data: EditAccessKeyRequest): Promise<void>
             name: data.name,
             expiresAt: data.expiresAt,
             prefix: data.prefix,
-            dataLimit: Number(data.dataLimit),
+            dataLimit: Number(data.dataLimit) ?? 0,
             dataLimitUnit: data.dataLimitUnit
         }
     });

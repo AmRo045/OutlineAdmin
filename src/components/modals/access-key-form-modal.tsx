@@ -40,7 +40,6 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
     const [serverError, setServerError] = useState<string>();
 
     const [selectedExpirationDate, setSelectedExpirationDate] = useState<string>();
-    const [selectedDataLimitUnit, setSelectedDataLimitUnit] = useState<string>(DataLimitUnit.Bytes);
     const [selectedPrefix, setSelectedPrefix] = useState<string | null>(null);
 
     const actualSubmit = async (data: NewAccessKeyRequest | EditAccessKeyRequest) => {
@@ -48,7 +47,7 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
 
         try {
             data.serverId ??= serverId;
-            data.dataLimitUnit ??= DataLimitUnit.Bytes;
+            data.dataLimitUnit = DataLimitUnit.MB;
 
             if (accessKeyData) {
                 const updateData = data as EditAccessKeyRequest;
@@ -61,13 +60,13 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
 
             disclosure.onClose();
 
+            await syncServer(serverId);
+
             if (onSuccess) {
                 onSuccess();
             }
         } catch (error) {
             setServerError(() => (error as object).toString());
-        } finally {
-            await syncServer(serverId);
         }
     };
 
@@ -82,10 +81,6 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
     }, [selectedExpirationDate]);
 
     useEffect(() => {
-        form.setValue("dataLimitUnit", selectedDataLimitUnit as DataLimitUnit, { shouldDirty: true });
-    }, [selectedDataLimitUnit]);
-
-    useEffect(() => {
         form.setValue("prefix", selectedPrefix, { shouldDirty: true });
     }, [selectedPrefix]);
 
@@ -98,7 +93,6 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
                     serverId: accessKeyData.serverId,
                     name: accessKeyData.name,
                     dataLimit: accessKeyData.dataLimit,
-                    dataLimitUnit: accessKeyData.dataLimitUnit as DataLimitUnit,
                     expiresAt: accessKeyData.expiresAt,
                     prefix: accessKeyData.prefix
                 });
@@ -109,20 +103,17 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
                     setSelectedExpirationDate(undefined);
                 }
 
-                setSelectedDataLimitUnit(accessKeyData.dataLimitUnit);
                 setSelectedPrefix(accessKeyData.prefix);
             } else {
                 form.reset({
                     serverId: serverId,
                     name: "",
                     dataLimit: null,
-                    dataLimitUnit: DataLimitUnit.Bytes,
                     expiresAt: null,
                     prefix: null
                 });
 
                 setSelectedExpirationDate(undefined);
-                setSelectedDataLimitUnit(DataLimitUnit.Bytes);
                 setSelectedPrefix(null);
             }
         }
@@ -155,6 +146,7 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
 
                         <div className="flex gap-2">
                             <Input
+                                endContent={<span>MB</span>}
                                 isInvalid={!!form.formState.errors.dataLimit}
                                 label="Data limit"
                                 size="sm"
@@ -167,31 +159,6 @@ export default function AccessKeyFormModal({ disclosure, serverId, accessKeyData
                                     setValueAs: (v) => parseInt(v)
                                 })}
                             />
-
-                            <Dropdown>
-                                <DropdownTrigger>
-                                    <Button
-                                        className="bg-default-100 text-sm"
-                                        radius="sm"
-                                        size="lg"
-                                        type="button"
-                                        variant="ghost"
-                                    >
-                                        {selectedDataLimitUnit}
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                    defaultSelectedKeys={new Set([selectedDataLimitUnit])}
-                                    selectionMode="single"
-                                    variant="flat"
-                                    onSelectionChange={(v) => setSelectedDataLimitUnit(v.currentKey!)}
-                                >
-                                    <DropdownItem key={DataLimitUnit.Bytes}>{DataLimitUnit.Bytes}</DropdownItem>
-                                    <DropdownItem key={DataLimitUnit.KB}>{DataLimitUnit.KB}</DropdownItem>
-                                    <DropdownItem key={DataLimitUnit.MB}>{DataLimitUnit.MB}</DropdownItem>
-                                    <DropdownItem key={DataLimitUnit.GB}>{DataLimitUnit.GB}</DropdownItem>
-                                </DropdownMenu>
-                            </Dropdown>
                         </div>
 
                         <div className="flex gap-2">

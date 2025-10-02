@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { AccessKey, Server } from "@prisma/client";
 
-import { MAX_DATA_LIMIT_FOR_ACCESS_KEYS } from "../config";
+import { BYTES_TO_MB_RATE } from "../config";
 
 import prisma from "@/prisma/db";
 import OutlineClient from "@/src/core/outline/outline-client";
@@ -83,13 +83,7 @@ export class OutlineSyncService {
                 (localAccessKey) => localAccessKey.apiId === remoteAccessKey.id
             );
 
-            const dataLimitUnit = localAccessKey
-                ? (localAccessKey.dataLimitUnit as DataLimitUnit)
-                : DataLimitUnit.Bytes;
-
-            const dataLimit = remoteAccessKey.dataLimitInBytes
-                ? this.convertDataLimitToUnit(remoteAccessKey.dataLimitInBytes, dataLimitUnit)
-                : null;
+            const dataLimit = this.bytesToMb(remoteAccessKey.dataLimitInBytes);
 
             if (localAccessKey) {
                 // this means we need to update the access key
@@ -105,6 +99,7 @@ export class OutlineSyncService {
                     data: {
                         name: accessKeyName,
                         dataLimit: dataLimit,
+                        dataLimitUnit: DataLimitUnit.MB,
                         dataUsage: metrics.bytesTransferredByUserId[remoteAccessKey.id]
                     }
                 });
@@ -123,8 +118,8 @@ export class OutlineSyncService {
                         name: remoteAccessKey.name,
                         prefix: null,
                         expiresAt: null,
-                        dataLimit: dataLimit,
-                        dataLimitUnit: DataLimitUnit.Bytes,
+                        dataLimit: this.bytesToMb(metrics.bytesTransferredByUserId[remoteAccessKey.id])!,
+                        dataLimitUnit: DataLimitUnit.MB,
                         apiId: remoteAccessKey.id,
                         accessUrl: remoteAccessKey.accessUrl,
                         method: remoteAccessKey.method,
@@ -192,16 +187,9 @@ export class OutlineSyncService {
         }
     }
 
-    protected convertDataLimitToUnit(value: number, unit: DataLimitUnit): number {
-        const unitFactors: Map<DataLimitUnit, number> = new Map([
-            [DataLimitUnit.Bytes, 1],
-            [DataLimitUnit.KB, 1024],
-            [DataLimitUnit.MB, 1000 * 1000],
-            [DataLimitUnit.GB, 1000 * 1000 * 1000]
-        ]);
+    protected bytesToMb(value?: number | null): number | null {
+        if (!value) return null;
 
-        const safeValue = Math.min(value, MAX_DATA_LIMIT_FOR_ACCESS_KEYS);
-
-        return safeValue * (unitFactors.get(unit) ?? 1);
+        return Math.round(value / BYTES_TO_MB_RATE);
     }
 }
