@@ -38,6 +38,7 @@ export default function CustomDatePicker({ label, value, onChange }: Props) {
     return (
         <div className="grid w-full">
             <DatePicker
+                aria-label="Access key expiration date picker"
                 className="col-start-1 row-start-1 opacity-0"
                 minValue={parseDate(getCurrentDateAsString())}
                 radius="sm"
