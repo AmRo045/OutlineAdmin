@@ -6,21 +6,23 @@ const defaultOptions: Partial<Options> = {
     height: 264,
     margin: 2,
     qrOptions: {
-        typeNumber: 8,
+        typeNumber: 0,
         mode: "Byte",
-        errorCorrectionLevel: "L"
+        errorCorrectionLevel: "Q"
     },
     imageOptions: {
+        saveAsBlob: true,
         hideBackgroundDots: true,
         imageSize: 0.4,
         margin: 6
     },
     dotsOptions: {
         type: "extra-rounded",
-        color: "gray"
+        color: "gray",
+        roundSize: true
     },
     backgroundOptions: {
-        color: "transparent"
+        color: "#f4f4f5"
     },
     cornersSquareOptions: {
         type: "dot",

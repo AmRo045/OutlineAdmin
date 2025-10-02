@@ -4,6 +4,6 @@
 
 @layer utilities {
     :root {
-        --qr-code-text: theme("colors.default-600");
+        --qr-code-text: #52525b;
     }
 }
