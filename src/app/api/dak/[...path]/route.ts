@@ -84,7 +84,7 @@ const selectAccessKey = async (
 
     switch (dynamicAccessKey.loadBalancerAlgorithm) {
         case LoadBalancerAlgorithm.UserIpAddress:
-            return selectedAccessKeyByClientIp(accessKeys, clientIp);
+            return selectAccessKeyByClientIp(accessKeys, clientIp);
 
         case LoadBalancerAlgorithm.RandomServerKeyOnEachConnection:
             return selectRandomServerKey(accessKeys);
@@ -95,7 +95,7 @@ const selectAccessKey = async (
     }
 };
 
-const selectedAccessKeyByClientIp = (accessKeys: AccessKey[], clientIp: string) => {
+const selectAccessKeyByClientIp = (accessKeys: AccessKey[], clientIp: string) => {
     const hash = crc32(clientIp);
     const index = hash % accessKeys.length;
 
