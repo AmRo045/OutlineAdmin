@@ -20,7 +20,7 @@ interface ContextProps {
 export async function GET(req: Request, context: ContextProps) {
     const path = context.params.path.join("/");
 
-    const dynamicAccessKey = await getDynamicAccessKeyByPath(path, true);
+    const dynamicAccessKey = await getDynamicAccessKeyByPath(path);
 
     if (!dynamicAccessKey) {
         return NextResponse.json({
