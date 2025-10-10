@@ -31,8 +31,8 @@ const navItems = [
         icon: <DynamicAccessKeyIcon size={24} />
     },
     {
-        label: "Health Check",
-        pathName: "/health-check",
+        label: "Health Checks",
+        pathName: "/health-checks",
         icon: <HealthCheckIcon size={24} />
     }
 ];

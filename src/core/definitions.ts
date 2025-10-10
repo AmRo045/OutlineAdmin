@@ -1,5 +1,5 @@
 import { JWTPayload } from "jose";
-import { AccessKey, DynamicAccessKey, Server } from "@prisma/client";
+import { AccessKey, DynamicAccessKey, HealthCheck, Server } from "@prisma/client";
 import { SVGProps } from "react";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
@@ -20,6 +20,8 @@ export type ServerWithAccessKeys = Server & { accessKeys: AccessKey[] };
 
 export type DynamicAccessKeyWithAccessKeysCount = DynamicAccessKey & { _count?: { accessKeys: number } };
 export type DynamicAccessKeyWithAccessKeys = DynamicAccessKey & { accessKeys: AccessKey[] };
+
+export type HealthCheckWithServer = HealthCheck & { server: Server };
 
 export interface NewServerRequest {
     managementJson: string;
@@ -96,6 +98,28 @@ export interface DynamicAccessKeyApiResponse {
     error?: {
         message?: string;
     };
+}
+
+export interface NewHealthCheckRequest {
+    serverId: number;
+    isAvailable: boolean;
+    lastCheckedAt: Date | null;
+    notification: string | null;
+    notificationConfig: string | null;
+    notificationSentAt: Date | null;
+    notificationCooldown: number;
+    interval: number;
+}
+
+export interface UpdateHealthCheckRequest {
+    id: number;
+    isAvailable: boolean;
+    lastCheckedAt: Date | null;
+    notification: string | null;
+    notificationConfig: string | null;
+    notificationSentAt: Date | null;
+    notificationCooldown: number;
+    interval: number;
 }
 
 export namespace Outline {

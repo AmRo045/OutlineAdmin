@@ -2,29 +2,27 @@
 
 import {
     Button,
-    ButtonGroup,
-    Card,
-    CardBody,
-    CardFooter,
-    CardHeader,
-    Chip,
-    Divider,
+    Drawer,
+    DrawerBody,
+    DrawerContent,
+    DrawerFooter,
+    DrawerHeader,
     Input,
+    Pagination,
+    Radio,
+    RadioGroup,
     useDisclosure
 } from "@heroui/react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { DynamicAccessKey } from "@prisma/client";
+import { HealthCheck } from "@prisma/client";
+import { range } from "@heroui/shared-utils";
 
-import ConfirmModal from "@/src/components/modals/confirm-modal";
-import { PlusIcon } from "@/src/components/icons";
-import { DynamicAccessKeyWithAccessKeysCount } from "@/src/core/definitions";
-import {
-    getDynamicAccessKeys,
-    getDynamicAccessKeysCount,
-    removeDynamicAccessKey
-} from "@/src/core/actions/dynamic-access-key";
+import { HealthCheckWithServer } from "@/src/core/definitions";
 import { PAGE_SIZE } from "@/src/core/config";
+import { getHealthChecks, getHealthChecksCount } from "@/src/core/actions/health-check";
+import HealthCheckListItem from "@/src/components/health-check-list-item";
+import HealthCheckListItemSkeleton from "@/src/components/health-check-list-item-skeleton";
 
 interface SearchFormProps {
     term: string;
@@ -56,46 +54,27 @@ const temp = [
 ];
 
 export default function HealthCheckList() {
-    const [dynamicAccessKeys, setDynamicAccessKeys] = useState<DynamicAccessKeyWithAccessKeysCount[]>([]);
-    const [currentDynamicAccessKey, setCurrentDynamicAccessKey] = useState<DynamicAccessKey>();
+    const [healthChecks, setHealthChecks] = useState<HealthCheckWithServer[]>([]);
+    const [currentHealthCheck, setCurrentHealthCheck] = useState<HealthCheck>();
     const [page, setPage] = useState<number>(1);
     const [totalItems, setTotalItems] = useState<number>(1);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const totalPage = Math.ceil(totalItems / PAGE_SIZE);
 
-    const dynamicAccessKeyFormModalDisclosure = useDisclosure();
-    const removeDynamicAccessKeyConfirmModalDisclosure = useDisclosure();
-    const dynamicAccessKeyModalDisclosure = useDisclosure();
-
+    const healthCheckFormDrawerDisclosure = useDisclosure();
     const searchForm = useForm<SearchFormProps>();
     const handleSearch = async (data: SearchFormProps) => {
         const params = {
             term: data.term
         };
 
-        const filteredServers = await getDynamicAccessKeys(params, true);
-        const total = await getDynamicAccessKeysCount(params);
+        const filteredServers = await getHealthChecks(params);
+        const total = await getHealthChecksCount(params);
 
         setTotalItems(total);
-        setDynamicAccessKeys(filteredServers);
+        setHealthChecks(filteredServers);
         setPage(1);
-    };
-
-    const handleRemoveDynamicAccessKey = async () => {
-        if (!currentDynamicAccessKey) return;
-
-        await removeDynamicAccessKey(currentDynamicAccessKey.id);
-        await updateData();
-    };
-
-    const getCurrentAccessKeyUrl = () => {
-        if (!currentDynamicAccessKey) return;
-
-        const swappedProtocol = window.location.origin.replace("http://", "ssconf://").replace("https://", "ssconf://");
-        const name = encodeURIComponent(currentDynamicAccessKey.name);
-
-        return `${swappedProtocol}/api/dak/${currentDynamicAccessKey.path}#${name}`;
     };
 
     const updateData = async () => {
@@ -104,11 +83,11 @@ export default function HealthCheckList() {
         setIsLoading(true);
 
         try {
-            const data = await getDynamicAccessKeys(params, true);
+            const data = await getHealthChecks(params);
 
-            setDynamicAccessKeys(data);
+            setHealthChecks(data);
 
-            const count = await getDynamicAccessKeysCount(params);
+            const count = await getHealthChecksCount(params);
 
             setTotalItems(count);
         } finally {
@@ -122,18 +101,50 @@ export default function HealthCheckList() {
 
     return (
         <>
-            <ConfirmModal
-                body={
-                    <div className="grid gap-2">
-                        <span>Are you sure you want to delete this health-check?</span>
-                        <p className="text-default-500 text-sm whitespace-pre-wrap break-all">Test value</p>
-                    </div>
-                }
-                confirmLabel="Remove"
-                disclosure={removeDynamicAccessKeyConfirmModalDisclosure}
-                title="Remove Health Check"
-                onConfirm={handleRemoveDynamicAccessKey}
-            />
+            <Drawer
+                backdrop="blur"
+                isOpen={healthCheckFormDrawerDisclosure.isOpen}
+                radius="none"
+                onOpenChange={healthCheckFormDrawerDisclosure.onOpenChange}
+            >
+                <DrawerContent>
+                    {(onClose) => (
+                        <>
+                            <DrawerHeader className="flex flex-col gap-1">Health check edit form</DrawerHeader>
+                            <DrawerBody>
+                                <form className="grid gap-4">
+                                    <RadioGroup label="Notification type">
+                                        <Radio value="telegram">Telegram</Radio>
+                                        <Radio value="endpoint">Endpoint</Radio>
+                                        <Radio value="script">Script</Radio>
+                                    </RadioGroup>
+
+                                    <Input
+                                        label="Notification cooldown (minute)"
+                                        placeholder="e.g. 60"
+                                        type="number"
+                                        variant="underlined"
+                                    />
+                                    <Input
+                                        label="Notification interval (minute)"
+                                        placeholder="e.g. 5"
+                                        type="number"
+                                        variant="underlined"
+                                    />
+                                </form>
+                            </DrawerBody>
+                            <DrawerFooter>
+                                <Button color="danger" variant="light" onPress={onClose}>
+                                    Close
+                                </Button>
+                                <Button color="primary" onPress={onClose}>
+                                    Action
+                                </Button>
+                            </DrawerFooter>
+                        </>
+                    )}
+                </DrawerContent>
+            </Drawer>
 
             <div className="grid gap-4">
                 <div className="flex gap-2 items-center">
@@ -150,79 +161,28 @@ export default function HealthCheckList() {
                             {...searchForm.register("term")}
                         />
                     </form>
-
-                    <Button
-                        color="primary"
-                        startContent={<PlusIcon size={20} />}
-                        variant="shadow"
-                        onPress={() => {
-                            setCurrentDynamicAccessKey(undefined);
-                            dynamicAccessKeyFormModalDisclosure.onOpen();
-                        }}
-                    >
-                        Create
-                    </Button>
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-4">
-                    {temp.map((item, index) => (
-                        <Card key={index} className="max-w-[400px]">
-                            <CardHeader className="flex gap-3">
-                                <div className="flex flex-col">
-                                    <p className="text-md">{item.name}</p>
-                                    <p className="text-small text-default-500">{item.hostname}</p>
-                                </div>
-                            </CardHeader>
-                            <Divider />
-                            <CardBody>
-                                <div className="grid gap-2 text-sm">
-                                    <div className="flex justify-between items-center gap-2">
-                                        <span>Status:</span>
-                                        {item.isAvailable ? (
-                                            <Chip color="success" size="sm" variant="flat">
-                                                Available
-                                            </Chip>
-                                        ) : (
-                                            <Chip color="danger" size="sm" variant="flat">
-                                                Not Available
-                                            </Chip>
-                                        )}
-                                    </div>
-
-                                    <div className="flex justify-between items-center gap-2">
-                                        <span>Last check:</span>
-                                        <Chip size="sm" variant="flat">
-                                            {item.lastCheckedAt}
-                                        </Chip>
-                                    </div>
-
-                                    <div className="flex justify-between items-center gap-2">
-                                        <span>Interval:</span>
-                                        <Chip size="sm" variant="flat">
-                                            Every {item.interval} minutes
-                                        </Chip>
-                                    </div>
-
-                                    <Divider />
-
-                                    <div className="flex justify-between items-center gap-2">
-                                        <span>Notification:</span>
-                                        <Chip size="sm" variant="flat">
-                                            {item.notification}
-                                        </Chip>
-                                    </div>
-                                </div>
-                            </CardBody>
-                            <Divider />
-                            <CardFooter>
-                                <ButtonGroup fullWidth={true} variant="flat">
-                                    <Button>Edit</Button>
-                                    <Button color="danger">Delete</Button>
-                                </ButtonGroup>
-                            </CardFooter>
-                        </Card>
-                    ))}
+                    {isLoading && range(1, 5).map((item, index) => <HealthCheckListItemSkeleton key={item} />)}
+                    {!isLoading &&
+                        healthChecks.map((item, index) => (
+                            <HealthCheckListItem
+                                key={item.id}
+                                item={item}
+                                onEdit={(item) => {
+                                    setCurrentHealthCheck(undefined);
+                                    healthCheckFormDrawerDisclosure.onOpen();
+                                }}
+                            />
+                        ))}
                 </div>
+
+                {!isLoading && totalPage > 1 && healthChecks.length > 0 && (
+                    <div className="flex justify-center">
+                        <Pagination initialPage={page} total={totalPage} variant="light" onChange={setPage} />
+                    </div>
+                )}
             </div>
         </>
     );
