@@ -14,7 +14,7 @@ import NextLink from "next/link";
 import { useForm } from "react-hook-form";
 import { usePathname } from "next/navigation";
 
-import { DynamicAccessKeyIcon, Logo, LogoutIcon, ServersIcon } from "@/src/components/icons";
+import { DynamicAccessKeyIcon, HealthCheckIcon, Logo, LogoutIcon, ServersIcon } from "@/src/components/icons";
 import { logout } from "@/src/core/actions";
 import { UserSession } from "@/src/core/definitions";
 import { app } from "@/src/core/config";
@@ -29,6 +29,11 @@ const navItems = [
         label: "Dynamic Access Keys",
         pathName: "/dynamic-access-keys",
         icon: <DynamicAccessKeyIcon size={24} />
+    },
+    {
+        label: "Health Check",
+        pathName: "/health-check",
+        icon: <HealthCheckIcon size={24} />
     }
 ];
 
