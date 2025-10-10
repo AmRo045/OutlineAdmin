@@ -16,10 +16,11 @@ Outline Admin is a web interface for the Outline Manager API, providing a simple
    - [Docker](#docker)
    - [Docker Compose](#docker-compose)
    - [NodeJS](#nodejs)
-3. [Development](#development)
-4. [Admin Password](#admin-password)
-5. [Donation](#donation)
-6. [Screenshots](#screenshots)
+3. [Updating to Latest Version](#updating-to-latest-version)
+4. [Development](#development)
+5. [Admin Password](#admin-password)
+6. [Donation](#donation)
+7. [Screenshots](#screenshots)
 
 ## Added Features
 
@@ -27,7 +28,6 @@ Outline Admin is a web interface for the Outline Manager API, providing a simple
 - QR codes for Access Keys.
 - Dynamic Access Keys.
 - Access Key prefix.
-
 
 ## Installation
 
@@ -92,6 +92,33 @@ npm run build
 cd .next/standalone
 node server.js
 ```
+
+## Updating to Latest Version
+
+Pull the latest version of the outline-admin image
+```bash
+docker pull amro045/outline-admin:latest
+```
+
+Stop running container
+
+```bash
+docker compose down
+```
+
+Restart the container
+
+```bash
+docker compose up -d
+```
+
+Clean up the old image to free up disk space
+
+```bash
+docker rmi {old-image-id}
+```
+
+Replace {old-image-id} with the ID of the old image you want to remove.
 
 ## Development
 

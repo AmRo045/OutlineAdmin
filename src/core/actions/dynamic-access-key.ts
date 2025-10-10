@@ -55,16 +55,19 @@ export async function getDynamicAccessKeyById(
     });
 }
 
-export async function getDynamicAccessKeyByPath(
-    path: string,
-    withKeys: boolean = false
-): Promise<DynamicAccessKeyWithAccessKeys | null> {
+export async function getDynamicAccessKeyByPath(path: string): Promise<DynamicAccessKeyWithAccessKeys | null> {
     return prisma.dynamicAccessKey.findFirst({
         where: {
             path
         },
         include: {
-            accessKeys: withKeys
+            accessKeys: {
+                where: {
+                    server: {
+                        isAvailable: true
+                    }
+                }
+            }
         }
     });
 }
