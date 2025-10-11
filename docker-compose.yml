@@ -1,15 +1,16 @@
 services:
-    outline-admin:
-        image: amro045/outline-admin:latest
-        container_name: outline-admin
-        ports:
-            - "3000:3000"
-        volumes:
-            - "./oa_data:/app/data"
-        networks:
-            - outline_admin
-        restart: unless-stopped
+  outline-admin:
+    image: amro045/outline-admin:latest
+    container_name: outline-admin
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./oa_data:/app/data"
+      - "./logs:/app/logs"
+    networks:
+      - outline_admin
+    restart: unless-stopped
 
 networks:
-    outline_admin:
-        driver: bridge
+  outline_admin:
+    driver: bridge

@@ -1,6 +1,21 @@
 import { JWTPayload } from "jose";
-import { AccessKey, DynamicAccessKey, Server } from "@prisma/client";
+import { AccessKey, DynamicAccessKey, HealthCheck, Server } from "@prisma/client";
 import { SVGProps } from "react";
+
+export enum LoggerContext {
+    OutlineSyncJob = "outline-sync-job",
+    HealthCheckJob = "health-check-job"
+}
+
+export enum HealthCheckNotificationType {
+    Telegram = "telegram"
+}
+
+export type HealthCheckTelegramNotificationConfig = {
+    botToken: string;
+    chatId: string;
+    messageTemplate: string;
+};
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
     size?: number;
@@ -17,9 +32,12 @@ export interface UserSession {
 
 export type ServerWithAccessKeysCount = Server & { _count?: { accessKeys: number } };
 export type ServerWithAccessKeys = Server & { accessKeys: AccessKey[] };
+export type ServerWithHealthCheck = Server & { healthCheck: HealthCheck };
 
 export type DynamicAccessKeyWithAccessKeysCount = DynamicAccessKey & { _count?: { accessKeys: number } };
 export type DynamicAccessKeyWithAccessKeys = DynamicAccessKey & { accessKeys: AccessKey[] };
+
+export type HealthCheckWithServer = HealthCheck & { server: Server };
 
 export interface NewServerRequest {
     managementJson: string;
@@ -96,6 +114,25 @@ export interface DynamicAccessKeyApiResponse {
     error?: {
         message?: string;
     };
+}
+
+export interface NewHealthCheckRequest {
+    serverId: number;
+    isAvailable: boolean;
+    lastCheckedAt?: Date | null;
+    notification?: string | null;
+    notificationConfig?: string | null;
+    notificationSentAt?: Date | null;
+    notificationCooldown: number;
+    interval: number;
+}
+
+export interface UpdateHealthCheckRequest {
+    id: number;
+    notification: string | null;
+    notificationConfig: string | null;
+    notificationCooldown: number;
+    interval: number;
 }
 
 export namespace Outline {

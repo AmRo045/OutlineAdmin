@@ -18,7 +18,7 @@ model User {
 }
 
 model Server {
-  id                       Int         @id @default(autoincrement())
+  id                       Int          @id @default(autoincrement())
   apiUrl                   String
   managementJson           String
   apiCertSha256            String
@@ -30,11 +30,12 @@ model Server {
   portForNewAccessKeys     Int
   totalDataUsage           BigInt?
   isMetricsEnabled         Boolean
-  isAvailable              Boolean     @default(true)
+  isAvailable              Boolean      @default(true)
   apiCreatedAt             DateTime
-  createdAt                DateTime    @default(now())
-  updatedAt                DateTime?   @updatedAt
+  createdAt                DateTime     @default(now())
+  updatedAt                DateTime?    @updatedAt
   accessKeys               AccessKey[]
+  healthCheck              HealthCheck?
 }
 
 model AccessKey {
@@ -71,4 +72,20 @@ model DynamicAccessKey {
   updatedAt             DateTime  @updatedAt
 
   accessKeys AccessKey[] @relation("AccessKeyDynamicAccessKeys")
+}
+
+model HealthCheck {
+  id                   Int       @id @default(autoincrement())
+  serverId             Int       @unique
+  lastCheckedAt        DateTime?
+  isAvailable          Boolean   @default(true)
+  notification         String?
+  notificationConfig   String?
+  notificationSentAt   DateTime?
+  notificationCooldown Int       @default(5)
+  interval             Int       @default(1)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
 }
