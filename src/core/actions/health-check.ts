@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import prisma from "@/prisma/db";
-import { HealthCheckWithServer, NewHealthCheckRequest, UpdateHealthCheckRequest } from "@/src/core/definitions"; // assuming you have a type definition
+import { HealthCheckWithServer, NewHealthCheckRequest, UpdateHealthCheckRequest } from "@/src/core/definitions";
 
 export async function createHealthCheck(data: NewHealthCheckRequest): Promise<void> {
     await prisma.healthCheck.create({ data });
