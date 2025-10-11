@@ -17,6 +17,7 @@ export interface UserSession {
 
 export type ServerWithAccessKeysCount = Server & { _count?: { accessKeys: number } };
 export type ServerWithAccessKeys = Server & { accessKeys: AccessKey[] };
+export type ServerWithHealthCheck = Server & { healthCheck: HealthCheck };
 
 export type DynamicAccessKeyWithAccessKeysCount = DynamicAccessKey & { _count?: { accessKeys: number } };
 export type DynamicAccessKeyWithAccessKeys = DynamicAccessKey & { accessKeys: AccessKey[] };
@@ -103,10 +104,10 @@ export interface DynamicAccessKeyApiResponse {
 export interface NewHealthCheckRequest {
     serverId: number;
     isAvailable: boolean;
-    lastCheckedAt: Date | null;
-    notification: string | null;
-    notificationConfig: string | null;
-    notificationSentAt: Date | null;
+    lastCheckedAt?: Date | null;
+    notification?: string | null;
+    notificationConfig?: string | null;
+    notificationSentAt?: Date | null;
     notificationCooldown: number;
     interval: number;
 }

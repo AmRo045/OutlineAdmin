@@ -5,10 +5,9 @@ import { HealthCheckWithServer } from "@/src/core/definitions";
 
 interface Props {
     item: HealthCheckWithServer;
-    onEdit: (item: HealthCheckWithServer) => void;
 }
 
-export default function HealthCheckListItem({ item, onEdit }: Props) {
+export default function HealthCheckListItem({ item }: Props) {
     return (
         <Card className="w-[320px]">
             <CardHeader className="flex gap-3">
@@ -57,7 +56,7 @@ export default function HealthCheckListItem({ item, onEdit }: Props) {
             </CardBody>
             <Divider />
             <CardFooter>
-                <Button fullWidth={true} variant="flat" onPress={onEdit}>
+                <Button fullWidth={true} variant="flat">
                     Edit
                 </Button>
             </CardFooter>

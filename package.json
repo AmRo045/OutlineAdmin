@@ -15,6 +15,7 @@
         "format": "prettier --write ./src/**/*.{ts,tsx,json} ./scripts/**/*.{ts,tsx,json}",
         "format:check": "prettier --check ./src/**/*.{ts,tsx,json} ./scripts/**/*.{ts,tsx,json}",
         "sync": "node ./dist/scripts/outline-sync.js",
+        "health-check": "node ./dist/scripts/health-check.js",
         "setup": "node ./dist/scripts/setup.js"
     },
     "dependencies": {

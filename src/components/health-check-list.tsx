@@ -1,21 +1,8 @@
 "use client";
 
-import {
-    Button,
-    Drawer,
-    DrawerBody,
-    DrawerContent,
-    DrawerFooter,
-    DrawerHeader,
-    Input,
-    Pagination,
-    Radio,
-    RadioGroup,
-    useDisclosure
-} from "@heroui/react";
+import { Input, Pagination } from "@heroui/react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { HealthCheck } from "@prisma/client";
 import { range } from "@heroui/shared-utils";
 
 import { HealthCheckWithServer } from "@/src/core/definitions";
@@ -28,41 +15,14 @@ interface SearchFormProps {
     term: string;
 }
 
-const temp = [
-    {
-        id: 1,
-        server: {
-            name: "ParsPack - Frankfurt / DC: DE-DC1",
-            hostname: "185.208.172.209"
-        },
-        lastCheckedAt: "16:50",
-        isAvailable: true,
-        notification: "Telegram",
-        notificationCooldown: 5,
-        interval: 1
-    },
-    {
-        id: 2,
-        name: "IRAN ParsVDS - IR_VPS_e2_Nvme",
-        hostname: "194.60.231.105",
-        lastCheckedAt: "15:50",
-        isAvailable: false,
-        notification: "Shell script",
-        notificationCooldown: 5,
-        interval: 5
-    }
-];
-
 export default function HealthCheckList() {
     const [healthChecks, setHealthChecks] = useState<HealthCheckWithServer[]>([]);
-    const [currentHealthCheck, setCurrentHealthCheck] = useState<HealthCheck>();
     const [page, setPage] = useState<number>(1);
     const [totalItems, setTotalItems] = useState<number>(1);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const totalPage = Math.ceil(totalItems / PAGE_SIZE);
 
-    const healthCheckFormDrawerDisclosure = useDisclosure();
     const searchForm = useForm<SearchFormProps>();
     const handleSearch = async (data: SearchFormProps) => {
         const params = {
@@ -77,10 +37,12 @@ export default function HealthCheckList() {
         setPage(1);
     };
 
-    const updateData = async () => {
+    const updateData = async (quietly: boolean = false) => {
         const params = { skip: (page - 1) * PAGE_SIZE, term: searchForm.getValues("term") };
 
-        setIsLoading(true);
+        if (!quietly) {
+            setIsLoading(true);
+        }
 
         try {
             const data = await getHealthChecks(params);
@@ -91,61 +53,22 @@ export default function HealthCheckList() {
 
             setTotalItems(count);
         } finally {
-            setIsLoading(false);
+            if (!quietly) {
+                setIsLoading(false);
+            }
         }
     };
 
     useEffect(() => {
         updateData();
+
+        const interval = setInterval(() => updateData(true), 30 * 1000);
+
+        return () => clearInterval(interval);
     }, [page]);
 
     return (
         <>
-            <Drawer
-                backdrop="blur"
-                isOpen={healthCheckFormDrawerDisclosure.isOpen}
-                radius="none"
-                onOpenChange={healthCheckFormDrawerDisclosure.onOpenChange}
-            >
-                <DrawerContent>
-                    {(onClose) => (
-                        <>
-                            <DrawerHeader className="flex flex-col gap-1">Health check edit form</DrawerHeader>
-                            <DrawerBody>
-                                <form className="grid gap-4">
-                                    <RadioGroup label="Notification type">
-                                        <Radio value="telegram">Telegram</Radio>
-                                        <Radio value="endpoint">Endpoint</Radio>
-                                        <Radio value="script">Script</Radio>
-                                    </RadioGroup>
-
-                                    <Input
-                                        label="Notification cooldown (minute)"
-                                        placeholder="e.g. 60"
-                                        type="number"
-                                        variant="underlined"
-                                    />
-                                    <Input
-                                        label="Notification interval (minute)"
-                                        placeholder="e.g. 5"
-                                        type="number"
-                                        variant="underlined"
-                                    />
-                                </form>
-                            </DrawerBody>
-                            <DrawerFooter>
-                                <Button color="danger" variant="light" onPress={onClose}>
-                                    Close
-                                </Button>
-                                <Button color="primary" onPress={onClose}>
-                                    Action
-                                </Button>
-                            </DrawerFooter>
-                        </>
-                    )}
-                </DrawerContent>
-            </Drawer>
-
             <div className="grid gap-4">
                 <div className="flex gap-2 items-center">
                     <h1 className="text-xl">Your Health Checks</h1>
@@ -165,17 +88,7 @@ export default function HealthCheckList() {
 
                 <div className="flex flex-wrap justify-center gap-4">
                     {isLoading && range(1, 5).map((item, index) => <HealthCheckListItemSkeleton key={item} />)}
-                    {!isLoading &&
-                        healthChecks.map((item, index) => (
-                            <HealthCheckListItem
-                                key={item.id}
-                                item={item}
-                                onEdit={(item) => {
-                                    setCurrentHealthCheck(undefined);
-                                    healthCheckFormDrawerDisclosure.onOpen();
-                                }}
-                            />
-                        ))}
+                    {!isLoading && healthChecks.map((item, index) => <HealthCheckListItem key={item.id} item={item} />)}
                 </div>
 
                 {!isLoading && totalPage > 1 && healthChecks.length > 0 && (
