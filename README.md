@@ -4,18 +4,20 @@
 
 <h2 align="center">Outline Admin</h2>
 
-Outline Admin is a web interface for the Outline Manager API, providing a simple and user-friendly UI for managing VPN servers.
+Outline Admin is a web interface for the Outline Manager API, providing a simple and user-friendly UI for managing VPN
+servers.
 
 > [!NOTE]
-> The previous PHP/Laravel version of this project has been moved to the [OutlineAdminLaravel](https://github.com/AmRo045/OutlineAdminLaravel) repository.
+> The previous PHP/Laravel version of this project has been moved to
+> the [OutlineAdminLaravel](https://github.com/AmRo045/OutlineAdminLaravel) repository.
 
 ## Table of Contents
 
 1. [Added Features](#added-features)
 2. [Installation](#installation)
-   - [Docker](#docker)
-   - [Docker Compose](#docker-compose)
-   - [NodeJS](#nodejs)
+    - [Docker](#docker)
+    - [Docker Compose](#docker-compose)
+    - [NodeJS](#nodejs)
 3. [Updating to Latest Version](#updating-to-latest-version)
 4. [Development](#development)
 5. [Admin Password](#admin-password)
@@ -33,11 +35,11 @@ Outline Admin is a web interface for the Outline Manager API, providing a simple
 
 ### Docker
 
-Before installing Outline Admin, ensure that Docker and Docker Compose are installed on your machine. Use the following commands to start the container:
-
+Before installing Outline Admin, ensure that Docker and Docker Compose are installed on your machine. Use the following
+commands to start the container:
 
 ```bash
-docker run -d -p 3000:3000 --name outline-admin -v ./oa_data:/app/data --restart unless-stopped amro045/outline-admin:latest
+docker run -d -p 3000:3000 --name outline-admin -v ./oa_data:/app/data -v ./logs:/app/logs --restart unless-stopped amro045/outline-admin:latest
 ```
 
 #### Docker Compose
@@ -96,6 +98,7 @@ node server.js
 ## Updating to Latest Version
 
 Pull the latest version of the outline-admin image
+
 ```bash
 docker pull amro045/outline-admin:latest
 ```
@@ -176,7 +179,8 @@ npm run password:change "your new password"
 
 ## Donation
 
-If you find this project useful and would like to support its development, consider making a donation. Your support is greatly appreciated!
+If you find this project useful and would like to support its development, consider making a donation. Your support is
+greatly appreciated!
 
 ### BTC
 
