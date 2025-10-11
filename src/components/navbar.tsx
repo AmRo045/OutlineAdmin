@@ -61,7 +61,10 @@ export const Navbar = ({ session }: Props) => {
                 <NavbarBrand as="li" className="gap-3 max-w-fit">
                     <NextLink className="flex justify-start items-center gap-1" href="/">
                         <Logo size={32} />
-                        <p className="font-bold text-inherit">{app.name.toUpperCase()}</p>
+                        <p className="font-bold text-inherit">
+                            {app.name.toUpperCase()}{" "}
+                            <small className="text-xs text-foreground-400 font-normal">{process.env.VERSION}</small>
+                        </p>
                     </NextLink>
                 </NavbarBrand>
 
