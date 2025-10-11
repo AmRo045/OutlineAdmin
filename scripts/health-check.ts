@@ -47,12 +47,12 @@ async function handleUnavailableServer(server: any) {
     }
 }
 
-function ensureHealthCheckExists(server: any) {
+async function ensureHealthCheckExists(server: any) {
     if (server.healthCheck) return server.healthCheck;
 
     logger.info(`Creating health check for ${server.name}...`);
 
-    return prisma.healthCheck.create({
+    return await prisma.healthCheck.create({
         data: {
             serverId: server.id,
             isAvailable: server.isAvailable,
@@ -140,7 +140,7 @@ async function main() {
     for (const server of servers) {
         logger.info(`{ ${server.name} - ${server.hostnameOrIp} }`);
 
-        server.healthCheck = ensureHealthCheckExists(server);
+        server.healthCheck = await ensureHealthCheckExists(server);
 
         if (shouldSkipHealthCheck(server.healthCheck)) {
             logger.warn(`Skipping — checked recently (interval ${server.healthCheck!.interval}m)`);
