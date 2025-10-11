@@ -13,6 +13,7 @@ import {
 import NextLink from "next/link";
 import { useForm } from "react-hook-form";
 import { usePathname } from "next/navigation";
+import React from "react";
 
 import { DynamicAccessKeyIcon, HealthCheckIcon, Logo, LogoutIcon, ServersIcon } from "@/src/components/icons";
 import { logout } from "@/src/core/actions";
@@ -55,6 +56,15 @@ export const Navbar = ({ session }: Props) => {
         return <></>;
     }
 
+    const handleVersionClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        const url = `${app.links.github}/releases/tag/v${process.env.VERSION}`;
+
+        window.open(url, "_blank");
+    };
+
     return (
         <HeroUINavbar maxWidth="xl" position="sticky">
             <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
@@ -63,7 +73,9 @@ export const Navbar = ({ session }: Props) => {
                         <Logo size={32} />
                         <p className="font-bold text-inherit">
                             {app.name.toUpperCase()}{" "}
-                            <small className="text-xs text-foreground-400 font-normal">{process.env.VERSION}</small>
+                            <button className="text-xs text-foreground-400 font-normal" onClick={handleVersionClick}>
+                                {process.env.VERSION}
+                            </button>
                         </p>
                     </NextLink>
                 </NavbarBrand>
