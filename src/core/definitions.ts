@@ -3,10 +3,19 @@ import { AccessKey, DynamicAccessKey, HealthCheck, Server } from "@prisma/client
 import { SVGProps } from "react";
 
 export enum LoggerContext {
-    App = "app",
     OutlineSyncJob = "outline-sync-job",
     HealthCheckJob = "health-check-job"
 }
+
+export enum HealthCheckNotificationType {
+    Telegram = "telegram"
+}
+
+export type HealthCheckTelegramNotificationConfig = {
+    botToken: string;
+    chatId: string;
+    messageTemplate: string;
+};
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
     size?: number;

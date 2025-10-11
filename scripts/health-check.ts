@@ -3,14 +3,16 @@ import https from "https";
 import crypto from "crypto";
 import { HEALTH_CHECK_DEFAULT_INTERVAL, HEALTH_CHECK_DEFAULT_NOTIFICATION_COOLDOWN } from "@/src/core/config";
 import { createLogger } from "@/src/core/logger";
-import { LoggerContext } from "@/src/core/definitions";
+import { HealthCheckNotificationType, LoggerContext } from "@/src/core/definitions";
+import { sendTelegramNotification } from "@/src/core/actions/health-check";
 
 let logger = createLogger(LoggerContext.HealthCheckJob);
 
 async function handleUnavailableServer(server: any) {
-    logger.info(`[${server.name}] Marking as unavailable...`);
-
+    const healthCheck = server.healthCheck;
     const now = new Date();
+
+    logger.info(`[${server.name}] Marking as unavailable...`);
 
     await prisma.server.update({
         where: { id: server.id },
@@ -19,14 +21,30 @@ async function handleUnavailableServer(server: any) {
 
     await prisma.healthCheck.update({
         where: { serverId: server.id },
-        data: {
-            isAvailable: false,
-            lastCheckedAt: now,
-            updatedAt: now
-        }
+        data: { isAvailable: false, lastCheckedAt: now, updatedAt: now }
     });
 
-    // TODO: Send notifications
+    if (!healthCheck.notification) return;
+
+    if (healthCheck.notificationSentAt) {
+        const msSinceLastNotification = Date.now() - new Date(healthCheck.notificationSentAt).getTime();
+        const cooldownMs = healthCheck.notificationCooldown * 60_000;
+        if (msSinceLastNotification < cooldownMs) return;
+    }
+
+    if (healthCheck.notification === HealthCheckNotificationType.Telegram && server.healthCheck.notificationConfig) {
+        try {
+            logger.info("Sending Telegram notification...");
+            await sendTelegramNotification(server);
+
+            await prisma.healthCheck.update({
+                where: { serverId: server.id },
+                data: { notificationSentAt: now }
+            });
+        } catch (err) {
+            logger.error("Failed to send Telegram notification:", err);
+        }
+    }
 }
 
 function ensureHealthCheckExists(server: any) {

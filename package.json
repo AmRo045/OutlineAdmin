@@ -37,6 +37,7 @@
         "react-dom": "18.3.1",
         "react-hook-form": "^7.54.2",
         "slugify": "^1.6.6",
+        "telegraf": "^4.16.3",
         "uuid": "^11.0.3",
         "winston": "^3.18.3",
         "winston-daily-rotate-file": "^5.0.0"

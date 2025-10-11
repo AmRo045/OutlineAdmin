@@ -1,9 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { Telegraf } from "telegraf";
 
 import prisma from "@/prisma/db";
-import { HealthCheckWithServer, NewHealthCheckRequest, UpdateHealthCheckRequest } from "@/src/core/definitions";
+import {
+    HealthCheckTelegramNotificationConfig,
+    HealthCheckWithServer,
+    NewHealthCheckRequest,
+    ServerWithHealthCheck,
+    UpdateHealthCheckRequest
+} from "@/src/core/definitions";
 
 export async function createHealthCheck(data: NewHealthCheckRequest): Promise<void> {
     await prisma.healthCheck.create({ data });
@@ -80,4 +87,18 @@ export async function deleteHealthCheck(id: number): Promise<void> {
 
     revalidatePath("/health-checks");
     revalidatePath(`/health-checks/${id}`);
+}
+
+export async function sendTelegramNotification(server: ServerWithHealthCheck): Promise<void> {
+    const config = JSON.parse(server.healthCheck.notificationConfig ?? "{}") as HealthCheckTelegramNotificationConfig;
+
+    const bot = new Telegraf(config.botToken);
+
+    const userId = config.chatId;
+
+    const message = config.messageTemplate
+        .replaceAll("{{serverName}}", server.name)
+        .replaceAll("{{serverHostnameOrIp}}", server.hostnameOrIp);
+
+    await bot.telegram.sendMessage(userId, message);
 }
