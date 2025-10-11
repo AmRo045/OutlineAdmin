@@ -102,3 +102,27 @@ export async function sendTelegramNotification(server: ServerWithHealthCheck): P
 
     await bot.telegram.sendMessage(userId, message);
 }
+
+export async function testTelegramNotification(config: HealthCheckTelegramNotificationConfig): Promise<void> {
+    if (!config.botToken) {
+        throw new Error("Bot token is required");
+    }
+
+    if (!config.chatId) {
+        throw new Error("Chat ID is required");
+    }
+
+    if (!config.messageTemplate) {
+        throw new Error("Message Template is required");
+    }
+
+    const bot = new Telegraf(config.botToken);
+
+    const userId = config.chatId;
+
+    const message = config.messageTemplate
+        .replaceAll("{{serverName}}", "Example Server")
+        .replaceAll("{{serverHostnameOrIp}}", "10.11.12.13");
+
+    await bot.telegram.sendMessage(userId, message);
+}

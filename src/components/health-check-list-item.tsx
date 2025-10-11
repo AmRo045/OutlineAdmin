@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@heroui/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Divider, Link } from "@heroui/react";
 import React from "react";
 
 import { HealthCheckWithServer } from "@/src/core/definitions";
@@ -56,8 +56,8 @@ export default function HealthCheckListItem({ item }: Props) {
             </CardBody>
             <Divider />
             <CardFooter>
-                <Button fullWidth={true} isDisabled={true} variant="flat">
-                    Edit (Soon)
+                <Button as={Link} fullWidth={true} href={`/health-checks/${item.id}`} variant="flat">
+                    Edit
                 </Button>
             </CardFooter>
         </Card>

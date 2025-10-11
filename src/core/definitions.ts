@@ -129,11 +129,8 @@ export interface NewHealthCheckRequest {
 
 export interface UpdateHealthCheckRequest {
     id: number;
-    isAvailable: boolean;
-    lastCheckedAt: Date | null;
     notification: string | null;
     notificationConfig: string | null;
-    notificationSentAt: Date | null;
     notificationCooldown: number;
     interval: number;
 }
