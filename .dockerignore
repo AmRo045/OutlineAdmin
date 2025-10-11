@@ -17,3 +17,4 @@ coverage*
 .next/cache
 *.log
 .next
+logs

@@ -2,9 +2,13 @@ import prisma from "@/prisma/db";
 import https from "https";
 import crypto from "crypto";
 import { HEALTH_CHECK_DEFAULT_INTERVAL, HEALTH_CHECK_DEFAULT_NOTIFICATION_COOLDOWN } from "@/src/core/config";
+import { createLogger } from "@/src/core/logger";
+import { LoggerContext } from "@/src/core/definitions";
+
+let logger = createLogger(LoggerContext.HealthCheckJob);
 
 async function handleUnavailableServer(server: any) {
-    console.log(`[${server.name}] Marking as unavailable...`);
+    logger.info(`[${server.name}] Marking as unavailable...`);
 
     const now = new Date();
 
@@ -28,7 +32,7 @@ async function handleUnavailableServer(server: any) {
 function ensureHealthCheckExists(server: any) {
     if (server.healthCheck) return server.healthCheck;
 
-    console.log(`Creating health check for ${server.name}...`);
+    logger.info(`Creating health check for ${server.name}...`);
 
     return prisma.healthCheck.create({
         data: {
@@ -72,7 +76,7 @@ async function checkServerHealth(server: any) {
     const url = `${server.apiUrl}/server`;
     const agent = createHttpsAgent(server);
 
-    console.log(`Checking ${server.name} (${url})...`);
+    logger.info(`Checking ${server.name} (${url})...`);
     const start = performance.now();
 
     try {
@@ -81,11 +85,11 @@ async function checkServerHealth(server: any) {
         const now = new Date();
 
         if (!response.ok) {
-            console.error(`[${server.name}] HTTP ${response.status} - ${response.statusText}`);
+            logger.error(`[${server.name}] HTTP ${response.status} - ${response.statusText}`);
             return await handleUnavailableServer(server);
         }
 
-        console.log(`[${server.name}] Healthy (${response.status}) — ${duration.toFixed(0)}ms`);
+        logger.info(`[${server.name}] Healthy (${response.status}) — ${duration.toFixed(0)}ms`);
 
         // Update DB only if something changed
         if (!server.isAvailable || !server.healthCheck.isAvailable) {
@@ -104,24 +108,24 @@ async function checkServerHealth(server: any) {
             }
         });
     } catch (error: any) {
-        console.error(`[${server.name}] Error:`, error.message);
+        logger.error(`[${server.name}] Error:`, error.message);
         await handleUnavailableServer(server);
     }
 }
 
 async function main() {
-    console.log("Loading servers from local database...");
+    logger.info("Loading servers from local database...");
     const servers = await prisma.server.findMany({ include: { healthCheck: true } });
 
-    console.log("Starting health checks...");
+    logger.info("Starting health checks...");
 
     for (const server of servers) {
-        console.log(`\n=====> { ${server.name} - ${server.hostnameOrIp} }`);
+        logger.info(`{ ${server.name} - ${server.hostnameOrIp} }`);
 
         server.healthCheck = ensureHealthCheckExists(server);
 
         if (shouldSkipHealthCheck(server.healthCheck)) {
-            console.log(`[${server.name}] Skipping — checked recently (interval ${server.healthCheck!.interval}m)`);
+            logger.warn(`Skipping — checked recently (interval ${server.healthCheck!.interval}m)`);
             continue;
         }
 
@@ -131,16 +135,9 @@ async function main() {
 
 main()
     .then(() => {
-        console.log("\n");
-        console.log("══════════════════════════════════════════════════");
-        console.log("   Health Check Script Executed Successfully 😎   ");
-        console.log("══════════════════════════════════════════════════");
+        logger.info("Health Check Script Executed Successfully 😎");
     })
     .catch((error) => {
-        console.log("\n");
-        console.log("═══════════════════════════════════");
-        console.log("   Health Check Script Failed 🥺   ");
-        console.log("═══════════════════════════════════");
-        console.log("\n");
-        console.error(error);
+        logger.info("Health Check Script Failed 🥺");
+        logger.error(error);
     });

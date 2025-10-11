@@ -42,3 +42,4 @@ certificates
 prisma/*.db
 prisma/sqlite/*.db*
 dist
+logs

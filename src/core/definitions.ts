@@ -2,6 +2,12 @@ import { JWTPayload } from "jose";
 import { AccessKey, DynamicAccessKey, HealthCheck, Server } from "@prisma/client";
 import { SVGProps } from "react";
 
+export enum LoggerContext {
+    App = "app",
+    OutlineSyncJob = "outline-sync-job",
+    HealthCheckJob = "health-check-job"
+}
+
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
     size?: number;
 };

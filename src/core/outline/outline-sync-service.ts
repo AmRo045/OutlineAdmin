@@ -1,22 +1,26 @@
 /* eslint-disable no-console */
 import { AccessKey, Server } from "@prisma/client";
+import { Logger } from "winston";
 
 import { BYTES_TO_MB_RATE } from "../config";
 
 import prisma from "@/prisma/db";
 import OutlineClient from "@/src/core/outline/outline-client";
-import { DataLimitUnit, Outline } from "@/src/core/definitions";
+import { DataLimitUnit, LoggerContext, Outline } from "@/src/core/definitions";
+import { createLogger } from "@/src/core/logger";
 
 export class OutlineSyncService {
     protected client: OutlineClient;
+    protected logger: Logger;
 
     constructor(protected readonly server: Server) {
         this.client = OutlineClient.fromConfig(server.managementJson);
+        this.logger = createLogger(LoggerContext.OutlineSyncJob);
     }
 
     async sync(): Promise<void> {
         if (!this.server.isAvailable) {
-            console.log(`Server ${this.server.name} (${this.server.hostnameOrIp}) is not available`);
+            this.logger.warn(`Server ${this.server.name} (${this.server.hostnameOrIp}) is not available`);
 
             return;
         }
@@ -28,16 +32,16 @@ export class OutlineSyncService {
 
         do {
             try {
-                console.log("Getting server info from remote server...");
+                this.logger.info("Getting server info from remote server...");
                 remoteServerInfo = await this.client.server();
             } catch (error) {
-                console.error(`Attempt #${attempts + 1} failed: ${error}\n`);
+                this.logger.error(`Attempt #${attempts + 1} failed: ${error}\n`);
                 attempts++;
             }
         } while (!remoteServerInfo && attempts < maxAttempts);
 
         if (remoteServerInfo) {
-            console.log("Getting server usage metrics...");
+            this.logger.info("Getting server usage metrics...");
             const metrics = await this.client.metricsTransfer();
 
             await this.syncAccessKeys(metrics);
@@ -45,18 +49,18 @@ export class OutlineSyncService {
     }
 
     protected async syncAccessKeys(metrics: Outline.Metrics): Promise<void> {
-        console.log("\nLoading servers access keys from local database...");
+        this.logger.info("Loading servers access keys from local database...");
         const localAccessKeys = await prisma.accessKey.findMany({
             where: {
                 serverId: this.server.id
             }
         });
 
-        console.log("Getting server access keys...");
+        this.logger.info("Getting server access keys...");
         const remoteAccessKeys = await this.client.keys();
 
         for (const remoteAccessKey of remoteAccessKeys) {
-            console.log(`\n----->{${remoteAccessKey.name} (${remoteAccessKey.id})}`);
+            this.logger.info(`{${remoteAccessKey.name} (${remoteAccessKey.id})}`);
             const localAccessKey = localAccessKeys.find(
                 (localAccessKey) => localAccessKey.apiId === remoteAccessKey.id
             );
@@ -65,7 +69,7 @@ export class OutlineSyncService {
 
             if (localAccessKey) {
                 // this means we need to update the access key
-                console.log(`Updating access key info in local database...`);
+                this.logger.info(`Updating access key info in local database...`);
 
                 let accessKeyName = remoteAccessKey.name;
 
@@ -83,12 +87,12 @@ export class OutlineSyncService {
                 });
 
                 if (this.isAccessKeyExpired(localAccessKey)) {
-                    console.log("Disabling access key due to expiration date...");
+                    this.logger.info("Disabling access key due to expiration date...");
                     await this.disableExpiredAccessKey(localAccessKey);
                 }
             } else {
                 // and this means we need to create the access key
-                console.log(`Creating missing access key in local database...`);
+                this.logger.info(`Creating missing access key in local database...`);
 
                 await prisma.accessKey.create({
                     data: {
@@ -108,7 +112,7 @@ export class OutlineSyncService {
             }
         }
 
-        console.log("\nRemoving access keys that does not exist in remote server...");
+        this.logger.info("Removing access keys that does not exist in remote server...");
 
         const localAccessKeysToRemove = [];
 
@@ -117,12 +121,12 @@ export class OutlineSyncService {
                 continue;
             }
 
-            console.log(`\n----->{${localAccessKey.name} (${localAccessKey.apiId})}`);
+            this.logger.info(`{${localAccessKey.name} (${localAccessKey.apiId})}`);
             localAccessKeysToRemove.push(localAccessKey.id);
         }
 
         if (localAccessKeysToRemove.length > 0) {
-            console.log("Removing access keys from local database...", localAccessKeysToRemove);
+            this.logger.info("Removing access keys from local database...", localAccessKeysToRemove);
 
             await prisma.accessKey.deleteMany({
                 where: {
@@ -132,7 +136,7 @@ export class OutlineSyncService {
                 }
             });
         } else {
-            console.log("There is no access key to remove");
+            this.logger.info("There is no access key to remove");
         }
     }
 
@@ -141,7 +145,7 @@ export class OutlineSyncService {
             return false;
         }
 
-        console.log("Checking for access key expiration date...");
+        this.logger.info("Checking for access key expiration date...");
 
         return accessKey.expiresAt <= new Date();
     }
@@ -161,7 +165,7 @@ export class OutlineSyncService {
                 }
             });
         } catch (error) {
-            console.error(`Attempt to disabling access key failed: ${error}\n`);
+            this.logger.error(`Attempt to disabling access key failed: ${error}\n`);
         }
     }
 
