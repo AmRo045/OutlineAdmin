@@ -42,7 +42,7 @@ export default function HealthCheckListItem({ item }: Props) {
                     <div className="flex justify-between items-center gap-2">
                         <span>Interval:</span>
                         <Chip size="sm" variant="flat">
-                            Every {item.interval} minutes
+                            Every {item.interval}m
                         </Chip>
                     </div>
 
@@ -56,8 +56,8 @@ export default function HealthCheckListItem({ item }: Props) {
             </CardBody>
             <Divider />
             <CardFooter>
-                <Button fullWidth={true} variant="flat">
-                    Edit
+                <Button fullWidth={true} isDisabled={true} variant="flat">
+                    Edit (Soon)
                 </Button>
             </CardFooter>
         </Card>
