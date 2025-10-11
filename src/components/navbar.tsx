@@ -13,8 +13,9 @@ import {
 import NextLink from "next/link";
 import { useForm } from "react-hook-form";
 import { usePathname } from "next/navigation";
+import React from "react";
 
-import { DynamicAccessKeyIcon, Logo, LogoutIcon, ServersIcon } from "@/src/components/icons";
+import { DynamicAccessKeyIcon, HealthCheckIcon, Logo, LogoutIcon, ServersIcon } from "@/src/components/icons";
 import { logout } from "@/src/core/actions";
 import { UserSession } from "@/src/core/definitions";
 import { app } from "@/src/core/config";
@@ -29,6 +30,11 @@ const navItems = [
         label: "Dynamic Access Keys",
         pathName: "/dynamic-access-keys",
         icon: <DynamicAccessKeyIcon size={24} />
+    },
+    {
+        label: "Health Checks",
+        pathName: "/health-checks",
+        icon: <HealthCheckIcon size={24} />
     }
 ];
 
@@ -50,13 +56,27 @@ export const Navbar = ({ session }: Props) => {
         return <></>;
     }
 
+    const handleVersionClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        const url = `${app.links.github}/releases/tag/v${process.env.VERSION}`;
+
+        window.open(url, "_blank");
+    };
+
     return (
         <HeroUINavbar maxWidth="xl" position="sticky">
             <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
                 <NavbarBrand as="li" className="gap-3 max-w-fit">
                     <NextLink className="flex justify-start items-center gap-1" href="/">
                         <Logo size={32} />
-                        <p className="font-bold text-inherit">{app.name.toUpperCase()}</p>
+                        <p className="font-bold text-inherit">
+                            {app.name.toUpperCase()}{" "}
+                            <button className="text-xs text-foreground-400 font-normal" onClick={handleVersionClick}>
+                                {process.env.VERSION}
+                            </button>
+                        </p>
                     </NextLink>
                 </NavbarBrand>
 

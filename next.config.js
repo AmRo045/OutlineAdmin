@@ -1,6 +1,11 @@
+const { version } = require("./package.json");
+
 /** @type {import("next").NextConfig} */
 const nextConfig = {
-    output: "standalone"
+    output: "standalone",
+    env: {
+        VERSION: version
+    }
 };
 
 module.exports = nextConfig;
