@@ -162,7 +162,7 @@ export default function DynamicAccessKeysList() {
                         startContent={<PlusIcon size={20} />}
                         variant="shadow"
                         onPress={() => {
-                            setCurrentDynamicAccessKey(undefined);
+                            setCurrentDynamicAccessKey(() => undefined);
                             dynamicAccessKeyFormModalDisclosure.onOpen();
                         }}
                     >
@@ -240,7 +240,7 @@ export default function DynamicAccessKeysList() {
                                                 size="sm"
                                                 variant="light"
                                                 onPress={() => {
-                                                    setCurrentDynamicAccessKey(dynamicAccessKey);
+                                                    setCurrentDynamicAccessKey(() => dynamicAccessKey);
                                                     dynamicAccessKeyModalDisclosure.onOpen();
                                                 }}
                                             >
@@ -280,7 +280,7 @@ export default function DynamicAccessKeysList() {
                                                 size="sm"
                                                 variant="light"
                                                 onPress={() => {
-                                                    setCurrentDynamicAccessKey(dynamicAccessKey);
+                                                    setCurrentDynamicAccessKey(() => dynamicAccessKey);
                                                     dynamicAccessKeyFormModalDisclosure.onOpen();
                                                 }}
                                             >
@@ -301,7 +301,7 @@ export default function DynamicAccessKeysList() {
                                                 size="sm"
                                                 variant="light"
                                                 onPress={() => {
-                                                    setCurrentDynamicAccessKey(dynamicAccessKey);
+                                                    setCurrentDynamicAccessKey(() => dynamicAccessKey);
                                                     removeDynamicAccessKeyConfirmModalDisclosure.onOpen();
                                                 }}
                                             >
