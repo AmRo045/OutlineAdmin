@@ -87,8 +87,8 @@ export default function HealthCheckList() {
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-4">
-                    {isLoading && range(1, 6).map((item, index) => <HealthCheckListItemSkeleton key={item} />)}
-                    {!isLoading && healthChecks.map((item, index) => <HealthCheckListItem key={item.id} item={item} />)}
+                    {isLoading && range(1, 6).map((item) => <HealthCheckListItemSkeleton key={item} />)}
+                    {!isLoading && healthChecks.map((item) => <HealthCheckListItem key={item.id} item={item} />)}
                 </div>
 
                 {!isLoading && totalPage > 1 && healthChecks.length > 0 && (
