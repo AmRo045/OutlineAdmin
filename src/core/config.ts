@@ -22,7 +22,8 @@ export const app = {
         outlineVpnWiki: {
             index: "https://www.reddit.com/r/outlinevpn/wiki/index",
             dynamicAccessKeys: "https://developers.google.com/outline/docs/guides/service-providers/dynamic-access-keys"
-        }
+        },
+        myTelegramApiProxyWorkerRepo: "https://github.com/AmRo045/telegram-api-proxy-worker"
     },
 
     snippets: {

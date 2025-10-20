@@ -4,12 +4,13 @@ import React, { useState } from "react";
 import { HealthCheck } from "@prisma/client";
 import { Radio, RadioGroup } from "@heroui/radio";
 import { Controller, useForm } from "react-hook-form";
-import { addToast, Button, Input, Link, Textarea, Tooltip, useDisclosure } from "@heroui/react";
+import { addToast, Alert, Button, Input, Link, Textarea, Tooltip, useDisclosure } from "@heroui/react";
 import { useRouter } from "next/navigation";
 
 import { testTelegramNotification, updateHealthCheck } from "@/src/core/actions/health-check";
 import MessageModal from "@/src/components/modals/message-modal";
 import { ArrowLeftIcon } from "@/src/components/icons";
+import { app } from "@/src/core/config";
 
 interface Props {
     healthCheck: HealthCheck;
@@ -133,6 +134,21 @@ export default function HealthCheckEditForm({ healthCheck }: Props) {
 
                     <h1 className="text-xl">Health Check Details</h1>
                 </section>
+
+                {selectedNotificationType === "telegram" && (
+                    <Alert color="warning" variant="flat">
+                        If Telegram is blocked in the region where your server is hosted, you may experience issues
+                        sending notifications through the Telegram API. To resolve this, consider using a proxy such as{" "}
+                        <Link
+                            className="text-warning font-black contents"
+                            href={app.links.myTelegramApiProxyWorkerRepo}
+                            target="_blank"
+                        >
+                            Telegram API Proxy via Cloudflare Worker
+                        </Link>
+                        . You can change the Telegram API base URL in .env file.
+                    </Alert>
+                )}
 
                 <form className="w-fit grid gap-4" onSubmit={handleSubmit(actualSubmit)}>
                     {/* Interval */}
