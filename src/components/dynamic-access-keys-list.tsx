@@ -140,7 +140,11 @@ export default function DynamicAccessKeysList() {
                     </Tooltip>
                 </div>
 
-                <Alert color="warning">A valid domain name with SSL encryption is required to use this feature.</Alert>
+                {window.location.protocol === "http:" && (
+                    <Alert color="warning">
+                        A valid domain name with SSL encryption is required to use this feature.
+                    </Alert>
+                )}
 
                 <div className="flex justify-between items-center gap-2">
                     <form onSubmit={searchForm.handleSubmit(handleSearch)}>
