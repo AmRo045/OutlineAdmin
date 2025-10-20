@@ -92,7 +92,11 @@ export async function deleteHealthCheck(id: number): Promise<void> {
 export async function sendTelegramNotification(server: ServerWithHealthCheck): Promise<void> {
     const config = JSON.parse(server.healthCheck.notificationConfig ?? "{}") as HealthCheckTelegramNotificationConfig;
 
-    const bot = new Telegraf(config.botToken);
+    const bot = new Telegraf(config.botToken, {
+        telegram: {
+            apiRoot: process.env.TELEGRAM_API_URL
+        }
+    });
 
     const userId = config.chatId;
 
@@ -103,26 +107,53 @@ export async function sendTelegramNotification(server: ServerWithHealthCheck): P
     await bot.telegram.sendMessage(userId, message);
 }
 
-export async function testTelegramNotification(config: HealthCheckTelegramNotificationConfig): Promise<void> {
+export async function testTelegramNotification(
+    config: HealthCheckTelegramNotificationConfig
+): Promise<{ ok: boolean; message: string }> {
     if (!config.botToken) {
-        throw new Error("Bot token is required");
+        return {
+            ok: false,
+            message: "Bot token is required"
+        };
     }
 
     if (!config.chatId) {
-        throw new Error("Chat ID is required");
+        return {
+            ok: false,
+            message: "Chat ID is required"
+        };
     }
 
     if (!config.messageTemplate) {
-        throw new Error("Message Template is required");
+        return {
+            ok: false,
+            message: "Message Template is required"
+        };
     }
 
-    const bot = new Telegraf(config.botToken);
+    try {
+        const bot = new Telegraf(config.botToken, {
+            telegram: {
+                apiRoot: process.env.TELEGRAM_API_URL
+            }
+        });
 
-    const userId = config.chatId;
+        const userId = config.chatId;
 
-    const message = config.messageTemplate
-        .replaceAll("{{serverName}}", "Example Server")
-        .replaceAll("{{serverHostnameOrIp}}", "10.11.12.13");
+        const message = config.messageTemplate
+            .replaceAll("{{serverName}}", "Example Server")
+            .replaceAll("{{serverHostnameOrIp}}", "10.11.12.13");
 
-    await bot.telegram.sendMessage(userId, message);
+        await bot.telegram.sendMessage(userId, message);
+
+        return {
+            ok: true,
+            message: "Message sent!"
+        };
+    } catch (error) {
+        return {
+            ok: false,
+            message: (error as object).toString()
+        };
+    }
 }

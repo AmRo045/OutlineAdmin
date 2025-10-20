@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { HealthCheck } from "@prisma/client";
 import { Radio, RadioGroup } from "@heroui/radio";
 import { Controller, useForm } from "react-hook-form";
-import { Button, Input, Link, Textarea, Tooltip, useDisclosure } from "@heroui/react";
+import { addToast, Button, Input, Link, Textarea, Tooltip, useDisclosure } from "@heroui/react";
 import { useRouter } from "next/navigation";
 
 import { testTelegramNotification, updateHealthCheck } from "@/src/core/actions/health-check";
@@ -60,11 +60,22 @@ export default function HealthCheckEditForm({ healthCheck }: Props) {
 
         try {
             setIsTesting(true);
-            await testTelegramNotification({
+            const result = await testTelegramNotification({
                 botToken: values.telegramBotToken!,
                 chatId: values.telegramChatId!,
                 messageTemplate: values.telegramMessageTemplate!
             });
+
+            if (result.ok) {
+                addToast({
+                    title: "Success",
+                    description: result.message,
+                    color: "success"
+                });
+            } else {
+                setErrorMessage(result.message);
+                errorModalDisclosure.onOpen();
+            }
         } catch (error) {
             setErrorMessage((error as object).toString());
             errorModalDisclosure.onOpen();
