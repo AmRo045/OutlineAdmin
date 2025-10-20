@@ -74,18 +74,31 @@ model DynamicAccessKey {
   accessKeys AccessKey[] @relation("AccessKeyDynamicAccessKeys")
 }
 
-model HealthCheck {
-  id                   Int       @id @default(autoincrement())
-  serverId             Int       @unique
-  lastCheckedAt        DateTime?
-  isAvailable          Boolean   @default(true)
-  notification         String?
-  notificationConfig   String?
-  notificationSentAt   DateTime?
-  notificationCooldown Int       @default(5)
-  interval             Int       @default(1)
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
+model NotificationChannel {
+  id        Int      @id @default(autoincrement())
+  name      String
+  type      String
+  config    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  healthChecks HealthCheck[]
+}
+
+model HealthCheck {
+  id                    Int       @id @default(autoincrement())
+  serverId              Int       @unique
+  notificationChannelId Int?
+  lastCheckedAt         DateTime?
+  isAvailable           Boolean   @default(true)
+  notification          String?
+  notificationConfig    String?
+  notificationSentAt    DateTime?
+  notificationCooldown  Int       @default(5)
+  interval              Int       @default(1)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  server              Server               @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  NotificationChannel NotificationChannel? @relation(fields: [notificationChannelId], references: [id])
 }
