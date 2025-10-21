@@ -4,20 +4,23 @@ import { Button, Input, Link, Pagination } from "@heroui/react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { range } from "@heroui/shared-utils";
+import { NotificationChannel } from "@prisma/client";
 
-import { HealthCheckWithServer } from "@/src/core/definitions";
 import { PAGE_SIZE } from "@/src/core/config";
-import { getHealthChecks, getHealthChecksCount } from "@/src/core/actions/health-check";
-import HealthCheckListItem from "@/src/components/health-check-list-item";
 import HealthCheckListItemSkeleton from "@/src/components/health-check-list-item-skeleton";
-import { BellIcon } from "@/src/components/icons";
+import { PlusIcon } from "@/src/components/icons";
+import { getNotificationChannels, getNotificationChannelsCount } from "@/src/core/actions/notification-channel";
+
+interface Props {
+    data: NotificationChannel[];
+}
 
 interface SearchFormProps {
     term: string;
 }
 
-export default function HealthCheckList() {
-    const [healthChecks, setHealthChecks] = useState<HealthCheckWithServer[]>([]);
+export default function NotificationChannelsList({ data }: Props) {
+    const [channels, setChannels] = useState<NotificationChannel[]>(data);
     const [page, setPage] = useState<number>(1);
     const [totalItems, setTotalItems] = useState<number>(1);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -30,49 +33,41 @@ export default function HealthCheckList() {
             term: data.term
         };
 
-        const filteredServers = await getHealthChecks(params);
-        const total = await getHealthChecksCount(params);
+        const filteredServers = await getNotificationChannels(params);
+        const total = await getNotificationChannelsCount(params);
 
         setTotalItems(total);
-        setHealthChecks(filteredServers);
+        setChannels(filteredServers);
         setPage(1);
     };
 
-    const updateData = async (quietly: boolean = false) => {
+    const updateData = async () => {
         const params = { skip: (page - 1) * PAGE_SIZE, term: searchForm.getValues("term") };
 
-        if (!quietly) {
-            setIsLoading(true);
-        }
+        setIsLoading(true);
 
         try {
-            const data = await getHealthChecks(params);
+            const data = await getNotificationChannels(params);
 
-            setHealthChecks(data);
+            setChannels(data);
 
-            const count = await getHealthChecksCount(params);
+            const count = await getNotificationChannelsCount(params);
 
             setTotalItems(count);
         } finally {
-            if (!quietly) {
-                setIsLoading(false);
-            }
+            setIsLoading(false);
         }
     };
 
     useEffect(() => {
         updateData();
-
-        const interval = setInterval(() => updateData(true), 30 * 1000);
-
-        return () => clearInterval(interval);
     }, [page]);
 
     return (
         <>
             <div className="grid gap-4">
                 <div className="flex gap-2 items-center">
-                    <h1 className="text-xl">Your Health Checks</h1>
+                    <h1 className="text-xl">Your Notification Channels</h1>
                 </div>
 
                 <div className="flex justify-between items-center gap-2">
@@ -89,20 +84,20 @@ export default function HealthCheckList() {
                     <Button
                         as={Link}
                         color="primary"
-                        href="/health-checks/notification-channels"
-                        startContent={<BellIcon size={20} />}
+                        href="/health-checks/notification-channels/create"
+                        startContent={<PlusIcon size={20} />}
                         variant="shadow"
                     >
-                        Channels
+                        Add
                     </Button>
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-4">
                     {isLoading && range(1, 6).map((item) => <HealthCheckListItemSkeleton key={item} />)}
-                    {!isLoading && healthChecks.map((item) => <HealthCheckListItem key={item.id} item={item} />)}
+                    {!isLoading && channels.map((item) => <div key={item.id}>{item.name}</div>)}
                 </div>
 
-                {!isLoading && totalPage > 1 && healthChecks.length > 0 && (
+                {!isLoading && totalPage > 1 && channels.length > 0 && (
                     <div className="flex justify-center">
                         <Pagination initialPage={page} total={totalPage} variant="light" onChange={setPage} />
                     </div>

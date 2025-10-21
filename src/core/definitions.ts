@@ -17,6 +17,13 @@ export type HealthCheckTelegramNotificationConfig = {
     messageTemplate: string;
 };
 
+export type TelegramNotificationChannelConfig = {
+    apiUrl: string;
+    botToken: string;
+    chatId: string;
+    messageTemplate: string;
+};
+
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
     size?: number;
 };

@@ -105,3 +105,7 @@ export const createPageTitle = (title?: string) => {
 
     return appTitle;
 };
+
+export const getNotificationChannelTypes = () => {
+    return ["None", "Telegram"];
+};
