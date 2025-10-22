@@ -4,7 +4,7 @@ import crypto from "crypto";
 import { HEALTH_CHECK_DEFAULT_INTERVAL, HEALTH_CHECK_DEFAULT_NOTIFICATION_COOLDOWN } from "@/src/core/config";
 import { createLogger } from "@/src/core/logger";
 import { HealthCheckNotificationType, LoggerContext } from "@/src/core/definitions";
-import { sendTelegramNotification } from "@/src/core/actions/health-check";
+import { sendNotificationViaTelegramChannel } from "@/src/core/actions/notification-channel";
 
 let logger = createLogger(LoggerContext.HealthCheckJob);
 
@@ -35,7 +35,7 @@ async function handleUnavailableServer(server: any) {
     if (healthCheck.notification === HealthCheckNotificationType.Telegram && server.healthCheck.notificationConfig) {
         try {
             logger.info("Sending Telegram notification...");
-            await sendTelegramNotification(server);
+            await sendNotificationViaTelegramChannel(server);
 
             await prisma.healthCheck.update({
                 where: { serverId: server.id },

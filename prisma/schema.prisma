@@ -100,5 +100,5 @@ model HealthCheck {
   updatedAt             DateTime  @updatedAt
 
   server              Server               @relation(fields: [serverId], references: [id], onDelete: Cascade)
-  NotificationChannel NotificationChannel? @relation(fields: [notificationChannelId], references: [id])
+  notificationChannel NotificationChannel? @relation(fields: [notificationChannelId], references: [id])
 }

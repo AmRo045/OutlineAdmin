@@ -143,7 +143,7 @@ export default function NotificationChannelForm({ channel }: Props) {
             />
             <div className="grid gap-6 w-full">
                 <section className="flex justify-start items-center gap-2">
-                    <Tooltip closeDelay={100} color="default" content="Servers" delay={600} size="sm">
+                    <Tooltip closeDelay={100} color="default" content="Notification channels" delay={600} size="sm">
                         <Button
                             isIconOnly
                             as={Link}

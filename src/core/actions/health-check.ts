@@ -1,27 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { Telegraf } from "telegraf";
 
 import prisma from "@/prisma/db";
-import {
-    HealthCheckTelegramNotificationConfig,
-    HealthCheckWithServer,
-    NewHealthCheckRequest,
-    ServerWithHealthCheck,
-    UpdateHealthCheckRequest
-} from "@/src/core/definitions";
-
-export async function createHealthCheck(data: NewHealthCheckRequest): Promise<void> {
-    await prisma.healthCheck.create({ data });
-    revalidatePath("/health-checks");
-}
+import { HealthCheckWithServerAndChannel, UpdateHealthCheckRequest } from "@/src/core/definitions";
 
 export async function getHealthChecks(filters?: {
     term?: string;
     skip?: number;
     take?: number;
-}): Promise<HealthCheckWithServer[]> {
+}): Promise<HealthCheckWithServerAndChannel[]> {
     const { term, skip = 0, take = 10 } = filters || {};
 
     return prisma.healthCheck.findMany({
@@ -34,9 +22,10 @@ export async function getHealthChecks(filters?: {
         },
         skip,
         take,
-        orderBy: { isAvailable: "desc" },
+        orderBy: { isAvailable: "asc" },
         include: {
-            server: true
+            server: true,
+            notificationChannel: true
         }
     });
 }
@@ -78,82 +67,4 @@ export async function updateHealthCheck(data: UpdateHealthCheckRequest): Promise
 
     revalidatePath("/health-checks");
     revalidatePath(`/health-checks/${id}`);
-}
-
-export async function deleteHealthCheck(id: number): Promise<void> {
-    await prisma.healthCheck.delete({
-        where: { id }
-    });
-
-    revalidatePath("/health-checks");
-    revalidatePath(`/health-checks/${id}`);
-}
-
-export async function sendTelegramNotification(server: ServerWithHealthCheck): Promise<void> {
-    const config = JSON.parse(server.healthCheck.notificationConfig ?? "{}") as HealthCheckTelegramNotificationConfig;
-
-    const bot = new Telegraf(config.botToken, {
-        telegram: {
-            apiRoot: process.env.TELEGRAM_API_URL
-        }
-    });
-
-    const userId = config.chatId;
-
-    const message = config.messageTemplate
-        .replaceAll("{{serverName}}", server.name)
-        .replaceAll("{{serverHostnameOrIp}}", server.hostnameOrIp);
-
-    await bot.telegram.sendMessage(userId, message);
-}
-
-export async function testTelegramNotification(
-    config: HealthCheckTelegramNotificationConfig
-): Promise<{ ok: boolean; message: string }> {
-    if (!config.botToken) {
-        return {
-            ok: false,
-            message: "Bot token is required"
-        };
-    }
-
-    if (!config.chatId) {
-        return {
-            ok: false,
-            message: "Chat ID is required"
-        };
-    }
-
-    if (!config.messageTemplate) {
-        return {
-            ok: false,
-            message: "Message Template is required"
-        };
-    }
-
-    try {
-        const bot = new Telegraf(config.botToken, {
-            telegram: {
-                apiRoot: process.env.TELEGRAM_API_URL
-            }
-        });
-
-        const userId = config.chatId;
-
-        const message = config.messageTemplate
-            .replaceAll("{{serverName}}", "Example Server")
-            .replaceAll("{{serverHostnameOrIp}}", "10.11.12.13");
-
-        await bot.telegram.sendMessage(userId, message);
-
-        return {
-            ok: true,
-            message: "Message sent!"
-        };
-    } catch (error) {
-        return {
-            ok: false,
-            message: (error as object).toString()
-        };
-    }
 }

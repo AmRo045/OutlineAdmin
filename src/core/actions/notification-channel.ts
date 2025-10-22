@@ -5,7 +5,7 @@ import { NotificationChannel } from "@prisma/client";
 import { Telegraf } from "telegraf";
 
 import prisma from "@/prisma/db";
-import { TelegramNotificationChannelConfig } from "@/src/core/definitions";
+import { ServerWithHealthCheck, TelegramNotificationChannelConfig } from "@/src/core/definitions";
 
 export async function createNotificationChannel(data: any): Promise<void> {
     await prisma.notificationChannel.create({ data });
@@ -64,6 +64,30 @@ export async function deleteNotificationChannel(id: number): Promise<void> {
 
     revalidatePath("/health-checks/notification-channels");
     revalidatePath(`/health-checks/notification-channels/${id}`);
+}
+
+export async function sendNotificationViaTelegramChannel(server: ServerWithHealthCheck): Promise<void> {
+    const channel = await getNotificationChannelById(server.healthCheck.notificationChannelId!);
+
+    if (!channel) {
+        return;
+    }
+
+    const config = JSON.parse(channel.config ?? "{}") as TelegramNotificationChannelConfig;
+
+    const bot = new Telegraf(config.botToken, {
+        telegram: {
+            apiRoot: config.apiUrl
+        }
+    });
+
+    const userId = config.chatId;
+
+    const message = config.messageTemplate
+        .replaceAll("{{serverName}}", server.name)
+        .replaceAll("{{serverHostnameOrIp}}", server.hostnameOrIp);
+
+    await bot.telegram.sendMessage(userId, message);
 }
 
 export async function testTelegramNotificationChannel(

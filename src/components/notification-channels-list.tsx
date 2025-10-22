@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Input, Link, Pagination } from "@heroui/react";
+import { Button, Input, Link, Pagination, Tooltip } from "@heroui/react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { range } from "@heroui/shared-utils";
@@ -8,7 +8,7 @@ import { NotificationChannel } from "@prisma/client";
 
 import { PAGE_SIZE } from "@/src/core/config";
 import HealthCheckListItemSkeleton from "@/src/components/health-check-list-item-skeleton";
-import { PlusIcon } from "@/src/components/icons";
+import { ArrowLeftIcon, PlusIcon } from "@/src/components/icons";
 import { getNotificationChannels, getNotificationChannelsCount } from "@/src/core/actions/notification-channel";
 
 interface Props {
@@ -66,9 +66,15 @@ export default function NotificationChannelsList({ data }: Props) {
     return (
         <>
             <div className="grid gap-4">
-                <div className="flex gap-2 items-center">
+                <section className="flex justify-start items-center gap-2">
+                    <Tooltip closeDelay={100} color="default" content="Health checks" delay={600} size="sm">
+                        <Button isIconOnly as={Link} href="/health-checks" size="sm" variant="light">
+                            <ArrowLeftIcon size={20} />
+                        </Button>
+                    </Tooltip>
+
                     <h1 className="text-xl">Your Notification Channels</h1>
-                </div>
+                </section>
 
                 <div className="flex justify-between items-center gap-2">
                     <form onSubmit={searchForm.handleSubmit(handleSearch)}>

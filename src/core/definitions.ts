@@ -1,5 +1,5 @@
 import { JWTPayload } from "jose";
-import { AccessKey, DynamicAccessKey, HealthCheck, Server } from "@prisma/client";
+import { AccessKey, DynamicAccessKey, HealthCheck, NotificationChannel, Server } from "@prisma/client";
 import { SVGProps } from "react";
 
 export enum LoggerContext {
@@ -10,12 +10,6 @@ export enum LoggerContext {
 export enum HealthCheckNotificationType {
     Telegram = "telegram"
 }
-
-export type HealthCheckTelegramNotificationConfig = {
-    botToken: string;
-    chatId: string;
-    messageTemplate: string;
-};
 
 export type TelegramNotificationChannelConfig = {
     apiUrl: string;
@@ -44,7 +38,10 @@ export type ServerWithHealthCheck = Server & { healthCheck: HealthCheck };
 export type DynamicAccessKeyWithAccessKeysCount = DynamicAccessKey & { _count?: { accessKeys: number } };
 export type DynamicAccessKeyWithAccessKeys = DynamicAccessKey & { accessKeys: AccessKey[] };
 
-export type HealthCheckWithServer = HealthCheck & { server: Server };
+export type HealthCheckWithServerAndChannel = HealthCheck & {
+    server: Server;
+    notificationChannel: NotificationChannel;
+};
 
 export interface NewServerRequest {
     managementJson: string;
@@ -123,21 +120,9 @@ export interface DynamicAccessKeyApiResponse {
     };
 }
 
-export interface NewHealthCheckRequest {
-    serverId: number;
-    isAvailable: boolean;
-    lastCheckedAt?: Date | null;
-    notification?: string | null;
-    notificationConfig?: string | null;
-    notificationSentAt?: Date | null;
-    notificationCooldown: number;
-    interval: number;
-}
-
 export interface UpdateHealthCheckRequest {
     id: number;
-    notification: string | null;
-    notificationConfig: string | null;
+    notificationChannelId?: number;
     notificationCooldown: number;
     interval: number;
 }
