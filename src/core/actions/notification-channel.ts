@@ -23,7 +23,8 @@ export async function getNotificationChannels(filters?: {
     return prisma.notificationChannel.findMany({
         where: term ? { name: { contains: term } } : undefined,
         skip,
-        take
+        take,
+        orderBy: [{ id: "desc" }]
     });
 }
 
