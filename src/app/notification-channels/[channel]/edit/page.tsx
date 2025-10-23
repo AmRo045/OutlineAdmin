@@ -6,7 +6,7 @@ import NotificationChannelForm from "@/src/components/notification-channel-form"
 import { getNotificationChannelById } from "@/src/core/actions/notification-channel";
 
 export const metadata: Metadata = {
-    title: createPageTitle("Notification Channel Form")
+    title: createPageTitle("Edit Notification Channel")
 };
 
 interface Props {

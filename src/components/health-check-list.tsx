@@ -89,7 +89,7 @@ export default function HealthCheckList() {
                     <Button
                         as={Link}
                         color="primary"
-                        href="/health-checks/notification-channels"
+                        href="/notification-channels"
                         startContent={<BellIcon size={20} />}
                         variant="shadow"
                     >

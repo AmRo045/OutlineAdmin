@@ -123,7 +123,7 @@ export default function NotificationChannelForm({ channel }: Props) {
                 });
             }
 
-            router.push("/health-checks/notification-channels");
+            router.push("/notification-channels");
         } catch (error) {
             setErrorMessage((error as object).toString());
             errorModalDisclosure.onOpen();
@@ -144,13 +144,7 @@ export default function NotificationChannelForm({ channel }: Props) {
             <div className="grid gap-6 w-full">
                 <section className="flex justify-start items-center gap-2">
                     <Tooltip closeDelay={100} color="default" content="Notification channels" delay={600} size="sm">
-                        <Button
-                            isIconOnly
-                            as={Link}
-                            href="/health-checks/notification-channels"
-                            size="sm"
-                            variant="light"
-                        >
+                        <Button isIconOnly as={Link} href="/notification-channels" size="sm" variant="light">
                             <ArrowLeftIcon size={20} />
                         </Button>
                     </Tooltip>

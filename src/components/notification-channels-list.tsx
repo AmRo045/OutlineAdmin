@@ -20,7 +20,7 @@ import { useForm } from "react-hook-form";
 import { NotificationChannel } from "@prisma/client";
 
 import { PAGE_SIZE } from "@/src/core/config";
-import { ArrowLeftIcon, DeleteIcon, EditIcon, PlusIcon } from "@/src/components/icons";
+import { DeleteIcon, EditIcon, PlusIcon } from "@/src/components/icons";
 import {
     deleteNotificationChannel,
     getNotificationChannels,
@@ -108,13 +108,7 @@ export default function NotificationChannelsList({ data }: Props) {
 
             <div className="grid gap-4">
                 <section className="flex justify-start items-center gap-2">
-                    <Tooltip closeDelay={100} color="default" content="Health checks" delay={600} size="sm">
-                        <Button isIconOnly as={Link} href="/health-checks" size="sm" variant="light">
-                            <ArrowLeftIcon size={20} />
-                        </Button>
-                    </Tooltip>
-
-                    <h1 className="text-xl">Your Notification Channels</h1>
+                    <h1 className="text-xl">Notification Channels</h1>
                 </section>
 
                 <div className="flex justify-between items-center gap-2">
@@ -131,7 +125,7 @@ export default function NotificationChannelsList({ data }: Props) {
                     <Button
                         as={Link}
                         color="primary"
-                        href="/health-checks/notification-channels/create"
+                        href="/notification-channels/create"
                         startContent={<PlusIcon size={20} />}
                         variant="shadow"
                     >
@@ -173,7 +167,7 @@ export default function NotificationChannelsList({ data }: Props) {
                                             <Button
                                                 as={Link}
                                                 color="primary"
-                                                href={`/health-checks/notification-channels/${channel.id}/edit`}
+                                                href={`/notification-channels/${channel.id}/edit`}
                                                 isIconOnly={true}
                                                 size="sm"
                                                 variant="light"

@@ -10,7 +10,7 @@ import { ServerWithHealthCheck, TelegramNotificationChannelConfig } from "@/src/
 export async function createNotificationChannel(data: any): Promise<void> {
     await prisma.notificationChannel.create({ data });
 
-    revalidatePath("/health-checks/notification-channels");
+    revalidatePath("/notification-channels");
 }
 
 export async function getNotificationChannels(filters?: {
@@ -54,8 +54,8 @@ export async function updateNotificationChannel(data: any): Promise<void> {
         data: updateData
     });
 
-    revalidatePath("/health-checks/notification-channels");
-    revalidatePath(`/health-checks/notification-channels/${id}`);
+    revalidatePath("/notification-channels");
+    revalidatePath(`/notification-channels/${id}`);
 }
 
 export async function deleteNotificationChannel(id: number): Promise<void> {
@@ -63,8 +63,8 @@ export async function deleteNotificationChannel(id: number): Promise<void> {
         where: { id }
     });
 
-    revalidatePath("/health-checks/notification-channels");
-    revalidatePath(`/health-checks/notification-channels/${id}`);
+    revalidatePath("/notification-channels");
+    revalidatePath(`/notification-channels/${id}`);
 }
 
 export async function sendNotificationViaTelegramChannel(server: ServerWithHealthCheck): Promise<void> {
