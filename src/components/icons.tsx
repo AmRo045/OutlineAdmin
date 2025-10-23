@@ -515,6 +515,26 @@ export const InfinityIcon = ({ size = 24, width, height, ...props }: IconSvgProp
     </svg>
 );
 
+export const HamburgerMenuIcon = ({ size = 24, width, height, ...props }: IconSvgProps) => (
+    <svg
+        aria-hidden="true"
+        focusable="false"
+        height={size || height}
+        role="presentation"
+        viewBox="0 0 24 24"
+        width={size || width}
+        {...props}
+    >
+        <path
+            d="M4 7h3m13 0h-9m9 10h-3M4 17h9m-9-5h16"
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeWidth="1.5"
+        />
+    </svg>
+);
+
 export const BellIcon = ({ size = 24, width, height, ...props }: IconSvgProps) => (
     <svg
         aria-hidden="true"

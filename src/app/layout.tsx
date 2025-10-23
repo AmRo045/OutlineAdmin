@@ -7,11 +7,12 @@ import { Inter as FontSans } from "next/font/google";
 
 import { Providers } from "./providers";
 
-import { Navbar } from "@/src/components/navbar";
 import { currentSession } from "@/src/core/session";
 import { app } from "@/src/core/config";
 import { createPageTitle } from "@/src/core/utils";
 import { Footer } from "@/src/components/footer";
+import { SideMenu } from "@/src/components/side-menu";
+import { SideMenuDrawer } from "@/src/components/side-menu-drawer";
 
 const fontSans = FontSans({
     subsets: ["latin"],
@@ -46,13 +47,27 @@ export default async function RootLayout({ children }: Props) {
 
             <body className={clsx("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
                 <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-                    <div className="relative flex flex-col h-screen">
-                        <Navbar session={session} />
+                    {session.isAuthorized ? (
+                        <div className="grid xl:grid-cols-[auto_1fr] gap-2">
+                            <div className="hidden xl:block">
+                                <SideMenu />
+                            </div>
 
-                        <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">{children}</main>
+                            <div className="relative flex flex-col w-full h-screen">
+                                <SideMenuDrawer />
 
-                        <Footer />
-                    </div>
+                                <main className="w-full pt-8 px-6 flex-grow">{children}</main>
+
+                                <Footer />
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="relative flex flex-col w-full h-screen">
+                            <main className="w-full flex-grow">{children}</main>
+
+                            <Footer />
+                        </div>
+                    )}
                 </Providers>
             </body>
         </html>
