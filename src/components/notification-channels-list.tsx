@@ -173,7 +173,7 @@ export default function NotificationChannelsList({ data }: Props) {
                                             <Button
                                                 as={Link}
                                                 color="primary"
-                                                href={`/notification-channels/${channel.id}/edit`}
+                                                href={`/health-checks/notification-channels/${channel.id}/edit`}
                                                 isIconOnly={true}
                                                 size="sm"
                                                 variant="light"
