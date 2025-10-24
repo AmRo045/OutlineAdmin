@@ -5,7 +5,7 @@ import AccessKeyForm from "@/src/components/access-key-form";
 import { getAccessKeyById } from "@/src/core/actions/access-key";
 
 export const metadata: Metadata = {
-    title: createPageTitle("New Dynamic Access Key")
+    title: createPageTitle("Edit Access Key")
 };
 
 interface Props {
