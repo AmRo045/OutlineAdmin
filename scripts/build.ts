@@ -8,11 +8,13 @@ const main = async () => {
         await runCommand("next", ["build"]);
 
         const publicDir = path.join(process.cwd(), ".next", "standalone", "public");
+
         if (!fs.existsSync(publicDir)) {
             fs.mkdirSync(publicDir, { recursive: true });
         }
 
         const staticDir = path.join(process.cwd(), ".next", "standalone", ".next", "static");
+
         if (!fs.existsSync(staticDir)) {
             fs.mkdirSync(staticDir, { recursive: true });
         }

@@ -1,6 +1,7 @@
-import prisma from "@/prisma/db";
 import https from "https";
 import crypto from "crypto";
+
+import prisma from "@/prisma/db";
 import { HEALTH_CHECK_DEFAULT_INTERVAL, HEALTH_CHECK_DEFAULT_NOTIFICATION_COOLDOWN } from "@/src/core/config";
 import { createLogger } from "@/src/core/logger";
 import { HealthCheckNotificationType, LoggerContext } from "@/src/core/definitions";
@@ -29,6 +30,7 @@ async function handleUnavailableServer(server: any) {
     if (healthCheck.notificationSentAt) {
         const msSinceLastNotification = Date.now() - new Date(healthCheck.notificationSentAt).getTime();
         const cooldownMs = healthCheck.notificationCooldown * 60_000;
+
         if (msSinceLastNotification < cooldownMs) return;
     }
 
@@ -104,6 +106,7 @@ async function checkServerHealth(server: any) {
 
         if (!response.ok) {
             logger.error(`[${server.name}] HTTP ${response.status} - ${response.statusText}`);
+
             return await handleUnavailableServer(server);
         }
 

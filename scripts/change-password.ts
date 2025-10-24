@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+
 import prisma from "@/prisma/db";
 
 const updatePassword = async (password: string): Promise<void> => {
