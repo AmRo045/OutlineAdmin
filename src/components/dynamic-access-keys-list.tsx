@@ -32,7 +32,6 @@ import {
 } from "@/src/core/actions/dynamic-access-key";
 import AccessKeyValidityChip from "@/src/components/access-key-validity-chip";
 import DynamicAccessKeyModal from "@/src/components/modals/dynamic-access-key-modal";
-import DynamicAccessKeyFormModal from "@/src/components/modals/dynamic-access-key-form-modal";
 import { app, PAGE_SIZE } from "@/src/core/config";
 
 interface SearchFormProps {
@@ -48,7 +47,6 @@ export default function DynamicAccessKeysList() {
 
     const totalPage = Math.ceil(totalItems / PAGE_SIZE);
 
-    const dynamicAccessKeyFormModalDisclosure = useDisclosure();
     const removeDynamicAccessKeyConfirmModalDisclosure = useDisclosure();
     const dynamicAccessKeyModalDisclosure = useDisclosure();
 
@@ -108,12 +106,6 @@ export default function DynamicAccessKeysList() {
         <>
             <DynamicAccessKeyModal disclosure={dynamicAccessKeyModalDisclosure} value={getCurrentAccessKeyUrl()} />
 
-            <DynamicAccessKeyFormModal
-                disclosure={dynamicAccessKeyFormModalDisclosure}
-                dynamicAccessKeyData={currentDynamicAccessKey}
-                onSuccess={updateData}
-            />
-
             <ConfirmModal
                 body={
                     <div className="grid gap-2">
@@ -131,7 +123,7 @@ export default function DynamicAccessKeysList() {
 
             <div className="grid gap-4">
                 <div className="flex gap-2 items-center">
-                    <h1 className="text-xl">Your Dynamic Access Keys</h1>
+                    <h1 className="text-xl">Dynamic Access Keys</h1>
 
                     <Tooltip content="Read more about dynamic access keys">
                         <Link href={app.links.outlineVpnWiki.dynamicAccessKeys} target="_blank">
@@ -158,13 +150,11 @@ export default function DynamicAccessKeysList() {
                     </form>
 
                     <Button
+                        as={Link}
                         color="primary"
+                        href="/dynamic-access-keys/create"
                         startContent={<PlusIcon size={20} />}
                         variant="shadow"
-                        onPress={() => {
-                            setCurrentDynamicAccessKey(() => undefined);
-                            dynamicAccessKeyFormModalDisclosure.onOpen();
-                        }}
                     >
                         Create
                     </Button>
@@ -275,14 +265,12 @@ export default function DynamicAccessKeysList() {
                                             size="sm"
                                         >
                                             <Button
+                                                as={Link}
                                                 color="primary"
+                                                href={`/dynamic-access-keys/${dynamicAccessKey.id}/edit`}
                                                 isIconOnly={true}
                                                 size="sm"
                                                 variant="light"
-                                                onPress={() => {
-                                                    setCurrentDynamicAccessKey(() => dynamicAccessKey);
-                                                    dynamicAccessKeyFormModalDisclosure.onOpen();
-                                                }}
                                             >
                                                 <EditIcon size={24} />
                                             </Button>

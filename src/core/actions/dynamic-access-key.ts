@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { DynamicAccessKey } from "@prisma/client";
 
 import prisma from "@/prisma/db";
 import {
@@ -51,6 +52,14 @@ export async function getDynamicAccessKeyById(
         },
         include: {
             accessKeys: withKeys
+        }
+    });
+}
+
+export async function findDynamicAccessKeyById(id: number): Promise<DynamicAccessKey | null> {
+    return prisma.dynamicAccessKey.findFirst({
+        where: {
+            id
         }
     });
 }
