@@ -33,6 +33,15 @@ export async function getAccessKeysCount(serverId: number): Promise<number> {
     });
 }
 
+export async function getAccessKeyById(serverId: number, id: number): Promise<AccessKey | null> {
+    return prisma.accessKey.findFirst({
+        where: {
+            serverId,
+            id
+        }
+    });
+}
+
 export async function createAccessKey(data: NewAccessKeyRequest): Promise<void> {
     const server = await prisma.server.findFirstOrThrow({
         where: { id: data.serverId }

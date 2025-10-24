@@ -19,7 +19,6 @@ import React, { useEffect, useState } from "react";
 import { AccessKey, Server } from "@prisma/client";
 
 import AccessKeyModal from "@/src/components/modals/access-key-modal";
-import AccessKeyFormModal from "@/src/components/modals/access-key-form-modal";
 import ConfirmModal from "@/src/components/modals/confirm-modal";
 import { ArrowLeftIcon, DeleteIcon, EditIcon, EyeIcon, InfinityIcon, PlusIcon } from "@/src/components/icons";
 import AccessKeyServerInfo from "@/src/components/access-key-server-info";
@@ -39,7 +38,6 @@ interface Props {
 }
 
 export default function ServerAccessKeys({ server, total }: Props) {
-    const accessKeyFormModalDisclosure = useDisclosure();
     const accessKeyModalDisclosure = useDisclosure();
     const removeAccessKeyConfirmModalDisclosure = useDisclosure();
     const apiErrorModalDisclosure = useDisclosure();
@@ -104,13 +102,6 @@ export default function ServerAccessKeys({ server, total }: Props) {
         <>
             <AccessKeyModal disclosure={accessKeyModalDisclosure} value={formattedAccessKey} />
 
-            <AccessKeyFormModal
-                accessKeyData={currentAccessKey}
-                disclosure={accessKeyFormModalDisclosure}
-                serverId={server.id}
-                onSuccess={updateData}
-            />
-
             <MessageModal
                 body={
                     <div className="grid gap-2">
@@ -161,15 +152,13 @@ export default function ServerAccessKeys({ server, total }: Props) {
                         <h1 className="text-xl">🗝️ Access Keys</h1>
 
                         <Button
+                            as={Link}
                             color="primary"
+                            href={`/servers/${server.id}/access-keys/create`}
                             startContent={<PlusIcon size={20} />}
                             variant="shadow"
-                            onPress={() => {
-                                setCurrentAccessKey(() => undefined);
-                                accessKeyFormModalDisclosure.onOpen();
-                            }}
                         >
-                            New
+                            Create
                         </Button>
                     </div>
 
@@ -265,13 +254,10 @@ export default function ServerAccessKeys({ server, total }: Props) {
                                                 <Button
                                                     as={Link}
                                                     color="primary"
+                                                    href={`/servers/${server.id}/access-keys/${accessKey.id}/edit`}
                                                     isIconOnly={true}
                                                     size="sm"
                                                     variant="light"
-                                                    onPress={() => {
-                                                        setCurrentAccessKey(() => accessKey);
-                                                        accessKeyFormModalDisclosure.onOpen();
-                                                    }}
                                                 >
                                                     <EditIcon size={24} />
                                                 </Button>
