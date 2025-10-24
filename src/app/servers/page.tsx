@@ -1,4 +1,3 @@
-import { Server } from "@prisma/client";
 import { Metadata } from "next";
 
 import ServersList from "@/src/components/servers-list";
@@ -10,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ServersPage() {
-    const servers: Server[] = await getServers({}, true);
+    const servers = await getServers({}, true);
 
     return <ServersList data={servers} />;
 }

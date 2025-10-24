@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { range } from "@heroui/shared-utils";
 
-import { HealthCheckWithServer } from "@/src/core/definitions";
+import { HealthCheckWithServerAndChannel } from "@/src/core/definitions";
 import { PAGE_SIZE } from "@/src/core/config";
 import { getHealthChecks, getHealthChecksCount } from "@/src/core/actions/health-check";
 import HealthCheckListItem from "@/src/components/health-check-list-item";
@@ -16,7 +16,7 @@ interface SearchFormProps {
 }
 
 export default function HealthCheckList() {
-    const [healthChecks, setHealthChecks] = useState<HealthCheckWithServer[]>([]);
+    const [healthChecks, setHealthChecks] = useState<HealthCheckWithServerAndChannel[]>([]);
     const [page, setPage] = useState<number>(1);
     const [totalItems, setTotalItems] = useState<number>(1);
     const [isLoading, setIsLoading] = useState<boolean>(true);

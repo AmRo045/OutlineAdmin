@@ -1,5 +1,5 @@
 import { JWTPayload } from "jose";
-import { AccessKey, DynamicAccessKey, HealthCheck, Server } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { SVGProps } from "react";
 
 export enum LoggerContext {
@@ -11,7 +11,8 @@ export enum HealthCheckNotificationType {
     Telegram = "telegram"
 }
 
-export type HealthCheckTelegramNotificationConfig = {
+export type TelegramNotificationChannelConfig = {
+    apiUrl: string;
     botToken: string;
     chatId: string;
     messageTemplate: string;
@@ -30,14 +31,46 @@ export interface UserSession {
     userId: number | undefined;
 }
 
-export type ServerWithAccessKeysCount = Server & { _count?: { accessKeys: number } };
-export type ServerWithAccessKeys = Server & { accessKeys: AccessKey[] };
-export type ServerWithHealthCheck = Server & { healthCheck: HealthCheck };
+export type ServerWithAccessKeysCount = Prisma.ServerGetPayload<{
+    include: {
+        _count: {
+            select: { accessKeys: true };
+        };
+    };
+}>;
 
-export type DynamicAccessKeyWithAccessKeysCount = DynamicAccessKey & { _count?: { accessKeys: number } };
-export type DynamicAccessKeyWithAccessKeys = DynamicAccessKey & { accessKeys: AccessKey[] };
+export type ServerWithAccessKeys = Prisma.ServerGetPayload<{
+    include: {
+        accessKeys: true;
+    };
+}>;
 
-export type HealthCheckWithServer = HealthCheck & { server: Server };
+export type ServerWithHealthCheck = Prisma.ServerGetPayload<{
+    include: {
+        healthCheck: true;
+    };
+}>;
+
+export type DynamicAccessKeyWithAccessKeysCount = Prisma.DynamicAccessKeyGetPayload<{
+    include: {
+        _count: {
+            select: { accessKeys: true };
+        };
+    };
+}>;
+
+export type DynamicAccessKeyWithAccessKeys = Prisma.DynamicAccessKeyGetPayload<{
+    include: {
+        accessKeys: true;
+    };
+}>;
+
+export type HealthCheckWithServerAndChannel = Prisma.HealthCheckGetPayload<{
+    include: {
+        server: true;
+        notificationChannel: true;
+    };
+}>;
 
 export interface NewServerRequest {
     managementJson: string;
@@ -116,21 +149,9 @@ export interface DynamicAccessKeyApiResponse {
     };
 }
 
-export interface NewHealthCheckRequest {
-    serverId: number;
-    isAvailable: boolean;
-    lastCheckedAt?: Date | null;
-    notification?: string | null;
-    notificationConfig?: string | null;
-    notificationSentAt?: Date | null;
-    notificationCooldown: number;
-    interval: number;
-}
-
 export interface UpdateHealthCheckRequest {
     id: number;
-    notification: string | null;
-    notificationConfig: string | null;
+    notificationChannelId?: number;
     notificationCooldown: number;
     interval: number;
 }

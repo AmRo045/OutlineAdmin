@@ -1,13 +1,21 @@
 import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Divider, Link } from "@heroui/react";
 import React from "react";
 
-import { HealthCheckWithServer } from "@/src/core/definitions";
+import { HealthCheckWithServerAndChannel } from "@/src/core/definitions";
 
 interface Props {
-    item: HealthCheckWithServer;
+    item: HealthCheckWithServerAndChannel;
 }
 
 export default function HealthCheckListItem({ item }: Props) {
+    const renderChannelName = () => {
+        if (!item.notificationChannel || item.notificationChannel.type === "None") {
+            return "No Notification";
+        }
+
+        return item.notificationChannel.name + " (" + item.notificationChannel.type + ")";
+    };
+
     return (
         <Card className="w-[320px]">
             <CardHeader className="flex gap-3">
@@ -49,7 +57,7 @@ export default function HealthCheckListItem({ item }: Props) {
                     <div className="flex justify-between items-center gap-2">
                         <span>Notification:</span>
                         <Chip size="sm" variant="flat">
-                            {item.notification ?? "NONE"}
+                            {renderChannelName()}
                         </Chip>
                     </div>
                 </div>

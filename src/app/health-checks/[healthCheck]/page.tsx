@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { createPageTitle } from "@/src/core/utils";
 import { getHealthCheckById } from "@/src/core/actions/health-check";
 import HealthCheckEditForm from "@/src/components/health-check-edit-form";
+import { getNotificationChannels } from "@/src/core/actions/notification-channel";
 
 interface Props {
     params: {
@@ -22,5 +23,7 @@ export default async function HealthCheckEditPage({ params }: Props) {
         notFound();
     }
 
-    return <HealthCheckEditForm healthCheck={healthCheck} />;
+    const notificationChannels = await getNotificationChannels({ take: 100000 });
+
+    return <HealthCheckEditForm healthCheck={healthCheck} notificationChannels={notificationChannels} />;
 }
