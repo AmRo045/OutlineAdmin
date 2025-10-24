@@ -12,12 +12,12 @@ export const metadata: Metadata = {
 
 interface Props {
     params: {
-        server: string;
+        serverId: string;
     };
 }
 
 export default async function ServerAccessKeysPage({ params }: Props) {
-    const server = await getServerById(parseInt(params.server));
+    const server = await getServerById(parseInt(params.serverId));
 
     if (!server) {
         notFound();

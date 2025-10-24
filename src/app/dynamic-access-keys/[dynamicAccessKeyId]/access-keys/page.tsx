@@ -8,7 +8,7 @@ import { createPageTitle } from "@/src/core/utils";
 
 interface Props {
     params: {
-        dynamicAccessKey: string;
+        dynamicAccessKeyId: string;
     };
 }
 
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export default async function DynamicAccessKeyAccessKeysFormPage({ params }: Props) {
-    const dynamicAccessKey = await getDynamicAccessKeyById(parseInt(params.dynamicAccessKey), true);
+    const dynamicAccessKey = await getDynamicAccessKeyById(parseInt(params.dynamicAccessKeyId), true);
 
     if (!dynamicAccessKey) {
         notFound();
