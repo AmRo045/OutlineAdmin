@@ -5,6 +5,7 @@ import { Button, Drawer, DrawerBody, DrawerContent, useDisclosure } from "@herou
 
 import { HamburgerMenuIcon } from "@/src/components/icons";
 import { SideMenu } from "@/src/components/side-menu";
+import { app } from "@/src/core/config";
 
 export const SideMenuDrawer = () => {
     const disclosure = useDisclosure();
@@ -14,7 +15,7 @@ export const SideMenuDrawer = () => {
             <div className="xl:hidden block">
                 <Button className="rounded-r-xl" radius="none" variant="light" onPress={disclosure.onOpen}>
                     <HamburgerMenuIcon size={24} />
-                    Navbar
+                    {app.name.toUpperCase()}
                 </Button>
             </div>
 
