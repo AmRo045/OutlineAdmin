@@ -265,7 +265,7 @@ export default function NotificationChannelForm({ channel }: Props) {
                                 errorMessage={formState.errors.telegramMessageTemplate?.message}
                                 isInvalid={!!formState.errors.telegramMessageTemplate}
                                 label="Message template"
-                                placeholder={`e.g. "{{serverName}} ({{serverHostnameOrIp}})" is out of reach!"`}
+                                placeholder={`e.g. "{{serverName}} ({{serverHostnameOrIp}})" is out of reach!`}
                                 variant="underlined"
                                 {...register("telegramMessageTemplate", {
                                     required: "Message template is required"
