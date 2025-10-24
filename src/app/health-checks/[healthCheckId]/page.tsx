@@ -8,7 +8,7 @@ import { getNotificationChannels } from "@/src/core/actions/notification-channel
 
 interface Props {
     params: {
-        healthCheck: string;
+        healthCheckId: string;
     };
 }
 
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export default async function HealthCheckEditPage({ params }: Props) {
-    const healthCheck = await getHealthCheckById(parseInt(params.healthCheck));
+    const healthCheck = await getHealthCheckById(parseInt(params.healthCheckId));
 
     if (!healthCheck) {
         notFound();

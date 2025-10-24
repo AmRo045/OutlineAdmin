@@ -5,7 +5,6 @@ dist
 esm/*
 public/*
 tests/*
-scripts/*
 *.config.js
 .DS_Store
 node_modules

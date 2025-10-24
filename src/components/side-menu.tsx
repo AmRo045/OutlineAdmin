@@ -74,7 +74,7 @@ export const SideMenu = ({ drawerDisclosure }: Props) => {
         <>
             <DonationModal disclosure={donationModalDisclosure} />
 
-            <div className="flex flex-col justify-between gap-2 h-screen w-[316px] bg-default-50 dark:bg-content1">
+            <div className="flex flex-col justify-between gap-2 h-screen w-[316px] bg-default-50 dark:bg-content1 xl:fixed">
                 <div className="mt-8">
                     <div className="grid gap-4">
                         <NextLink

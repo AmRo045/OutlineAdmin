@@ -49,7 +49,7 @@ export default async function RootLayout({ children }: Props) {
                 <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
                     {session.isAuthorized ? (
                         <div className="grid xl:grid-cols-[auto_1fr] gap-2">
-                            <div className="hidden xl:block">
+                            <div className="hidden xl:block xl:w-[316px]">
                                 <SideMenu />
                             </div>
 

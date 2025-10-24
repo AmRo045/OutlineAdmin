@@ -17,15 +17,20 @@ export async function encrypt(payload: SessionPayload): Promise<string> {
 }
 
 export async function decrypt(session: string | undefined = ""): Promise<SessionPayload | null> {
+    if (!session) return null;
+
     try {
         const { payload } = await jwtVerify(session, encodedKey, {
             algorithms: ["HS256"]
         });
 
+        if (payload.exp && Date.now() >= payload.exp * 1000) {
+            return null;
+        }
+
         return payload as SessionPayload;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-        // TODO: report error
         return null;
     }
 }

@@ -11,12 +11,12 @@ export const metadata: Metadata = {
 
 interface Props {
     params: {
-        channel: string;
+        channelId: string;
     };
 }
 
 export default async function NotificationChannelEditPage({ params }: Props) {
-    const channel = await getNotificationChannelById(parseInt(params.channel));
+    const channel = await getNotificationChannelById(parseInt(params.channelId));
 
     if (!channel) {
         notFound();

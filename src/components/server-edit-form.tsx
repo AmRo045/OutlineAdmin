@@ -4,7 +4,7 @@ import { Button, Divider, Input, Link, Tooltip, useDisclosure } from "@heroui/re
 import React, { useState } from "react";
 import { Server } from "@prisma/client";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { ArrowLeftIcon } from "@/src/components/icons";
 import { EditServerRequest } from "@/src/core/definitions";
@@ -19,6 +19,9 @@ interface Props {
 
 export default function ServerEditForm({ server }: Props) {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const returnUrl = searchParams.get("return");
+
     const updateErrorModalDisclosure = useDisclosure();
     const removeServerConfirmModalDisclosure = useDisclosure();
 
@@ -36,7 +39,11 @@ export default function ServerEditForm({ server }: Props) {
         try {
             await updateServer(server.id, data);
 
-            router.push("/servers");
+            if (returnUrl) {
+                router.push(returnUrl);
+            } else {
+                router.push("/servers");
+            }
         } catch (error) {
             setServerError((error as object).toString());
             updateErrorModalDisclosure.onOpen();
@@ -80,8 +87,14 @@ export default function ServerEditForm({ server }: Props) {
 
             <div className="grid gap-6">
                 <section className="flex justify-start items-center gap-2">
-                    <Tooltip closeDelay={100} color="default" content="Servers" delay={600} size="sm">
-                        <Button as={Link} href="/servers" isIconOnly={true} size="sm" variant="light">
+                    <Tooltip closeDelay={100} color="default" content="Back" delay={600} size="sm">
+                        <Button
+                            as={Link}
+                            href={returnUrl ? returnUrl : "/servers"}
+                            isIconOnly={true}
+                            size="sm"
+                            variant="light"
+                        >
                             <ArrowLeftIcon size={20} />
                         </Button>
                     </Tooltip>

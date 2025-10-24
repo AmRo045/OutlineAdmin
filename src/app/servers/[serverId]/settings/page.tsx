@@ -7,7 +7,7 @@ import ServerEditForm from "@/src/components/server-edit-form";
 import { createPageTitle } from "@/src/core/utils";
 
 interface Props {
-    params: { server: string };
+    params: { serverId: string };
 }
 
 export const dynamic = "force-dynamic";
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ServerSettingsPage({ params }: Props) {
-    const server = await getServerById(parseInt(params.server));
+    const server = await getServerById(parseInt(params.serverId));
 
     if (!server) {
         notFound();
