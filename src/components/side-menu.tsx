@@ -16,8 +16,7 @@ import {
     HeartIconDuotone,
     Logo,
     RedditIcon,
-    ServersIcon,
-    SettingsIcon
+    ServersIcon
 } from "@/src/components/icons";
 import { app } from "@/src/core/config";
 import { logout } from "@/src/core/actions";
@@ -44,12 +43,12 @@ const menuItems = [
         label: "Notification Channels",
         pathName: "/notification-channels",
         icon: <BellIcon size={24} />
-    },
-    {
-        label: "Settings",
-        pathName: "#",
-        icon: <SettingsIcon size={24} />
     }
+    // {
+    //     label: "Settings",
+    //     pathName: "#",
+    //     icon: <SettingsIcon size={24} />
+    // }
 ];
 
 interface Props {
