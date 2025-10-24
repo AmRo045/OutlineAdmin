@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { HealthCheck, NotificationChannel } from "@prisma/client";
 import { Radio, RadioGroup } from "@heroui/radio";
 import { Controller, useForm } from "react-hook-form";
-import { Button, Input, Link, Tooltip, useDisclosure } from "@heroui/react";
-import { useRouter } from "next/navigation";
+import { Alert, Button, Input, Link, Tooltip, useDisclosure } from "@heroui/react";
+import { usePathname, useRouter } from "next/navigation";
 
 import { updateHealthCheck } from "@/src/core/actions/health-check";
 import MessageModal from "@/src/components/modals/message-modal";
@@ -25,6 +25,7 @@ type FormFields = {
 };
 
 export default function HealthCheckEditForm({ healthCheck, notificationChannels }: Props) {
+    const pathname = usePathname();
     const router = useRouter();
 
     const form = useForm<FormFields>({
@@ -113,24 +114,33 @@ export default function HealthCheckEditForm({ healthCheck, notificationChannels 
                         })}
                     />
 
-                    {/* Notification type */}
-                    <Controller
-                        control={control}
-                        name="notificationChannelId"
-                        render={({ field }) => (
-                            <RadioGroup
-                                label="Notification channel"
-                                value={field.value?.toString() ?? "0"}
-                                onChange={field.onChange}
-                            >
-                                {[NoNotificationChannel, ...notificationChannels].map((channel) => (
-                                    <Radio key={channel.id} value={channel.id.toString()}>
-                                        {channel.name} ({channel.type === "None" ? "No Notification" : channel.type})
-                                    </Radio>
-                                ))}
-                            </RadioGroup>
-                        )}
-                    />
+                    {notificationChannels.length > 0 ? (
+                        <Controller
+                            control={control}
+                            name="notificationChannelId"
+                            render={({ field }) => (
+                                <RadioGroup
+                                    label="Notification channel"
+                                    value={field.value?.toString() ?? "0"}
+                                    onChange={field.onChange}
+                                >
+                                    {[NoNotificationChannel, ...notificationChannels].map((channel) => (
+                                        <Radio key={channel.id} value={channel.id.toString()}>
+                                            {channel.name} ({channel.type === "None" ? "No Notification" : channel.type}
+                                            )
+                                        </Radio>
+                                    ))}
+                                </RadioGroup>
+                            )}
+                        />
+                    ) : (
+                        <Alert color="warning" hideIcon={true}>
+                            You do not have any notification channel.{" "}
+                            <Link className="contents" href={`/notification-channels/create?return=${pathname}`}>
+                                Create one
+                            </Link>
+                        </Alert>
+                    )}
 
                     <Button
                         color="primary"

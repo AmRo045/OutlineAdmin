@@ -5,7 +5,7 @@ import { NotificationChannel } from "@prisma/client";
 import { Radio, RadioGroup } from "@heroui/radio";
 import { Controller, useForm } from "react-hook-form";
 import { addToast, Alert, Button, Input, Link, Textarea, Tooltip, useDisclosure } from "@heroui/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import MessageModal from "@/src/components/modals/message-modal";
 import { ArrowLeftIcon } from "@/src/components/icons";
@@ -32,6 +32,7 @@ type FormFields = {
 
 export default function NotificationChannelForm({ channel }: Props) {
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     const parsedConfig = (() => {
         if (!channel) {
@@ -123,7 +124,13 @@ export default function NotificationChannelForm({ channel }: Props) {
                 });
             }
 
-            router.push("/notification-channels");
+            const returnUrl = searchParams.get("return");
+
+            if (returnUrl) {
+                router.push(returnUrl);
+            } else {
+                router.push("/notification-channels");
+            }
         } catch (error) {
             setErrorMessage((error as object).toString());
             errorModalDisclosure.onOpen();

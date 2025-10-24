@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Input, Link, Pagination } from "@heroui/react";
+import { Input, Pagination } from "@heroui/react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { range } from "@heroui/shared-utils";
@@ -10,7 +10,6 @@ import { PAGE_SIZE } from "@/src/core/config";
 import { getHealthChecks, getHealthChecksCount } from "@/src/core/actions/health-check";
 import HealthCheckListItem from "@/src/components/health-check-list-item";
 import HealthCheckListItemSkeleton from "@/src/components/health-check-list-item-skeleton";
-import { BellIcon } from "@/src/components/icons";
 
 interface SearchFormProps {
     term: string;
@@ -85,16 +84,6 @@ export default function HealthCheckList() {
                             {...searchForm.register("term")}
                         />
                     </form>
-
-                    <Button
-                        as={Link}
-                        color="primary"
-                        href="/notification-channels"
-                        startContent={<BellIcon size={20} />}
-                        variant="shadow"
-                    >
-                        Channels
-                    </Button>
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-4">
