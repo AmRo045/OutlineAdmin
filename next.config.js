@@ -4,7 +4,6 @@ const { version } = require("./package.json");
 const nextConfig = {
     output: "standalone",
     env: {
-        TELEGRAM_API_URL: process.env.TELEGRAM_API_URL,
         VERSION: version
     }
 };
