@@ -68,7 +68,7 @@ export async function deleteNotificationChannel(id: number): Promise<void> {
 }
 
 export async function sendNotificationViaTelegramChannel(server: ServerWithHealthCheck): Promise<void> {
-    const channel = await getNotificationChannelById(server.healthCheck.notificationChannelId!);
+    const channel = await getNotificationChannelById(server.healthCheck!.notificationChannelId!);
 
     if (!channel) {
         return;

@@ -1,5 +1,5 @@
 import { JWTPayload } from "jose";
-import { AccessKey, DynamicAccessKey, HealthCheck, NotificationChannel, Server } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { SVGProps } from "react";
 
 export enum LoggerContext {
@@ -31,17 +31,46 @@ export interface UserSession {
     userId: number | undefined;
 }
 
-export type ServerWithAccessKeysCount = Server & { _count?: { accessKeys: number } };
-export type ServerWithAccessKeys = Server & { accessKeys: AccessKey[] };
-export type ServerWithHealthCheck = Server & { healthCheck: HealthCheck };
+export type ServerWithAccessKeysCount = Prisma.ServerGetPayload<{
+    include: {
+        _count: {
+            select: { accessKeys: true };
+        };
+    };
+}>;
 
-export type DynamicAccessKeyWithAccessKeysCount = DynamicAccessKey & { _count?: { accessKeys: number } };
-export type DynamicAccessKeyWithAccessKeys = DynamicAccessKey & { accessKeys: AccessKey[] };
+export type ServerWithAccessKeys = Prisma.ServerGetPayload<{
+    include: {
+        accessKeys: true;
+    };
+}>;
 
-export type HealthCheckWithServerAndChannel = HealthCheck & {
-    server: Server;
-    notificationChannel: NotificationChannel;
-};
+export type ServerWithHealthCheck = Prisma.ServerGetPayload<{
+    include: {
+        healthCheck: true;
+    };
+}>;
+
+export type DynamicAccessKeyWithAccessKeysCount = Prisma.DynamicAccessKeyGetPayload<{
+    include: {
+        _count: {
+            select: { accessKeys: true };
+        };
+    };
+}>;
+
+export type DynamicAccessKeyWithAccessKeys = Prisma.DynamicAccessKeyGetPayload<{
+    include: {
+        accessKeys: true;
+    };
+}>;
+
+export type HealthCheckWithServerAndChannel = Prisma.HealthCheckGetPayload<{
+    include: {
+        server: true;
+        notificationChannel: true;
+    };
+}>;
 
 export interface NewServerRequest {
     managementJson: string;

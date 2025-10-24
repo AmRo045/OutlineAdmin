@@ -110,7 +110,7 @@ export const SideMenu = ({ drawerDisclosure }: Props) => {
                     </div>
 
                     <nav className="grid gap-6 mt-16 px-4">
-                        {menuItems.map((item, index) => (
+                        {menuItems.map((item) => (
                             <NextLink
                                 key={item.pathName}
                                 className={`flex gap-2 items-center ${currentPathname.startsWith(item.pathName) ? "text-primary-500" : "text-default-500"}`}

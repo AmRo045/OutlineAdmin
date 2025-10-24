@@ -26,13 +26,9 @@ export const SideMenuDrawer = () => {
                 onOpenChange={disclosure.onOpenChange}
             >
                 <DrawerContent>
-                    {(onClose) => (
-                        <>
-                            <DrawerBody className="p-0">
-                                <SideMenu drawerDisclosure={disclosure} />
-                            </DrawerBody>
-                        </>
-                    )}
+                    <DrawerBody className="p-0">
+                        <SideMenu drawerDisclosure={disclosure} />
+                    </DrawerBody>
                 </DrawerContent>
             </Drawer>
         </>
