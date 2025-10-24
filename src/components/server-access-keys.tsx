@@ -140,7 +140,12 @@ export default function ServerAccessKeys({ server, total }: Props) {
                         <h1 className="text-xl">{server.name}</h1>
                     </section>
 
-                    <Button as={Link} color="primary" href={`/servers/${server.id}/settings`} variant="light">
+                    <Button
+                        as={Link}
+                        color="primary"
+                        href={`/servers/${server.id}/settings?return=/servers/${server.id}/access-keys`}
+                        variant="light"
+                    >
                         Settings
                     </Button>
                 </section>
