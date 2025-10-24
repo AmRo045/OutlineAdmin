@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 
 import { SessionPayload, UserSession } from "@/src/core/definitions";
 import { AUTH_SESSION_KEY } from "@/src/core/config";
+// import { createLogger } from "@/src/core/logger";
 
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
@@ -17,15 +18,20 @@ export async function encrypt(payload: SessionPayload): Promise<string> {
 }
 
 export async function decrypt(session: string | undefined = ""): Promise<SessionPayload | null> {
+    if (!session) return null;
+
     try {
         const { payload } = await jwtVerify(session, encodedKey, {
             algorithms: ["HS256"]
         });
 
+        if (payload.exp && Date.now() >= payload.exp * 1000) {
+            return null;
+        }
+
         return payload as SessionPayload;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-        // TODO: report error
         return null;
     }
 }
