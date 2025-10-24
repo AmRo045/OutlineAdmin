@@ -4,7 +4,6 @@ import { cookies } from "next/headers";
 
 import { SessionPayload, UserSession } from "@/src/core/definitions";
 import { AUTH_SESSION_KEY } from "@/src/core/config";
-// import { createLogger } from "@/src/core/logger";
 
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
