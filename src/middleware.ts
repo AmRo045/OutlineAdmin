@@ -27,5 +27,5 @@ export default async function middleware(req: NextRequest) {
 
 // Routes Middleware should not run on
 export const config = {
-    matcher: ["/servers/:path*", "/dynamic-access-keys/:path*", "/((?!api|_next/static|_next/image|.*\\.png$).*)"]
+    matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"]
 };
