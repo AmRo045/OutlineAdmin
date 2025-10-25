@@ -15,6 +15,16 @@ export const app = {
     description:
         "Outline Admin is a web interface for the Outline Manager API, providing a simple and user-friendly UI for managing VPN servers.",
 
+    defaultTelegramNotificationTemplate: `⚠️ OUTLINE ADMIN ⚠️
+
+**\`{{serverName}}\`** (\`{{serverHostnameOrIp}}\`) is out of reach!
+
+
+[[Error]]:
+\`\`\`
+{{errorMessage}}
+\`\`\``,
+
     links: {
         github: "https://github.com/AmRo045/OutlineAdmin",
         x: "https://x.com/AmRo045",

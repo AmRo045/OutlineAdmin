@@ -100,11 +100,13 @@ export default function NotificationChannelForm({ channel }: Props) {
         let config = null;
 
         if (data.type === "Telegram") {
+            const messageTemplate = data.telegramMessageTemplate ?? "";
+
             config = JSON.stringify({
                 apiUrl: data.telegramApiUrl!,
                 botToken: data.telegramBotToken!,
                 chatId: data.telegramChatId!,
-                messageTemplate: data.telegramMessageTemplate!
+                messageTemplate: messageTemplate.length > 0 ? messageTemplate : app.defaultTelegramNotificationTemplate
             });
         }
 
@@ -261,15 +263,13 @@ export default function NotificationChannelForm({ channel }: Props) {
 
                             <Textarea
                                 color="primary"
-                                description="Available placeholders: {{serverName}} {{serverHostnameOrIp}}"
+                                description="Available placeholders: {{serverName}} {{serverHostnameOrIp}} {{errorMessage}}"
                                 errorMessage={formState.errors.telegramMessageTemplate?.message}
                                 isInvalid={!!formState.errors.telegramMessageTemplate}
-                                label="Message template"
-                                placeholder={`e.g. "{{serverName}} ({{serverHostnameOrIp}})" is out of reach!`}
+                                label="Message template (Markdown)"
+                                placeholder={`e.g. ${app.defaultTelegramNotificationTemplate}`}
                                 variant="underlined"
-                                {...register("telegramMessageTemplate", {
-                                    required: "Message template is required"
-                                })}
+                                {...register("telegramMessageTemplate")}
                             />
                         </div>
                     )}

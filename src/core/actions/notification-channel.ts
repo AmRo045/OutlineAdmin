@@ -6,6 +6,7 @@ import { Telegraf } from "telegraf";
 
 import prisma from "@/prisma/db";
 import { ServerWithHealthCheck, TelegramNotificationChannelConfig } from "@/src/core/definitions";
+import { app } from "@/src/core/config";
 
 export async function createNotificationChannel(data: any): Promise<void> {
     await prisma.notificationChannel.create({ data });
@@ -67,7 +68,10 @@ export async function deleteNotificationChannel(id: number): Promise<void> {
     revalidatePath(`/notification-channels/${id}`);
 }
 
-export async function sendNotificationViaTelegramChannel(server: ServerWithHealthCheck): Promise<void> {
+export async function sendNotificationViaTelegramChannel(
+    server: ServerWithHealthCheck,
+    errorMessage: string
+): Promise<void> {
     const channel = await getNotificationChannelById(server.healthCheck!.notificationChannelId!);
 
     if (!channel) {
@@ -85,10 +89,16 @@ export async function sendNotificationViaTelegramChannel(server: ServerWithHealt
     const userId = config.chatId;
 
     const message = config.messageTemplate
+        .replaceAll("{{errorMessage}}", errorMessage)
         .replaceAll("{{serverName}}", server.name)
         .replaceAll("{{serverHostnameOrIp}}", server.hostnameOrIp);
 
-    await bot.telegram.sendMessage(userId, message);
+    await bot.telegram.sendMessage(userId, message, {
+        parse_mode: "Markdown",
+        link_preview_options: {
+            is_disabled: true
+        }
+    });
 }
 
 export async function testTelegramNotificationChannel(
@@ -116,10 +126,7 @@ export async function testTelegramNotificationChannel(
     }
 
     if (!config.messageTemplate) {
-        return {
-            ok: false,
-            message: "Message Template is required"
-        };
+        config.messageTemplate = app.defaultTelegramNotificationTemplate;
     }
 
     try {
@@ -132,10 +139,16 @@ export async function testTelegramNotificationChannel(
         const userId = config.chatId;
 
         const message = config.messageTemplate
+            .replaceAll("{{errorMessage}}", "Example server error message")
             .replaceAll("{{serverName}}", "Example Server")
             .replaceAll("{{serverHostnameOrIp}}", "10.11.12.13");
 
-        await bot.telegram.sendMessage(userId, message);
+        await bot.telegram.sendMessage(userId, message, {
+            parse_mode: "Markdown",
+            link_preview_options: {
+                is_disabled: true
+            }
+        });
 
         return {
             ok: true,
