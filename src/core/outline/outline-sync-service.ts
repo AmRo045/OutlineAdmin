@@ -44,6 +44,25 @@ export class OutlineSyncService {
             this.logger.info("Getting server usage metrics...");
             const metrics = await this.client.metricsTransfer();
 
+            const allMetrics = Object.values(metrics.bytesTransferredByUserId);
+            const totalUsageMetrics = allMetrics.reduce(
+                (previousValue, currentValue) => previousValue + currentValue,
+                0
+            );
+
+            this.logger.info("Updating server info in local database...");
+            await prisma.server.update({
+                where: { id: this.server.id },
+                data: {
+                    name: remoteServerInfo.name,
+                    hostnameOrIp: remoteServerInfo.hostnameForAccessKeys,
+                    hostnameForNewAccessKeys: remoteServerInfo.hostnameForAccessKeys,
+                    portForNewAccessKeys: remoteServerInfo.portForNewAccessKeys,
+                    isMetricsEnabled: remoteServerInfo.metricsEnabled,
+                    totalDataUsage: totalUsageMetrics
+                }
+            });
+
             await this.syncAccessKeys(metrics);
         }
     }
