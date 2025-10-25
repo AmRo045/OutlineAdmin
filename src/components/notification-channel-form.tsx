@@ -50,6 +50,7 @@ export default function NotificationChannelForm({ channel }: Props) {
         defaultValues: {
             name: channel?.name,
             type: channel?.type,
+            telegramApiUrl: parsedConfig.apiUrl ?? "",
             telegramBotToken: parsedConfig.botToken ?? "",
             telegramChatId: parsedConfig.chatId ?? "",
             telegramMessageTemplate: parsedConfig.messageTemplate ?? ""
