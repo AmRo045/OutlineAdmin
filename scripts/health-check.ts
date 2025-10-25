@@ -9,7 +9,7 @@ import { sendNotificationViaTelegramChannel } from "@/src/core/actions/notificat
 
 let logger = createLogger(LoggerContext.HealthCheckJob);
 
-async function handleUnavailableServer(server: any) {
+async function handleUnavailableServer(server: any, errorMessage: string) {
     const healthCheck = server.healthCheck;
     const now = new Date();
 
@@ -37,7 +37,7 @@ async function handleUnavailableServer(server: any) {
     if (healthCheck.notification === HealthCheckNotificationType.Telegram && server.healthCheck.notificationConfig) {
         try {
             logger.info("Sending Telegram notification...");
-            await sendNotificationViaTelegramChannel(server);
+            await sendNotificationViaTelegramChannel(server, errorMessage);
 
             await prisma.healthCheck.update({
                 where: { serverId: server.id },
@@ -107,7 +107,13 @@ async function checkServerHealth(server: any) {
         if (!response.ok) {
             logger.error(`[${server.name}] HTTP ${response.status} - ${response.statusText}`);
 
-            return await handleUnavailableServer(server);
+            const errorText = await response.text();
+            const errorMessage = JSON.stringify({
+                status: response.status,
+                message: errorText
+            });
+
+            return await handleUnavailableServer(server, errorMessage);
         }
 
         logger.info(`[${server.name}] Healthy (${response.status}) — ${duration.toFixed(0)}ms`);
@@ -130,7 +136,7 @@ async function checkServerHealth(server: any) {
         });
     } catch (error: any) {
         logger.error(`[${server.name}] Error:`, error.message);
-        await handleUnavailableServer(server);
+        await handleUnavailableServer(server, error.message);
     }
 }
 
