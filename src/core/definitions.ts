@@ -8,7 +8,7 @@ export enum LoggerContext {
 }
 
 export enum HealthCheckNotificationType {
-    Telegram = "telegram"
+    Telegram = "Telegram"
 }
 
 export type TelegramNotificationChannelConfig = {

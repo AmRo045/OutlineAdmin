@@ -25,16 +25,22 @@ async function handleUnavailableServer(server: any, errorMessage: string) {
         data: { isAvailable: false, lastCheckedAt: now, updatedAt: now }
     });
 
-    if (!healthCheck.notification) return;
+    const notificationChannel = healthCheck.notificationChannel;
+
+    if (!notificationChannel) {
+        return;
+    }
 
     if (healthCheck.notificationSentAt) {
         const msSinceLastNotification = Date.now() - new Date(healthCheck.notificationSentAt).getTime();
         const cooldownMs = healthCheck.notificationCooldown * 60_000;
 
-        if (msSinceLastNotification < cooldownMs) return;
+        if (msSinceLastNotification < cooldownMs) {
+            return;
+        }
     }
 
-    if (healthCheck.notification === HealthCheckNotificationType.Telegram && server.healthCheck.notificationConfig) {
+    if (notificationChannel.type === HealthCheckNotificationType.Telegram && notificationChannel.config) {
         try {
             logger.info("Sending Telegram notification...");
             await sendNotificationViaTelegramChannel(server, errorMessage);
@@ -142,7 +148,15 @@ async function checkServerHealth(server: any) {
 
 async function main() {
     logger.info("Loading servers from local database...");
-    const servers = await prisma.server.findMany({ include: { healthCheck: true } });
+    const servers = await prisma.server.findMany({
+        include: {
+            healthCheck: {
+                include: {
+                    notificationChannel: true
+                }
+            }
+        }
+    });
 
     logger.info("Starting health checks...");
 
