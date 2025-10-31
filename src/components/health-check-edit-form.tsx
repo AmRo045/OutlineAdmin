@@ -48,7 +48,7 @@ export default function HealthCheckEditForm({ healthCheck, notificationChannels 
         try {
             await updateHealthCheck({
                 id: healthCheck.id,
-                notificationChannelId: channelId > 0 ? channelId : undefined,
+                notificationChannelId: channelId > 0 ? channelId : null,
                 notificationCooldown: data.notificationCooldown,
                 interval: data.interval
             });
