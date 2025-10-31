@@ -35,7 +35,23 @@ interface Props {
 
 export default function AccessKeyForm({ serverId, accessKeyData }: Props) {
     const router = useRouter();
-    const form = useForm<NewAccessKeyRequest | EditAccessKeyRequest>();
+    const form = useForm<NewAccessKeyRequest | EditAccessKeyRequest>({
+        defaultValues: accessKeyData
+            ? {
+                  serverId: accessKeyData.serverId,
+                  name: accessKeyData.name,
+                  dataLimit: Number(accessKeyData.dataLimit),
+                  expiresAt: accessKeyData.expiresAt,
+                  prefix: accessKeyData.prefix
+              }
+            : {
+                  serverId: serverId,
+                  name: "",
+                  dataLimit: null,
+                  expiresAt: null,
+                  prefix: null
+              }
+    });
     const errorModalDisclosure = useDisclosure();
     const [errorMessage, setErrorMessage] = useState<string>();
 
@@ -83,14 +99,6 @@ export default function AccessKeyForm({ serverId, accessKeyData }: Props) {
 
     useEffect(() => {
         if (accessKeyData) {
-            form.reset({
-                serverId: accessKeyData.serverId,
-                name: accessKeyData.name,
-                dataLimit: Number(accessKeyData.dataLimit),
-                expiresAt: accessKeyData.expiresAt,
-                prefix: accessKeyData.prefix
-            });
-
             if (accessKeyData.expiresAt) {
                 setSelectedExpirationDate(moment(accessKeyData.expiresAt).format("YYYY-MM-DD"));
             } else {
@@ -99,18 +107,10 @@ export default function AccessKeyForm({ serverId, accessKeyData }: Props) {
 
             setSelectedPrefix(accessKeyData.prefix);
         } else {
-            form.reset({
-                serverId: serverId,
-                name: "",
-                dataLimit: null,
-                expiresAt: null,
-                prefix: null
-            });
-
             setSelectedExpirationDate(undefined);
             setSelectedPrefix(null);
         }
-    }, []);
+    }, [accessKeyData]);
 
     return (
         <>

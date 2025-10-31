@@ -39,7 +39,24 @@ interface Props {
 
 export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
     const router = useRouter();
-    const form = useForm<NewDynamicAccessKeyRequest | EditDynamicAccessKeyRequest>();
+    const form = useForm<NewDynamicAccessKeyRequest | EditDynamicAccessKeyRequest>({
+        defaultValues: dynamicAccessKey
+            ? {
+                  name: dynamicAccessKey.name,
+                  path: dynamicAccessKey.path,
+                  loadBalancerAlgorithm: dynamicAccessKey.loadBalancerAlgorithm,
+                  expiresAt: dynamicAccessKey.expiresAt,
+                  prefix: dynamicAccessKey.prefix
+              }
+            : {
+                  name: "",
+                  path: "",
+                  loadBalancerAlgorithm: LoadBalancerAlgorithm.RandomKeyOnEachConnection,
+                  expiresAt: null,
+                  prefix: null
+              }
+    });
+
     const errorModalDisclosure = useDisclosure();
     const [errorMessage, setErrorMessage] = useState<string>();
 
@@ -100,14 +117,6 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
 
     useEffect(() => {
         if (dynamicAccessKey) {
-            form.reset({
-                name: dynamicAccessKey.name,
-                path: dynamicAccessKey.path,
-                loadBalancerAlgorithm: dynamicAccessKey.loadBalancerAlgorithm,
-                expiresAt: dynamicAccessKey.expiresAt,
-                prefix: dynamicAccessKey.prefix
-            });
-
             if (dynamicAccessKey.expiresAt) {
                 setSelectedExpirationDate(moment(dynamicAccessKey.expiresAt).format("YYYY-MM-DD"));
             } else {
@@ -117,19 +126,11 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
             setSelectedLoadBalancer(dynamicAccessKey.loadBalancerAlgorithm);
             setSelectedPrefix(dynamicAccessKey.prefix);
         } else {
-            form.reset({
-                name: "",
-                path: "",
-                loadBalancerAlgorithm: LoadBalancerAlgorithm.RandomKeyOnEachConnection,
-                expiresAt: null,
-                prefix: null
-            });
-
             setSelectedExpirationDate(undefined);
             setSelectedLoadBalancer(null);
             setSelectedPrefix(null);
         }
-    }, []);
+    }, [dynamicAccessKey]);
 
     return (
         <>
