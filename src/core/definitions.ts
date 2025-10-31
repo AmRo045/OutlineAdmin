@@ -151,7 +151,7 @@ export interface DynamicAccessKeyApiResponse {
 
 export interface UpdateHealthCheckRequest {
     id: number;
-    notificationChannelId?: number;
+    notificationChannelId?: number | null;
     notificationCooldown: number;
     interval: number;
 }
