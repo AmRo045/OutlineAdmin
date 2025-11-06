@@ -38,7 +38,7 @@ export async function getNotificationChannelsCount(filters?: { term?: string }):
         });
     }
 
-    return prisma.healthCheck.count();
+    return prisma.notificationChannel.count();
 }
 
 export async function getNotificationChannelById(id: number) {
