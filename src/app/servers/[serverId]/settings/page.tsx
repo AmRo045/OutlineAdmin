@@ -2,9 +2,10 @@ import React from "react";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 
-import { getServerById } from "@/src/core/actions/server";
+import { getServerByIdWithTags } from "@/src/core/actions/server";
 import ServerEditForm from "@/src/components/server-edit-form";
 import { createPageTitle } from "@/src/core/utils";
+import { getTags } from "@/src/core/actions/tags";
 
 interface Props {
     params: { serverId: string };
@@ -17,11 +18,13 @@ export const metadata: Metadata = {
 };
 
 export default async function ServerSettingsPage({ params }: Props) {
-    const server = await getServerById(parseInt(params.serverId));
+    const server = await getServerByIdWithTags(parseInt(params.serverId));
 
     if (!server) {
         notFound();
     }
 
-    return <ServerEditForm server={server} />;
+    const tags = await getTags();
+
+    return <ServerEditForm server={server} tags={tags} />;
 }

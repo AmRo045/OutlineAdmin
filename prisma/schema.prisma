@@ -36,7 +36,7 @@ model Server {
   updatedAt                DateTime?    @updatedAt
   accessKeys               AccessKey[]
   healthCheck              HealthCheck?
-  ServerTag                ServerTag[]
+  tags                     ServerTag[]
 }
 
 model AccessKey {

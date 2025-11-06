@@ -45,6 +45,12 @@ export type ServerWithAccessKeys = Prisma.ServerGetPayload<{
     };
 }>;
 
+export type ServerWithTags = Prisma.ServerGetPayload<{
+    include: {
+        tags: true;
+    };
+}>;
+
 export type ServerWithHealthCheck = Prisma.ServerGetPayload<{
     include: {
         healthCheck: true;
@@ -80,6 +86,7 @@ export interface EditServerRequest {
     name: string;
     portForNewAccessKeys: number;
     hostnameForNewAccessKeys: string;
+    tags: string[];
 }
 
 export enum DataLimitUnit {

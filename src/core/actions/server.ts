@@ -9,7 +9,8 @@ import {
     EditServerRequest,
     NewServerRequest,
     ServerWithAccessKeys,
-    ServerWithAccessKeysCount
+    ServerWithAccessKeysCount,
+    ServerWithTags
 } from "@/src/core/definitions";
 import OutlineClient from "@/src/core/outline/outline-client";
 import { OutlineSyncService } from "@/src/core/outline/outline-sync-service";
@@ -58,6 +59,17 @@ export async function getServerById(id: number, withKeys: boolean = false): Prom
         },
         include: {
             accessKeys: withKeys
+        }
+    });
+}
+
+export async function getServerByIdWithTags(id: number): Promise<ServerWithTags | null> {
+    return prisma.server.findFirst({
+        where: {
+            id
+        },
+        include: {
+            tags: true
         }
     });
 }
@@ -131,12 +143,19 @@ export async function updateServer(id: number, data: EditServerRequest): Promise
     await outlineClient.setHostNameForNewKeys(data.hostnameForNewAccessKeys);
     await outlineClient.setPortForNewKeys(data.portForNewAccessKeys);
 
+    const tagIds = data.tags?.map((t) => Number(t)) ?? [];
+
     await prisma.server.update({
         where: { id },
         data: {
             name: data.name,
             hostnameForNewAccessKeys: data.hostnameForNewAccessKeys,
-            portForNewAccessKeys: data.portForNewAccessKeys
+            portForNewAccessKeys: data.portForNewAccessKeys,
+
+            tags: {
+                deleteMany: {},
+                create: tagIds.map((tagId) => ({ tagId }))
+            }
         }
     });
 
