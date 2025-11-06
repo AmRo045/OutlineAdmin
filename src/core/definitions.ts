@@ -39,9 +39,37 @@ export type ServerWithAccessKeysCount = Prisma.ServerGetPayload<{
     };
 }>;
 
+export type ServerWithAccessKeysCountAndTags = Prisma.ServerGetPayload<{
+    include: {
+        _count: {
+            select: { accessKeys: true };
+        };
+        tags: {
+            include: { tag: true };
+        };
+    };
+}>;
+
 export type ServerWithAccessKeys = Prisma.ServerGetPayload<{
     include: {
         accessKeys: true;
+    };
+}>;
+
+export type ServerWithAccessKeysAndTags = Prisma.ServerGetPayload<{
+    include: {
+        accessKeys: true;
+        tags: {
+            include: { tag: true };
+        };
+    };
+}>;
+
+export type ServerWithTags = Prisma.ServerGetPayload<{
+    include: {
+        tags: {
+            include: { tag: true };
+        };
     };
 }>;
 
@@ -80,6 +108,7 @@ export interface EditServerRequest {
     name: string;
     portForNewAccessKeys: number;
     hostnameForNewAccessKeys: string;
+    tags: string[];
 }
 
 export enum DataLimitUnit {

@@ -1,23 +1,24 @@
 "use client";
 
-import { Button, Divider, Input, Link, Tooltip, useDisclosure } from "@heroui/react";
+import { Button, Checkbox, CheckboxGroup, Divider, Input, Link, Tooltip, useDisclosure } from "@heroui/react";
 import React, { useState } from "react";
-import { Server } from "@prisma/client";
+import { Tag } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { ArrowLeftIcon } from "@/src/components/icons";
-import { EditServerRequest } from "@/src/core/definitions";
+import { EditServerRequest, ServerWithTags } from "@/src/core/definitions";
 import { removeServer, updateServer } from "@/src/core/actions/server";
 import ConfirmModal from "@/src/components/modals/confirm-modal";
 import MessageModal from "@/src/components/modals/message-modal";
 import { app } from "@/src/core/config";
 
 interface Props {
-    server: Server;
+    server: ServerWithTags;
+    tags: Tag[];
 }
 
-export default function ServerEditForm({ server }: Props) {
+export default function ServerEditForm({ server, tags }: Props) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const returnUrl = searchParams.get("return");
@@ -31,7 +32,8 @@ export default function ServerEditForm({ server }: Props) {
         defaultValues: {
             name: server.name,
             hostnameForNewAccessKeys: server.hostnameForNewAccessKeys,
-            portForNewAccessKeys: server.portForNewAccessKeys
+            portForNewAccessKeys: server.portForNewAccessKeys,
+            tags: server.tags.map((st) => st.tagId.toString())
         }
     });
 
@@ -148,6 +150,18 @@ export default function ServerEditForm({ server }: Props) {
                             setValueAs: (v: string) => parseInt(v)
                         })}
                     />
+
+                    <CheckboxGroup
+                        label="Tags"
+                        value={form.watch("tags")}
+                        onChange={(values) => form.setValue("tags", values)}
+                    >
+                        {tags.map((tag) => (
+                            <Checkbox key={tag.id} value={tag.id.toString()}>
+                                {tag.name}
+                            </Checkbox>
+                        ))}
+                    </CheckboxGroup>
 
                     <Button
                         className="w-fit"

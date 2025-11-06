@@ -7,6 +7,6 @@ export const metadata: Metadata = {
     title: createPageTitle("New Notification Channel")
 };
 
-export default async function HealthCheckEditPage() {
+export default async function NotificationChannelEditPage() {
     return <NotificationChannelForm />;
 }

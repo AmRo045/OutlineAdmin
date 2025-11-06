@@ -9,7 +9,10 @@ import {
     EditServerRequest,
     NewServerRequest,
     ServerWithAccessKeys,
-    ServerWithAccessKeysCount
+    ServerWithAccessKeysAndTags,
+    ServerWithAccessKeysCount,
+    ServerWithAccessKeysCountAndTags,
+    ServerWithTags
 } from "@/src/core/definitions";
 import OutlineClient from "@/src/core/outline/outline-client";
 import { OutlineSyncService } from "@/src/core/outline/outline-sync-service";
@@ -27,6 +30,38 @@ export async function getServers(
         orderBy: [{ id: "desc" }],
         include: {
             _count: withKeysCount ? { select: { accessKeys: true } } : undefined
+        }
+    });
+}
+
+export async function getServersWithTags(
+    filters?: { term?: string },
+    withKeysCount: boolean = false
+): Promise<ServerWithAccessKeysCountAndTags[]> {
+    const { term } = filters || {};
+
+    return prisma.server.findMany({
+        where: {
+            OR: term
+                ? [
+                      { hostnameOrIp: { contains: term } },
+                      { name: { contains: term } },
+                      {
+                          tags: {
+                              some: {
+                                  tag: {
+                                      name: { contains: term }
+                                  }
+                              }
+                          }
+                      }
+                  ]
+                : undefined
+        },
+        orderBy: [{ id: "desc" }],
+        include: {
+            _count: withKeysCount ? { select: { accessKeys: true } } : undefined,
+            tags: { include: { tag: true } }
         }
     });
 }
@@ -51,6 +86,31 @@ export async function getServersWithAccessKeys(filters?: {
     });
 }
 
+export async function getServersWithAccessKeysAndTags(filters?: {
+    term?: string;
+    skip?: number;
+    take?: number;
+}): Promise<ServerWithAccessKeysAndTags[]> {
+    const { term, skip = 0, take = 10 } = filters || {};
+
+    return prisma.server.findMany({
+        where: {
+            OR: term ? [{ hostnameOrIp: { contains: term } }, { name: { contains: term } }] : undefined
+        },
+        skip,
+        take,
+        orderBy: [{ id: "desc" }],
+        include: {
+            accessKeys: true,
+            tags: {
+                include: {
+                    tag: true
+                }
+            }
+        }
+    });
+}
+
 export async function getServerById(id: number, withKeys: boolean = false): Promise<Server | null> {
     return prisma.server.findFirst({
         where: {
@@ -62,32 +122,17 @@ export async function getServerById(id: number, withKeys: boolean = false): Prom
     });
 }
 
-export async function updateMetrics(id: number): Promise<void> {
-    const server = await getServerById(id);
-
-    if (!server) {
-        return;
-    }
-
-    const outlineClient = OutlineClient.fromConfig(server.managementJson);
-    const metrics = await outlineClient.metricsTransfer();
-
-    let sum = 0;
-
-    Object.entries(metrics.bytesTransferredByUserId).forEach(([id, value]: [string, number]) => {
-        prisma.accessKey.update({
-            // @ts-ignore
-            where: { apiId: id },
-            data: { dataUsage: value }
-        });
-
-        sum += value;
-    });
-
-    await prisma.server.update({
-        where: { id: server.id },
-        data: {
-            totalDataUsage: sum
+export async function getServerByIdWithTags(id: number): Promise<ServerWithTags | null> {
+    return prisma.server.findFirst({
+        where: {
+            id
+        },
+        include: {
+            tags: {
+                include: {
+                    tag: true
+                }
+            }
         }
     });
 }
@@ -131,12 +176,19 @@ export async function updateServer(id: number, data: EditServerRequest): Promise
     await outlineClient.setHostNameForNewKeys(data.hostnameForNewAccessKeys);
     await outlineClient.setPortForNewKeys(data.portForNewAccessKeys);
 
+    const tagIds = data.tags?.map((t) => Number(t)) ?? [];
+
     await prisma.server.update({
         where: { id },
         data: {
             name: data.name,
             hostnameForNewAccessKeys: data.hostnameForNewAccessKeys,
-            portForNewAccessKeys: data.portForNewAccessKeys
+            portForNewAccessKeys: data.portForNewAccessKeys,
+
+            tags: {
+                deleteMany: {},
+                create: tagIds.map((tagId) => ({ tagId }))
+            }
         }
     });
 

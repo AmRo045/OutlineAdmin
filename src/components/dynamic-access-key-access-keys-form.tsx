@@ -1,17 +1,28 @@
 "use client";
 
-import { Button, Checkbox, CheckboxGroup, Chip, Link, Tooltip } from "@heroui/react";
+import {
+    Button,
+    Card,
+    CardBody,
+    CardFooter,
+    CardHeader,
+    Checkbox,
+    CheckboxGroup,
+    Chip,
+    Link,
+    Tooltip
+} from "@heroui/react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
 import { ArrowLeftIcon } from "@/src/components/icons";
-import { DynamicAccessKeyWithAccessKeys, ServerWithAccessKeys } from "@/src/core/definitions";
+import { DynamicAccessKeyWithAccessKeys, ServerWithAccessKeysAndTags } from "@/src/core/definitions";
 import { syncDynamicAccessKeyAccessKeys } from "@/src/core/actions/dynamic-access-key";
 
 interface Props {
     dynamicAccessKey: DynamicAccessKeyWithAccessKeys;
-    servers: ServerWithAccessKeys[];
+    servers: ServerWithAccessKeysAndTags[];
 }
 
 interface FormProps {
@@ -70,19 +81,47 @@ export default function DynamicAccessKeyAccessKeysForm({ dynamicAccessKey, serve
 
                 <section className="grid gap-6 px-10">
                     <CheckboxGroup defaultValue={form.getValues("accessKeys")} onChange={handleSelection}>
-                        <div className="flex flex-wrap gap-8">
+                        <div className="flex justify-center flex-wrap gap-8">
                             {servers?.map((server) => (
-                                <div key={server.id} className="flex flex-col gap-2">
-                                    <Chip color={server.isAvailable ? "success" : "danger"} variant="dot">
-                                        {server.name} ({server.hostnameOrIp})
-                                    </Chip>
+                                <Card key={server.id} className="w-[360px]">
+                                    <CardHeader>
+                                        <div className="flex gap-2 flex-col w-full">
+                                            <span className="text-md">{server.name}</span>
+                                            <div className="flex justify-between items-center gap-2">
+                                                <Chip size="sm" variant="flat">
+                                                    {server.hostnameOrIp}
+                                                </Chip>
+                                                <Chip
+                                                    color={server.isAvailable ? "success" : "danger"}
+                                                    size="sm"
+                                                    variant="flat"
+                                                >
+                                                    {server.isAvailable ? "Available" : "Not Available"}
+                                                </Chip>
+                                            </div>
+                                        </div>
+                                    </CardHeader>
 
-                                    {server.accessKeys.map((accessKey) => (
-                                        <Checkbox key={accessKey.id} value={accessKey.id.toString()}>
-                                            {accessKey.name} ({accessKey.id})
-                                        </Checkbox>
-                                    ))}
-                                </div>
+                                    <CardBody className="bg-content2">
+                                        {server.accessKeys.map((accessKey) => (
+                                            <Checkbox key={accessKey.id} value={accessKey.id.toString()}>
+                                                {accessKey.name} ({accessKey.id})
+                                            </Checkbox>
+                                        ))}
+                                    </CardBody>
+
+                                    {server.tags?.length > 0 && (
+                                        <CardFooter>
+                                            <div className="flex gap-2 items-center flex-wrap">
+                                                {server.tags.map((t) => (
+                                                    <Chip key={t.tag.id} color="default" size="sm" variant="flat">
+                                                        {t.tag.name}
+                                                    </Chip>
+                                                ))}
+                                            </div>
+                                        </CardFooter>
+                                    )}
+                                </Card>
                             ))}
                         </div>
                     </CheckboxGroup>

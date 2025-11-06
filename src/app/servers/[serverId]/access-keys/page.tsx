@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 
 import ServerAccessKeys from "@/src/components/server-access-keys";
-import { getServerById } from "@/src/core/actions/server";
+import { getServerByIdWithTags } from "@/src/core/actions/server";
 import { getAccessKeysCount } from "@/src/core/actions/access-key";
 import { createPageTitle } from "@/src/core/utils";
 
@@ -17,7 +17,7 @@ interface Props {
 }
 
 export default async function ServerAccessKeysPage({ params }: Props) {
-    const server = await getServerById(parseInt(params.serverId));
+    const server = await getServerByIdWithTags(parseInt(params.serverId));
 
     if (!server) {
         notFound();

@@ -16,7 +16,7 @@ import {
     useDisclosure
 } from "@heroui/react";
 import React, { useEffect, useState } from "react";
-import { AccessKey, Server } from "@prisma/client";
+import { AccessKey } from "@prisma/client";
 
 import AccessKeyModal from "@/src/components/modals/access-key-modal";
 import ConfirmModal from "@/src/components/modals/confirm-modal";
@@ -24,7 +24,7 @@ import { ArrowLeftIcon, DeleteIcon, EditIcon, EyeIcon, InfinityIcon, PlusIcon } 
 import AccessKeyServerInfo from "@/src/components/access-key-server-info";
 import { convertDataLimitToUnit, formatBytes } from "@/src/core/utils";
 import { getAccessKeys, removeAccessKey } from "@/src/core/actions/access-key";
-import { DataLimitUnit } from "@/src/core/definitions";
+import { DataLimitUnit, ServerWithTags } from "@/src/core/definitions";
 import NoResult from "@/src/components/no-result";
 import AccessKeyValidityChip from "@/src/components/access-key-validity-chip";
 import MessageModal from "@/src/components/modals/message-modal";
@@ -33,7 +33,7 @@ import { syncServer } from "@/src/core/actions/server";
 import { PAGE_SIZE } from "@/src/core/config";
 
 interface Props {
-    server: Server;
+    server: ServerWithTags;
     total: number;
 }
 

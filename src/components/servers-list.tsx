@@ -20,14 +20,14 @@ import { useForm } from "react-hook-form";
 
 import ConfirmModal from "@/src/components/modals/confirm-modal";
 import { CopyIcon, DeleteIcon, KeyIcon, PlusIcon, SettingsIcon } from "@/src/components/icons";
-import { getServers, removeServer } from "@/src/core/actions/server";
+import { getServersWithTags, removeServer } from "@/src/core/actions/server";
 import NoResult from "@/src/components/no-result";
-import { ServerWithAccessKeysCount } from "@/src/core/definitions";
+import { ServerWithAccessKeysCountAndTags } from "@/src/core/definitions";
 import { formatBytes } from "@/src/core/utils";
 import { app } from "@/src/core/config";
 
 interface Props {
-    data: ServerWithAccessKeysCount[];
+    data: ServerWithAccessKeysCountAndTags[];
 }
 
 interface SearchFormProps {
@@ -35,13 +35,13 @@ interface SearchFormProps {
 }
 
 export default function ServersList({ data }: Props) {
-    const [servers, setServers] = useState<ServerWithAccessKeysCount[]>(data);
+    const [servers, setServers] = useState<ServerWithAccessKeysCountAndTags[]>(data);
     const [serverToRemove, setServerToRemove] = useState<number | null>(null);
     const removeServerConfirmModalDisclosure = useDisclosure();
 
     const searchForm = useForm<SearchFormProps>();
     const handleSearch = async (data: SearchFormProps) => {
-        const filteredServers = await getServers(
+        const filteredServers = await getServersWithTags(
             {
                 term: data.term
             },
@@ -116,6 +116,7 @@ export default function ServersList({ data }: Props) {
                         <TableColumn>ID</TableColumn>
                         <TableColumn>NAME</TableColumn>
                         <TableColumn>HOSTNAME OR IP</TableColumn>
+                        <TableColumn align="center">TAGS</TableColumn>
                         <TableColumn align="center">NUMBER OF KEYS</TableColumn>
                         <TableColumn align="center">TOTAL USAGE</TableColumn>
                         <TableColumn align="center">STATUS</TableColumn>
@@ -144,6 +145,15 @@ export default function ServersList({ data }: Props) {
                                     <Chip color="default" size="sm" variant="flat">
                                         {server._count?.accessKeys}
                                     </Chip>
+                                </TableCell>
+                                <TableCell className="max-w-[260px]">
+                                    <div className="flex gap-2 justify-center items-center flex-wrap">
+                                        {server.tags.map((t) => (
+                                            <Chip key={t.tag.id} color="default" size="sm" variant="flat">
+                                                {t.tag.name}
+                                            </Chip>
+                                        ))}
+                                    </div>
                                 </TableCell>
                                 <TableCell>
                                     <Chip color="default" size="sm" variant="flat">

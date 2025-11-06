@@ -71,7 +71,6 @@ export default function AccessKeyForm({ serverId, accessKeyData }: Props) {
                 updateData.id = accessKeyData.id;
                 await updateAccessKey(updateData);
             } else {
-                console.log(data);
                 await createAccessKey(data);
             }
 
