@@ -1,20 +1,15 @@
-import moment from "moment";
-
 import { DataLimitUnit } from "@/src/core/definitions";
 import { app } from "@/src/core/config";
 
 export const formatAsDuration = (start: Date, end: Date): string => {
-    const momentStart = moment(start);
-    const momentEnd = moment(end);
+    const diff = Math.max(0, end.getTime() - start.getTime());
+    const seconds = Math.floor(diff / 1000);
+    const days = Math.floor(seconds / 86400);
+    const hours = Math.floor((seconds % 86400) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
 
-    const duration = moment.duration(momentEnd.diff(momentStart));
-
-    const days = duration.days();
-    const hours = duration.hours();
-    const minutes = duration.minutes();
-    const seconds = duration.seconds();
-
-    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    return `${days}d ${hours}h ${minutes}m ${secs}s`;
 };
 
 export function getDataLimitUnitFactor(unit: DataLimitUnit): number {
