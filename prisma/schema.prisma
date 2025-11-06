@@ -36,6 +36,7 @@ model Server {
   updatedAt                DateTime?    @updatedAt
   accessKeys               AccessKey[]
   healthCheck              HealthCheck?
+  ServerTag                ServerTag[]
 }
 
 model AccessKey {
@@ -101,4 +102,23 @@ model HealthCheck {
 
   server              Server               @relation(fields: [serverId], references: [id], onDelete: Cascade)
   notificationChannel NotificationChannel? @relation(fields: [notificationChannelId], references: [id])
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  serverTags ServerTag[]
+}
+
+model ServerTag {
+  serverId Int
+  tagId    Int
+
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([serverId, tagId])
 }
