@@ -74,36 +74,6 @@ export async function getServerByIdWithTags(id: number): Promise<ServerWithTags 
     });
 }
 
-export async function updateMetrics(id: number): Promise<void> {
-    const server = await getServerById(id);
-
-    if (!server) {
-        return;
-    }
-
-    const outlineClient = OutlineClient.fromConfig(server.managementJson);
-    const metrics = await outlineClient.metricsTransfer();
-
-    let sum = 0;
-
-    Object.entries(metrics.bytesTransferredByUserId).forEach(([id, value]: [string, number]) => {
-        prisma.accessKey.update({
-            // @ts-ignore
-            where: { apiId: id },
-            data: { dataUsage: value }
-        });
-
-        sum += value;
-    });
-
-    await prisma.server.update({
-        where: { id: server.id },
-        data: {
-            totalDataUsage: sum
-        }
-    });
-}
-
 export async function createServer(data: NewServerRequest): Promise<void> {
     const outlineClient = OutlineClient.fromConfig(data.managementJson);
     const outlineServer = await outlineClient.server();
