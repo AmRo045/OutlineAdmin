@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 import { getDynamicAccessKeyById } from "@/src/core/actions/dynamic-access-key";
 import DynamicAccessKeyAccessKeysForm from "@/src/components/dynamic-access-key-access-keys-form";
-import { getServersWithAccessKeys } from "@/src/core/actions/server";
+import { getServersWithAccessKeysAndTags } from "@/src/core/actions/server";
 import { createPageTitle } from "@/src/core/utils";
 
 interface Props {
@@ -23,7 +23,7 @@ export default async function DynamicAccessKeyAccessKeysFormPage({ params }: Pro
         notFound();
     }
 
-    const servers = await getServersWithAccessKeys();
+    const servers = await getServersWithAccessKeysAndTags();
 
     return <DynamicAccessKeyAccessKeysForm dynamicAccessKey={dynamicAccessKey} servers={servers} />;
 }

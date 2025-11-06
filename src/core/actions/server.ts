@@ -9,7 +9,9 @@ import {
     EditServerRequest,
     NewServerRequest,
     ServerWithAccessKeys,
+    ServerWithAccessKeysAndTags,
     ServerWithAccessKeysCount,
+    ServerWithAccessKeysCountAndTags,
     ServerWithTags
 } from "@/src/core/definitions";
 import OutlineClient from "@/src/core/outline/outline-client";
@@ -28,6 +30,38 @@ export async function getServers(
         orderBy: [{ id: "desc" }],
         include: {
             _count: withKeysCount ? { select: { accessKeys: true } } : undefined
+        }
+    });
+}
+
+export async function getServersWithTags(
+    filters?: { term?: string },
+    withKeysCount: boolean = false
+): Promise<ServerWithAccessKeysCountAndTags[]> {
+    const { term } = filters || {};
+
+    return prisma.server.findMany({
+        where: {
+            OR: term
+                ? [
+                      { hostnameOrIp: { contains: term } },
+                      { name: { contains: term } },
+                      {
+                          tags: {
+                              some: {
+                                  tag: {
+                                      name: { contains: term }
+                                  }
+                              }
+                          }
+                      }
+                  ]
+                : undefined
+        },
+        orderBy: [{ id: "desc" }],
+        include: {
+            _count: withKeysCount ? { select: { accessKeys: true } } : undefined,
+            tags: { include: { tag: true } }
         }
     });
 }
@@ -52,6 +86,31 @@ export async function getServersWithAccessKeys(filters?: {
     });
 }
 
+export async function getServersWithAccessKeysAndTags(filters?: {
+    term?: string;
+    skip?: number;
+    take?: number;
+}): Promise<ServerWithAccessKeysAndTags[]> {
+    const { term, skip = 0, take = 10 } = filters || {};
+
+    return prisma.server.findMany({
+        where: {
+            OR: term ? [{ hostnameOrIp: { contains: term } }, { name: { contains: term } }] : undefined
+        },
+        skip,
+        take,
+        orderBy: [{ id: "desc" }],
+        include: {
+            accessKeys: true,
+            tags: {
+                include: {
+                    tag: true
+                }
+            }
+        }
+    });
+}
+
 export async function getServerById(id: number, withKeys: boolean = false): Promise<Server | null> {
     return prisma.server.findFirst({
         where: {
@@ -69,7 +128,11 @@ export async function getServerByIdWithTags(id: number): Promise<ServerWithTags 
             id
         },
         include: {
-            tags: true
+            tags: {
+                include: {
+                    tag: true
+                }
+            }
         }
     });
 }

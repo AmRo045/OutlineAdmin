@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 import ServersList from "@/src/components/servers-list";
-import { getServers } from "@/src/core/actions/server";
+import { getServersWithTags } from "@/src/core/actions/server";
 import { createPageTitle } from "@/src/core/utils";
 
 export const metadata: Metadata = {
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ServersPage() {
-    const servers = await getServers({}, true);
+    const servers = await getServersWithTags({}, true);
 
     return <ServersList data={servers} />;
 }

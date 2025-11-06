@@ -39,15 +39,37 @@ export type ServerWithAccessKeysCount = Prisma.ServerGetPayload<{
     };
 }>;
 
+export type ServerWithAccessKeysCountAndTags = Prisma.ServerGetPayload<{
+    include: {
+        _count: {
+            select: { accessKeys: true };
+        };
+        tags: {
+            include: { tag: true };
+        };
+    };
+}>;
+
 export type ServerWithAccessKeys = Prisma.ServerGetPayload<{
     include: {
         accessKeys: true;
     };
 }>;
 
+export type ServerWithAccessKeysAndTags = Prisma.ServerGetPayload<{
+    include: {
+        accessKeys: true;
+        tags: {
+            include: { tag: true };
+        };
+    };
+}>;
+
 export type ServerWithTags = Prisma.ServerGetPayload<{
     include: {
-        tags: true;
+        tags: {
+            include: { tag: true };
+        };
     };
 }>;
 

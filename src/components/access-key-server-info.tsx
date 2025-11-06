@@ -1,13 +1,13 @@
 import { Chip, Snippet, Tooltip } from "@heroui/react";
 import React from "react";
-import { Server } from "@prisma/client";
 import moment from "moment";
 
 import { CopyIcon } from "@/src/components/icons";
 import { formatBytes } from "@/src/core/utils";
+import { ServerWithTags } from "@/src/core/definitions";
 
 interface Props {
-    server: Server;
+    server: ServerWithTags;
     numberOfKeys: number;
 }
 
@@ -119,6 +119,17 @@ export default function AccessKeyServerInfo({ server, numberOfKeys }: Props) {
                 >
                     {server.managementJson}
                 </Snippet>
+            </div>
+
+            <div className="flex flex-wrap justify-between items-center gap-2 col-span-2 ">
+                <span className="text-sm text-default-500">Tags</span>
+                <div className="flex gap-2 justify-center items-center flex-wrap">
+                    {server.tags.map((t) => (
+                        <Chip key={t.tag.id} color="default" size="sm" variant="flat">
+                            {t.tag.name}
+                        </Chip>
+                    ))}
+                </div>
             </div>
         </section>
     );
