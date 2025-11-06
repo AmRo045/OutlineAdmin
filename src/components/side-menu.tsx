@@ -12,6 +12,7 @@ import {
     BellIcon,
     DynamicAccessKeyIcon,
     GithubIcon,
+    HashtagIcon,
     HealthCheckIcon,
     HeartIconDuotone,
     Logo,
@@ -43,6 +44,11 @@ const menuItems = [
         label: "Notification Channels",
         pathName: "/notification-channels",
         icon: <BellIcon size={24} />
+    },
+    {
+        label: "Tags",
+        pathName: "/tags",
+        icon: <HashtagIcon size={24} />
     }
     // {
     //     label: "Settings",
