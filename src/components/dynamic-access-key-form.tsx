@@ -41,6 +41,7 @@ import MessageModal from "@/src/components/modals/message-modal";
 import { ArrowLeftIcon, DeleteIcon } from "@/src/components/icons";
 import CustomDatePicker from "@/src/components/custom-date-picker";
 import { AccessKeyPrefixes } from "@/src/core/outline/access-key-prefix";
+import { MAX_DATA_LIMIT_FOR_ACCESS_KEYS } from "@/src/core/config";
 
 interface Props {
     servers: Server[];
@@ -230,6 +231,25 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }
                                 value: 120,
                                 message: "The name cannot be more than 120 character"
                             }
+                        })}
+                    />
+
+                    <Input
+                        endContent={<span>MB</span>}
+                        errorMessage={form.formState.errors.dataLimit?.message}
+                        isInvalid={!!form.formState.errors.dataLimit}
+                        label="Data limit"
+                        size="sm"
+                        type="number"
+                        variant="underlined"
+                        {...form.register("dataLimit", {
+                            required: false,
+                            min: 1,
+                            max: {
+                                value: MAX_DATA_LIMIT_FOR_ACCESS_KEYS,
+                                message: `The value cannot be more that ${MAX_DATA_LIMIT_FOR_ACCESS_KEYS}`
+                            },
+                            setValueAs: (v) => parseInt(v)
                         })}
                     />
 
