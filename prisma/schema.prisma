@@ -71,6 +71,7 @@ model DynamicAccessKey {
   isSelfManaged         Boolean   @default(false)
   serverPoolValue       String?
   serverPoolType        String?
+  activeServerId        Int?
   usageInterval         String?
   usageStartedAt        DateTime?
   dataUsage             BigInt    @default(0)

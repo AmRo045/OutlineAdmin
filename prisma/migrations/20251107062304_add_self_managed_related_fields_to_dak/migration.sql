@@ -10,6 +10,7 @@ CREATE TABLE "new_DynamicAccessKey" (
     "isSelfManaged" BOOLEAN NOT NULL DEFAULT false,
     "serverPoolValue" TEXT,
     "serverPoolType" TEXT,
+    "activeServerId" INTEGER,
     "expiresAt" DATETIME,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
