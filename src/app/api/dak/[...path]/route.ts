@@ -1,15 +1,19 @@
+// TODO: Refactor this hell
+
 import { NextResponse } from "next/server";
-import { AccessKey } from "@prisma/client";
+import { AccessKey, DynamicAccessKey, Server } from "@prisma/client";
 
 import { getDynamicAccessKeyByPath } from "@/src/core/actions/dynamic-access-key";
 import { AccessKeyPrefixes } from "@/src/core/outline/access-key-prefix";
 import prisma from "@/prisma/db";
 import {
+    DataLimitUnit,
     DynamicAccessKeyApiResponse,
     DynamicAccessKeyWithAccessKeys,
     LoadBalancerAlgorithm
 } from "@/src/core/definitions";
 import { crc32 } from "@/src/core/utils";
+import { createAccessKey } from "@/src/core/actions/access-key";
 
 interface ContextProps {
     params: {
@@ -23,27 +27,19 @@ export async function GET(req: Request, context: ContextProps) {
     const dynamicAccessKey = await getDynamicAccessKeyByPath(path);
 
     if (!dynamicAccessKey) {
-        return NextResponse.json({
-            error: {
-                message: "There is no dynamic access key with this path"
-            }
-        });
+        return jsonError("There is no dynamic access key with this path");
     }
 
     if (dynamicAccessKey.expiresAt && dynamicAccessKey.expiresAt <= new Date()) {
-        return NextResponse.json({
-            error: {
-                message: "The dynamic access key has expired"
-            }
-        });
+        return jsonError("The dynamic access key has expired");
+    }
+
+    if (dynamicAccessKey.isSelfManaged) {
+        return await handleSelfManagedDynamicAccessKey(dynamicAccessKey);
     }
 
     if (dynamicAccessKey.accessKeys.length === 0) {
-        return NextResponse.json({
-            error: {
-                message: "There is no associated access key to this dynamic access key"
-            }
-        });
+        return jsonError("There is no associated access key to this dynamic access key");
     }
 
     const clientIp = (
@@ -58,22 +54,7 @@ export async function GET(req: Request, context: ContextProps) {
         where: { id: selectedAccessKey.serverId }
     });
 
-    const result: DynamicAccessKeyApiResponse = {
-        server: selectedServer.hostnameOrIp,
-        server_port: selectedAccessKey.port,
-        password: selectedAccessKey.password,
-        method: selectedAccessKey.method
-    };
-
-    if (dynamicAccessKey.prefix) {
-        const prefix = AccessKeyPrefixes.find((x) => x.type === dynamicAccessKey.prefix);
-
-        if (prefix) {
-            return NextResponse.json({ ...result, prefix: prefix.jsonEncodedValue });
-        }
-    }
-
-    return NextResponse.json(result);
+    return createAccessKeyResponse(dynamicAccessKey, selectedServer, selectedAccessKey);
 }
 
 const selectAccessKey = async (
@@ -121,4 +102,148 @@ const selectRandomServerKey = (accessKeys: AccessKey[]) => {
 
     // Select a random key from the selected server
     return selectedServer[Math.floor(Math.random() * selectedServer.length)];
+};
+
+export const handleSelfManagedDynamicAccessKey = async (dynamicAccessKey: DynamicAccessKeyWithAccessKeys) => {
+    const accessKeyName = `self-managed-dak-access-key-${dynamicAccessKey.id}`;
+
+    try {
+        const servers = await getAvailableServers(dynamicAccessKey);
+
+        if (servers.length === 0) {
+            return jsonError("Server pool is empty");
+        }
+
+        let activeServerId = await validateOrSelectServer(dynamicAccessKey, servers);
+
+        if (!activeServerId) {
+            return jsonError("No active server could be selected");
+        }
+
+        return await getOrCreateAccessKeyResponse(dynamicAccessKey, accessKeyName, activeServerId);
+    } catch (error) {
+        console.error("handleSelfManagedDynamicAccessKey error:", error);
+
+        return jsonError("The dynamic access key configuration is incorrect");
+    }
+};
+
+async function getAvailableServers(dynamicAccessKey: DynamicAccessKeyWithAccessKeys): Promise<Server[]> {
+    const poolItems = JSON.parse(dynamicAccessKey.serverPoolValue ?? "[]");
+
+    switch (dynamicAccessKey.serverPoolType) {
+        case "manual":
+            return prisma.server.findMany({
+                where: {
+                    id: { in: poolItems },
+                    isAvailable: true
+                }
+            });
+
+        case "tag":
+            return prisma.server.findMany({
+                where: {
+                    isAvailable: true,
+                    tags: {
+                        some: {
+                            tagId: { in: poolItems }
+                        }
+                    }
+                }
+            });
+
+        default:
+            return [];
+    }
+}
+
+async function validateOrSelectServer(
+    dynamicAccessKey: DynamicAccessKeyWithAccessKeys,
+    servers: Server[]
+): Promise<number | null> {
+    const activeServerId = dynamicAccessKey.activeServerId;
+
+    if (activeServerId) {
+        const isStillAvailable = servers.some((s) => s.id === activeServerId && s.isAvailable);
+
+        if (isStillAvailable) {
+            return activeServerId;
+        }
+        console.warn(`Active server ${activeServerId} is no longer available. Selecting a new one.`);
+    }
+
+    const newServerId = await setRandomActiveServer(dynamicAccessKey, servers);
+
+    return newServerId ?? null;
+}
+
+async function setRandomActiveServer(
+    dynamicAccessKey: DynamicAccessKeyWithAccessKeys,
+    servers: Server[]
+): Promise<number> {
+    const randomServer = servers[Math.floor(Math.random() * servers.length)];
+
+    await prisma.dynamicAccessKey.update({
+        where: { id: dynamicAccessKey.id },
+        data: { activeServerId: randomServer.id }
+    });
+
+    return randomServer.id;
+}
+
+async function getOrCreateAccessKeyResponse(
+    dynamicAccessKey: DynamicAccessKeyWithAccessKeys,
+    accessKeyName: string,
+    activeServerId: number
+) {
+    const activeServer = await prisma.server.findUnique({
+        where: { id: activeServerId, isAvailable: true },
+        include: { accessKeys: true }
+    });
+
+    if (!activeServer) {
+        return jsonError("Could not find active server");
+    }
+
+    let accessKey = activeServer.accessKeys.find((k) => k.name === accessKeyName);
+
+    if (!accessKey) {
+        accessKey = await createAccessKey({
+            serverId: activeServer.id,
+            name: accessKeyName,
+            prefix: null,
+            expiresAt: null,
+            dataLimit: null,
+            dataLimitUnit: DataLimitUnit.MB
+        });
+    }
+
+    return createAccessKeyResponse(dynamicAccessKey, activeServer, accessKey);
+}
+
+function jsonError(message: string) {
+    return NextResponse.json({ error: { message } });
+}
+
+const createAccessKeyResponse = (
+    dynamicAccessKey: DynamicAccessKey,
+    selectedServer: Server,
+    selectedAccessKey: AccessKey
+) => {
+    const result: DynamicAccessKeyApiResponse = {
+        server: selectedServer.hostnameOrIp,
+        server_port: selectedAccessKey.port,
+        password: selectedAccessKey.password,
+        method: selectedAccessKey.method
+    };
+
+    if (dynamicAccessKey.prefix) {
+        const prefix = AccessKeyPrefixes.find((x) => x.type === dynamicAccessKey.prefix);
+
+        if (prefix) {
+            return NextResponse.json({ ...result, prefix: prefix.jsonEncodedValue });
+        }
+    }
+
+    return NextResponse.json(result);
 };
