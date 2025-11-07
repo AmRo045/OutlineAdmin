@@ -141,11 +141,6 @@ export default function ServersList({ data }: Props) {
                                         {server.hostnameOrIp}
                                     </Snippet>
                                 </TableCell>
-                                <TableCell>
-                                    <Chip color="default" size="sm" variant="flat">
-                                        {server._count?.accessKeys}
-                                    </Chip>
-                                </TableCell>
                                 <TableCell className="max-w-[260px]">
                                     <div className="flex gap-2 justify-center items-center flex-wrap">
                                         {server.tags.map((t) => (
@@ -154,6 +149,11 @@ export default function ServersList({ data }: Props) {
                                             </Chip>
                                         ))}
                                     </div>
+                                </TableCell>
+                                <TableCell>
+                                    <Chip color="default" size="sm" variant="flat">
+                                        {server._count?.accessKeys}
+                                    </Chip>
                                 </TableCell>
                                 <TableCell>
                                     <Chip color="default" size="sm" variant="flat">
