@@ -11,7 +11,7 @@ CREATE TABLE "new_DynamicAccessKey" (
     "serverPoolValue" TEXT,
     "serverPoolType" TEXT,
     "activeServerId" INTEGER,
-    "usageInterval" TEXT,
+    "validityPeriod" TEXT,
     "usageStartedAt" DATETIME,
     "dataUsage" BIGINT NOT NULL DEFAULT 0,
     "dataLimit" INTEGER,

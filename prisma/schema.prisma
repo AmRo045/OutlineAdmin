@@ -72,7 +72,7 @@ model DynamicAccessKey {
   serverPoolValue       String?
   serverPoolType        String?
   activeServerId        Int?
-  usageInterval         String?
+  validityPeriod        String?
   usageStartedAt        DateTime?
   dataUsage             BigInt    @default(0)
   dataLimit             BigInt?
