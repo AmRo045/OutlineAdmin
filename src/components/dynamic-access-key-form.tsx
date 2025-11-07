@@ -234,25 +234,6 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }
                         })}
                     />
 
-                    <Input
-                        endContent={<span>MB</span>}
-                        errorMessage={form.formState.errors.dataLimit?.message}
-                        isInvalid={!!form.formState.errors.dataLimit}
-                        label="Data limit"
-                        size="sm"
-                        type="number"
-                        variant="underlined"
-                        {...form.register("dataLimit", {
-                            required: false,
-                            min: 1,
-                            max: {
-                                value: MAX_DATA_LIMIT_FOR_ACCESS_KEYS,
-                                message: `The value cannot be more that ${MAX_DATA_LIMIT_FOR_ACCESS_KEYS}`
-                            },
-                            setValueAs: (v) => parseInt(v)
-                        })}
-                    />
-
                     {!selectedExpirationDate && (
                         <>
                             <Input
@@ -409,6 +390,25 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }
                     {isSelfManaged && (
                         <div className="grid gap-4">
                             <Divider />
+
+                            <Input
+                                endContent={<span>MB</span>}
+                                errorMessage={form.formState.errors.dataLimit?.message}
+                                isInvalid={!!form.formState.errors.dataLimit}
+                                label="Data limit"
+                                size="sm"
+                                type="number"
+                                variant="underlined"
+                                {...form.register("dataLimit", {
+                                    required: false,
+                                    min: 1,
+                                    max: {
+                                        value: MAX_DATA_LIMIT_FOR_ACCESS_KEYS,
+                                        message: `The value cannot be more that ${MAX_DATA_LIMIT_FOR_ACCESS_KEYS}`
+                                    },
+                                    setValueAs: (v) => parseInt(v)
+                                })}
+                            />
 
                             <RadioGroup
                                 defaultValue={serverPoolType}
