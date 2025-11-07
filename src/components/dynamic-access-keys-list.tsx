@@ -2,16 +2,14 @@
 
 import {
     Button,
+    ButtonGroup,
+    Card,
+    CardBody,
+    CardFooter,
+    CardHeader,
     Chip,
     Input,
     Pagination,
-    Spinner,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow,
     Tooltip,
     useDisclosure
 } from "@heroui/react";
@@ -21,8 +19,7 @@ import { DynamicAccessKey } from "@prisma/client";
 import { Link } from "@heroui/link";
 
 import ConfirmModal from "@/src/components/modals/confirm-modal";
-import { DeleteIcon, EditIcon, EyeIcon, InfoIcon, KeyIcon, PlusIcon } from "@/src/components/icons";
-import NoResult from "@/src/components/no-result";
+import { InfoIcon, PlusIcon } from "@/src/components/icons";
 import { DynamicAccessKeyWithAccessKeysCount } from "@/src/core/definitions";
 import {
     getDynamicAccessKeys,
@@ -109,15 +106,15 @@ export default function DynamicAccessKeysList() {
             <ConfirmModal
                 body={
                     <div className="grid gap-2">
-                        <span>Are you sure you want to remove this dynamic access key?</span>
+                        <span>Are you sure you want to Delete this dynamic access key?</span>
                         <p className="text-default-500 text-sm whitespace-pre-wrap break-all">
                             {getCurrentAccessKeyUrl()}
                         </p>
                     </div>
                 }
-                confirmLabel="Remove"
+                confirmLabel="Delete"
                 disclosure={removeDynamicAccessKeyConfirmModalDisclosure}
-                title="Remove Dyanmic Access Key"
+                title="Delete Dyanmic Access Key"
                 onConfirm={handleRemoveDynamicAccessKey}
             />
 
@@ -156,162 +153,112 @@ export default function DynamicAccessKeysList() {
                     </Button>
                 </div>
 
-                <Table
-                    aria-label="Dynamic access keys list"
-                    bottomContent={
-                        totalPage > 1 && (
-                            <div className="flex justify-center">
-                                <Pagination initialPage={page} total={totalPage} variant="light" onChange={setPage} />
-                            </div>
-                        )
-                    }
-                    color="primary"
-                    isCompact={false}
-                    isHeaderSticky={true}
-                    isStriped={true}
-                    shadow="sm"
-                >
-                    <TableHeader>
-                        <TableColumn>ID</TableColumn>
-                        <TableColumn>NAME</TableColumn>
-                        <TableColumn>PATH</TableColumn>
-                        <TableColumn>MANAGEMENT</TableColumn>
-                        <TableColumn>PREFIX</TableColumn>
-                        <TableColumn align="center">NUMBER OF KEYS</TableColumn>
-                        <TableColumn align="center">LOAD BALANCER ALGO</TableColumn>
-                        <TableColumn align="center">VALIDITY</TableColumn>
-                        <TableColumn align="center">ACTIONS</TableColumn>
-                    </TableHeader>
-                    <TableBody emptyContent={<NoResult />} isLoading={isLoading} loadingContent={<Spinner />}>
-                        {dynamicAccessKeys.map((dynamicAccessKey) => (
-                            <TableRow key={dynamicAccessKey.id}>
-                                <TableCell>{dynamicAccessKey.id}</TableCell>
-                                <TableCell>
-                                    <span className="whitespace-nowrap">{dynamicAccessKey.name}</span>
-                                </TableCell>
-                                <TableCell>{dynamicAccessKey.path}</TableCell>
-                                <TableCell>
-                                    {dynamicAccessKey.isSelfManaged ? (
-                                        <Chip color="secondary" variant="flat">
+                <div className="flex flex-wrap justify-center gap-4">
+                    {dynamicAccessKeys.map((item) => (
+                        <Card key={item.id} className="w-[360px]">
+                            <CardHeader>
+                                <div className="grid gap-1">
+                                    <span className="max-w-[340px] truncate">{item.name}</span>
+                                    <span className="max-w-[340px] truncate text-foreground-400 text-sm">
+                                        {item.path}
+                                    </span>
+                                </div>
+                            </CardHeader>
+                            <CardBody className="text-sm grid gap-2">
+                                <div className="flex gap-1 justify-between items-center">
+                                    <span>ID</span>
+                                    <Chip radius="sm" size="sm" variant="flat">
+                                        {item.id}
+                                    </Chip>
+                                </div>
+
+                                <div className="flex gap-1 justify-between items-center">
+                                    <span>Management type</span>
+                                    {item.isSelfManaged ? (
+                                        <Chip color="secondary" radius="sm" size="sm" variant="flat">
                                             Self-Managed
                                         </Chip>
                                     ) : (
-                                        <Chip color="default" variant="flat">
+                                        <Chip color="default" radius="sm" size="sm" variant="flat">
                                             Manual
                                         </Chip>
                                     )}
-                                </TableCell>
-                                <TableCell>
+                                </div>
+
+                                <div className="flex gap-1 justify-between items-center">
+                                    <span>Number of keys</span>
+                                    <Chip color="default" radius="sm" size="sm" variant="flat">
+                                        {item._count?.accessKeys}
+                                    </Chip>
+                                </div>
+
+                                <div className="flex gap-1 justify-between items-center">
+                                    <span>Load balancer</span>
+                                    <Chip color="default" radius="sm" size="sm" variant="flat">
+                                        {item.loadBalancerAlgorithm}
+                                    </Chip>
+                                </div>
+
+                                <div className="flex gap-1 justify-between items-center">
+                                    <span>Prefix</span>
                                     <Chip
-                                        color={dynamicAccessKey.prefix ? "success" : "default"}
+                                        color={item.prefix ? "success" : "default"}
+                                        radius="sm"
                                         size="sm"
                                         variant="flat"
                                     >
-                                        {dynamicAccessKey.prefix ? dynamicAccessKey.prefix : "None"}
+                                        {item.prefix ? item.prefix : "None"}
                                     </Chip>
-                                </TableCell>
-                                <TableCell>
-                                    <Chip color="default" size="sm" variant="flat">
-                                        {dynamicAccessKey._count?.accessKeys}
-                                    </Chip>
-                                </TableCell>
-                                <TableCell>
-                                    <Chip color="default" size="sm" variant="flat">
-                                        {dynamicAccessKey.loadBalancerAlgorithm}
-                                    </Chip>
-                                </TableCell>
-                                <TableCell width={160}>
-                                    <DynamicAccessKeyValidityChip dak={dynamicAccessKey} />
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex gap-2 justify-center items-center">
-                                        <Tooltip
-                                            closeDelay={100}
-                                            color="primary"
-                                            content="Show the key"
-                                            delay={600}
-                                            size="sm"
-                                        >
-                                            <Button
-                                                color="primary"
-                                                isIconOnly={true}
-                                                size="sm"
-                                                variant="light"
-                                                onPress={() => {
-                                                    setCurrentDynamicAccessKey(() => dynamicAccessKey);
-                                                    dynamicAccessKeyModalDisclosure.onOpen();
-                                                }}
-                                            >
-                                                <EyeIcon size={24} />
-                                            </Button>
-                                        </Tooltip>
+                                </div>
 
-                                        {!dynamicAccessKey.isSelfManaged && (
-                                            <Tooltip
-                                                closeDelay={100}
-                                                color="primary"
-                                                content="Manage access keys"
-                                                delay={600}
-                                                size="sm"
-                                            >
-                                                <Button
-                                                    as={Link}
-                                                    color="primary"
-                                                    href={`/dynamic-access-keys/${dynamicAccessKey.id}/access-keys`}
-                                                    isIconOnly={true}
-                                                    size="sm"
-                                                    variant="light"
-                                                >
-                                                    <KeyIcon size={24} />
-                                                </Button>
-                                            </Tooltip>
-                                        )}
+                                <div className="flex gap-1 justify-between items-center">
+                                    <span>Validity</span>
+                                    <DynamicAccessKeyValidityChip dak={item} />
+                                </div>
+                            </CardBody>
+                            <CardFooter>
+                                <ButtonGroup color="default" fullWidth={true} size="sm" variant="flat">
+                                    <Button
+                                        onPress={() => {
+                                            setCurrentDynamicAccessKey(() => item);
+                                            dynamicAccessKeyModalDisclosure.onOpen();
+                                        }}
+                                    >
+                                        QR Code
+                                    </Button>
 
-                                        <Tooltip
-                                            closeDelay={100}
-                                            color="primary"
-                                            content="Edit the key"
-                                            delay={600}
-                                            size="sm"
-                                        >
-                                            <Button
-                                                as={Link}
-                                                color="primary"
-                                                href={`/dynamic-access-keys/${dynamicAccessKey.id}/edit`}
-                                                isIconOnly={true}
-                                                size="sm"
-                                                variant="light"
-                                            >
-                                                <EditIcon size={24} />
-                                            </Button>
-                                        </Tooltip>
+                                    <Button
+                                        as={Link}
+                                        href={`/dynamic-access-keys/${item.id}/access-keys`}
+                                        isDisabled={item.isSelfManaged}
+                                    >
+                                        Access Keys
+                                    </Button>
 
-                                        <Tooltip
-                                            closeDelay={100}
-                                            color="danger"
-                                            content="Remove the key"
-                                            delay={600}
-                                            size="sm"
-                                        >
-                                            <Button
-                                                color="danger"
-                                                isIconOnly={true}
-                                                size="sm"
-                                                variant="light"
-                                                onPress={() => {
-                                                    setCurrentDynamicAccessKey(() => dynamicAccessKey);
-                                                    removeDynamicAccessKeyConfirmModalDisclosure.onOpen();
-                                                }}
-                                            >
-                                                <DeleteIcon size={24} />
-                                            </Button>
-                                        </Tooltip>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                                    <Button as={Link} href={`/dynamic-access-keys/${item.id}/edit`}>
+                                        Edit
+                                    </Button>
+
+                                    <Button
+                                        color="danger"
+                                        onPress={() => {
+                                            setCurrentDynamicAccessKey(() => item);
+                                            removeDynamicAccessKeyConfirmModalDisclosure.onOpen();
+                                        }}
+                                    >
+                                        Delete
+                                    </Button>
+                                </ButtonGroup>
+                            </CardFooter>
+                        </Card>
+                    ))}
+                </div>
+
+                {totalPage > 1 && dynamicAccessKeys.length > 0 && (
+                    <div className="flex justify-center">
+                        <Pagination initialPage={page} total={totalPage} variant="light" onChange={setPage} />
+                    </div>
+                )}
             </div>
         </>
     );

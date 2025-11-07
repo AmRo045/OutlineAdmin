@@ -34,7 +34,7 @@ export default function DynamicAccessKeyValidityChip({ dak }: Props) {
 
     if (!dak.usageStartedAt && dak.validityPeriod) {
         return (
-            <Chip color="primary" size="sm" variant="flat">
+            <Chip color="primary" radius="sm" size="sm" variant="flat">
                 NOT STARTED
             </Chip>
         );
@@ -42,7 +42,7 @@ export default function DynamicAccessKeyValidityChip({ dak }: Props) {
 
     if (!dak.validityPeriod) {
         return (
-            <Chip color="success" size="sm" variant="flat">
+            <Chip color="success" radius="sm" size="sm" variant="flat">
                 <InfinityIcon />
             </Chip>
         );
@@ -50,14 +50,14 @@ export default function DynamicAccessKeyValidityChip({ dak }: Props) {
 
     if (expiryDate && expiryDate <= new Date()) {
         return (
-            <Chip color="danger" size="sm" variant="flat">
+            <Chip color="danger" radius="sm" size="sm" variant="flat">
                 <span>EXPIRED</span>
             </Chip>
         );
     }
 
     return (
-        <Chip color="warning" size="sm" variant="flat">
+        <Chip color="warning" radius="sm" size="sm" variant="flat">
             <span>{duration}</span>
         </Chip>
     );
