@@ -63,8 +63,8 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }
                   serverPoolValue: dynamicAccessKey.serverPoolValue
                       ? JSON.parse(dynamicAccessKey.serverPoolValue)
                       : null,
-                  usageInterval: dynamicAccessKey.usageInterval,
-                  usageStartedAt: dynamicAccessKey.usageStartedAt
+                  validityPeriod: dynamicAccessKey.validityPeriod ? Number(dynamicAccessKey.validityPeriod) : null,
+                  dataLimit: dynamicAccessKey.dataLimit
               }
             : {
                   name: "",
@@ -75,8 +75,8 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }
                   isSelfManaged: false,
                   serverPoolType: null,
                   serverPoolValue: null,
-                  usageInterval: null,
-                  usageStartedAt: null
+                  validityPeriod: null,
+                  dataLimit: null
               }
     });
 
@@ -233,8 +233,46 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }
                         })}
                     />
 
-                    <div className="flex gap-2">
-                        {selectedExpirationDate && (
+                    {!selectedExpirationDate && (
+                        <>
+                            <Input
+                                color="primary"
+                                errorMessage={form.formState.errors.validityPeriod?.message}
+                                isInvalid={!!form.formState.errors.validityPeriod}
+                                label="Validity period (in days)"
+                                placeholder="e.g. 30"
+                                type="number"
+                                variant="underlined"
+                                {...form.register("validityPeriod", {
+                                    valueAsNumber: true,
+                                    max: {
+                                        value: 10000,
+                                        message: "The value must be less than 1000"
+                                    },
+                                    min: {
+                                        value: 1,
+                                        message: "The value must be greater than 1"
+                                    }
+                                })}
+                            />
+
+                            {!dynamicAccessKey && (
+                                <RadioGroup
+                                    defaultValue="now"
+                                    label="Usage start date"
+                                    onValueChange={(v) => {
+                                        form.setValue("setUsageDateOnFirstConnection", v === "first-connection");
+                                    }}
+                                >
+                                    <Radio value="now">Set on creation</Radio>
+                                    <Radio value="first-connection">Set on first connection</Radio>
+                                </RadioGroup>
+                            )}
+                        </>
+                    )}
+
+                    {selectedExpirationDate && (
+                        <div className="flex gap-2">
                             <Button
                                 color="danger"
                                 isIconOnly={true}
@@ -245,14 +283,14 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }
                             >
                                 <DeleteIcon size={18} />
                             </Button>
-                        )}
 
-                        <CustomDatePicker
-                            label="Expiration Date:"
-                            value={selectedExpirationDate}
-                            onChange={(value) => setSelectedExpirationDate(value)}
-                        />
-                    </div>
+                            <CustomDatePicker
+                                label="Expiration Date:"
+                                value={selectedExpirationDate}
+                                onChange={(value) => setSelectedExpirationDate(value)}
+                            />
+                        </div>
+                    )}
 
                     <Dropdown>
                         <DropdownTrigger>

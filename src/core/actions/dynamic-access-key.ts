@@ -108,8 +108,8 @@ export async function createDynamicAccessKey(data: NewDynamicAccessKeyRequest): 
             isSelfManaged: data.isSelfManaged,
             serverPoolType: data.serverPoolType,
             serverPoolValue: data.serverPoolValue,
-            usageInterval: data.usageInterval,
-            usageStartedAt: data.usageStartedAt
+            validityPeriod: data.validityPeriod?.toString() ?? null,
+            usageStartedAt: data.setUsageDateOnFirstConnection ? null : new Date()
         }
     });
 
@@ -128,8 +128,7 @@ export async function updateDynamicAccessKey(data: EditDynamicAccessKeyRequest):
             isSelfManaged: data.isSelfManaged,
             serverPoolType: data.serverPoolType,
             serverPoolValue: data.serverPoolValue,
-            usageInterval: data.usageInterval,
-            usageStartedAt: data.usageStartedAt
+            validityPeriod: data.validityPeriod?.toString() ?? null
         }
     });
 

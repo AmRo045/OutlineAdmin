@@ -155,8 +155,9 @@ export interface NewDynamicAccessKeyRequest {
     isSelfManaged: boolean;
     serverPoolValue: string | null;
     serverPoolType: string | null;
-    usageInterval: string | null;
-    usageStartedAt: Date | null;
+    validityPeriod: string | null;
+    setUsageDateOnFirstConnection?: boolean;
+    dataLimit: number | null;
     expiresAt: Date | null;
     prefix: string | null;
 }
