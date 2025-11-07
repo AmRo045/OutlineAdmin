@@ -64,8 +64,8 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }
                   serverPoolValue: dynamicAccessKey.serverPoolValue
                       ? JSON.parse(dynamicAccessKey.serverPoolValue)
                       : null,
-                  validityPeriod: dynamicAccessKey.validityPeriod ? Number(dynamicAccessKey.validityPeriod) : null,
-                  dataLimit: dynamicAccessKey.dataLimit
+                  validityPeriod: dynamicAccessKey.validityPeriod ? dynamicAccessKey.validityPeriod : null,
+                  dataLimit: Number(dynamicAccessKey.dataLimit)
               }
             : {
                   name: "",
@@ -264,7 +264,6 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }
                                 type="number"
                                 variant="underlined"
                                 {...form.register("validityPeriod", {
-                                    valueAsNumber: true,
                                     max: {
                                         value: 10000,
                                         message: "The value must be less than 1000"
