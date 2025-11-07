@@ -137,10 +137,29 @@ export async function updateDynamicAccessKey(data: EditDynamicAccessKeyRequest):
 }
 
 export async function removeDynamicAccessKey(id: number): Promise<void> {
-    await prisma.dynamicAccessKey.delete({
+    const dak = await prisma.dynamicAccessKey.findUnique({
+        where: { id }
+    });
+
+    if (!dak) {
+        return;
+    }
+
+    const pattern = `self-managed-dak-access-key-${id}`;
+    const accessKeys = await prisma.accessKey.findMany({
         where: {
-            id: id
+            name: { contains: pattern }
         }
+    });
+
+    if (accessKeys.length > 0) {
+        await prisma.accessKey.deleteMany({
+            where: { id: { in: accessKeys.map((k) => k.id) } }
+        });
+    }
+
+    await prisma.dynamicAccessKey.delete({
+        where: { id }
     });
 
     revalidatePath("/dynamic-access-keys");
