@@ -1,7 +1,6 @@
 "use client";
 
 import {
-    Alert,
     Button,
     Chip,
     Input,
@@ -33,6 +32,7 @@ import {
 import DynamicAccessKeyModal from "@/src/components/modals/dynamic-access-key-modal";
 import { app, PAGE_SIZE } from "@/src/core/config";
 import DynamicAccessKeyValidityChip from "@/src/components/dynamic-access-key-validity-chip";
+import DynamicAccessKeysSslWarning from "@/src/components/dynamic-access-keys-ssl-warning";
 
 interface SearchFormProps {
     term: string;
@@ -132,11 +132,7 @@ export default function DynamicAccessKeysList() {
                     </Tooltip>
                 </div>
 
-                {window.location.protocol === "http:" && (
-                    <Alert color="warning">
-                        A valid domain name with SSL encryption is required to use this feature.
-                    </Alert>
-                )}
+                <DynamicAccessKeysSslWarning />
 
                 <div className="flex justify-between items-center gap-2">
                     <form onSubmit={searchForm.handleSubmit(handleSearch)}>
