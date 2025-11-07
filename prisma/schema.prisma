@@ -68,6 +68,12 @@ model DynamicAccessKey {
   path                  String    @unique
   loadBalancerAlgorithm String
   prefix                String?
+  isSelfManaged         Boolean   @default(false)
+  serverPoolValue       String?
+  serverPoolType        String?
+  usageInterval         String?
+  usageStartedAt        DateTime?
+  dataUsage             BigInt    @default(0)
   expiresAt             DateTime?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
