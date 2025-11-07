@@ -54,7 +54,7 @@ export async function GET(req: Request, context: ContextProps) {
         where: { id: selectedAccessKey.serverId }
     });
 
-    return createAccessKeyResponse(dynamicAccessKey, selectedServer, selectedAccessKey);
+    return await createAccessKeyResponse(dynamicAccessKey, selectedServer, selectedAccessKey);
 }
 
 const selectAccessKey = async (
@@ -218,18 +218,25 @@ async function getOrCreateAccessKeyResponse(
         });
     }
 
-    return createAccessKeyResponse(dynamicAccessKey, activeServer, accessKey);
+    return await createAccessKeyResponse(dynamicAccessKey, activeServer, accessKey);
 }
 
 function jsonError(message: string) {
     return NextResponse.json({ error: { message } });
 }
 
-const createAccessKeyResponse = (
+const createAccessKeyResponse = async (
     dynamicAccessKey: DynamicAccessKey,
     selectedServer: Server,
     selectedAccessKey: AccessKey
 ) => {
+    if (!dynamicAccessKey.usageStartedAt) {
+        await prisma.dynamicAccessKey.update({
+            where: { id: dynamicAccessKey.id },
+            data: { usageStartedAt: new Date() }
+        });
+    }
+
     const result: DynamicAccessKeyApiResponse = {
         server: selectedServer.hostnameOrIp,
         server_port: selectedAccessKey.port,
