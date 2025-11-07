@@ -75,6 +75,7 @@ model DynamicAccessKey {
   usageInterval         String?
   usageStartedAt        DateTime?
   dataUsage             BigInt    @default(0)
+  dataLimit             BigInt?
   expiresAt             DateTime?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
