@@ -12,7 +12,7 @@ import {
     DynamicAccessKeyWithAccessKeys,
     LoadBalancerAlgorithm
 } from "@/src/core/definitions";
-import { crc32 } from "@/src/core/utils";
+import { crc32, getDakExpiryDateBasedOnValidityPeriod } from "@/src/core/utils";
 import { createAccessKey } from "@/src/core/actions/access-key";
 
 interface ContextProps {
@@ -31,6 +31,12 @@ export async function GET(req: Request, context: ContextProps) {
     }
 
     if (dynamicAccessKey.expiresAt && dynamicAccessKey.expiresAt <= new Date()) {
+        return jsonError("The dynamic access key has expired");
+    }
+
+    const expiryDate = getDakExpiryDateBasedOnValidityPeriod(dynamicAccessKey);
+
+    if (expiryDate && expiryDate <= new Date()) {
         return jsonError("The dynamic access key has expired");
     }
 

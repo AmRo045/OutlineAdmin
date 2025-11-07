@@ -221,7 +221,7 @@ export default function DynamicAccessKeysList() {
                                     </Chip>
                                 </TableCell>
                                 <TableCell width={160}>
-                                    <DynamicAccessKeyValidityChip data={dynamicAccessKey} />
+                                    <DynamicAccessKeyValidityChip dak={dynamicAccessKey} />
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex gap-2 justify-center items-center">

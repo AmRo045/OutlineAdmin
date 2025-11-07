@@ -3,20 +3,17 @@ import React, { useEffect, useState } from "react";
 import { DynamicAccessKey } from "@prisma/client";
 
 import { InfinityIcon } from "@/src/components/icons";
-import { formatAsDuration } from "@/src/core/utils";
+import { formatAsDuration, getDakExpiryDateBasedOnValidityPeriod } from "@/src/core/utils";
 import AccessKeyValidityChip from "@/src/components/access-key-validity-chip";
 
 interface Props {
-    data: DynamicAccessKey;
+    dak: DynamicAccessKey;
 }
 
-export default function DynamicAccessKeyValidityChip({ data }: Props) {
+export default function DynamicAccessKeyValidityChip({ dak }: Props) {
     const [duration, setDuration] = useState<string>("...");
 
-    const expiryDate =
-        data.usageStartedAt && data.validityPeriod
-            ? new Date(new Date(data.usageStartedAt).getTime() + Number(data.validityPeriod) * 24 * 60 * 60 * 1000)
-            : null;
+    const expiryDate = getDakExpiryDateBasedOnValidityPeriod(dak);
 
     useEffect(() => {
         if (!expiryDate) return;
@@ -31,11 +28,11 @@ export default function DynamicAccessKeyValidityChip({ data }: Props) {
         return () => clearInterval(intervalId);
     }, [expiryDate]);
 
-    if (data.expiresAt) {
-        return <AccessKeyValidityChip value={data.expiresAt} />;
+    if (dak.expiresAt) {
+        return <AccessKeyValidityChip value={dak.expiresAt} />;
     }
 
-    if (!data.usageStartedAt && data.validityPeriod) {
+    if (!dak.usageStartedAt && dak.validityPeriod) {
         return (
             <Chip color="primary" size="sm" variant="flat">
                 NOT STARTED
@@ -43,7 +40,7 @@ export default function DynamicAccessKeyValidityChip({ data }: Props) {
         );
     }
 
-    if (!data.validityPeriod) {
+    if (!dak.validityPeriod) {
         return (
             <Chip color="success" size="sm" variant="flat">
                 <InfinityIcon />
