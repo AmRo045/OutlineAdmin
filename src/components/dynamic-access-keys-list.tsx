@@ -30,9 +30,9 @@ import {
     getDynamicAccessKeysCount,
     removeDynamicAccessKey
 } from "@/src/core/actions/dynamic-access-key";
-import AccessKeyValidityChip from "@/src/components/access-key-validity-chip";
 import DynamicAccessKeyModal from "@/src/components/modals/dynamic-access-key-modal";
 import { app, PAGE_SIZE } from "@/src/core/config";
+import DynamicAccessKeyValidityChip from "@/src/components/dynamic-access-key-validity-chip";
 
 interface SearchFormProps {
     term: string;
@@ -225,7 +225,7 @@ export default function DynamicAccessKeysList() {
                                     </Chip>
                                 </TableCell>
                                 <TableCell width={160}>
-                                    <AccessKeyValidityChip value={dynamicAccessKey.expiresAt} />
+                                    <DynamicAccessKeyValidityChip data={dynamicAccessKey} />
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex gap-2 justify-center items-center">
