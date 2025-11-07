@@ -31,7 +31,12 @@ import {
     LoadBalancerAlgorithm,
     NewDynamicAccessKeyRequest
 } from "@/src/core/definitions";
-import { createDynamicAccessKey, updateDynamicAccessKey } from "@/src/core/actions/dynamic-access-key";
+import {
+    createDynamicAccessKey,
+    removeSelfManagedDynamicAccessKeyAccessKeys,
+    syncDynamicAccessKeyAccessKeys,
+    updateDynamicAccessKey
+} from "@/src/core/actions/dynamic-access-key";
 import MessageModal from "@/src/components/modals/message-modal";
 import { ArrowLeftIcon, DeleteIcon } from "@/src/components/icons";
 import CustomDatePicker from "@/src/components/custom-date-picker";
@@ -86,7 +91,11 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }
         setErrorMessage(() => "");
 
         try {
-            if (!data.isSelfManaged) {
+            if (data.isSelfManaged) {
+                if (Array.isArray(data.serverPoolValue)) {
+                    data.serverPoolValue = JSON.stringify(data.serverPoolValue);
+                }
+            } else {
                 data.serverPoolType = null;
                 data.serverPoolValue = null;
             }
@@ -104,6 +113,14 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }
 
                 updateData.id = dynamicAccessKey.id;
                 await updateDynamicAccessKey(updateData);
+
+                if (dynamicAccessKey.isSelfManaged && !updateData.isSelfManaged) {
+                    await removeSelfManagedDynamicAccessKeyAccessKeys(dynamicAccessKey.id);
+                }
+
+                if (!dynamicAccessKey.isSelfManaged && updateData.isSelfManaged) {
+                    await syncDynamicAccessKeyAccessKeys(dynamicAccessKey.id, []);
+                }
             } else {
                 await createDynamicAccessKey(data);
             }
