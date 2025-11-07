@@ -1,6 +1,6 @@
 "use client";
 
-import { DynamicAccessKey } from "@prisma/client";
+import { DynamicAccessKey, Server, Tag } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -11,6 +11,7 @@ import {
     Checkbox,
     CheckboxGroup,
     Chip,
+    cn,
     Divider,
     Dropdown,
     DropdownItem,
@@ -37,10 +38,12 @@ import CustomDatePicker from "@/src/components/custom-date-picker";
 import { AccessKeyPrefixes } from "@/src/core/outline/access-key-prefix";
 
 interface Props {
+    servers: Server[];
+    tags: Tag[];
     dynamicAccessKey?: DynamicAccessKey | null;
 }
 
-export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
+export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }: Props) {
     const router = useRouter();
     const form = useForm<NewDynamicAccessKeyRequest | EditDynamicAccessKeyRequest>({
         defaultValues: dynamicAccessKey
@@ -52,7 +55,9 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
                   prefix: dynamicAccessKey.prefix,
                   isSelfManaged: dynamicAccessKey.isSelfManaged,
                   serverPoolType: dynamicAccessKey.serverPoolType,
-                  serverPoolValue: dynamicAccessKey.serverPoolValue,
+                  serverPoolValue: dynamicAccessKey.serverPoolValue
+                      ? JSON.parse(dynamicAccessKey.serverPoolValue)
+                      : null,
                   usageInterval: dynamicAccessKey.usageInterval,
                   usageStartedAt: dynamicAccessKey.usageStartedAt
               }
@@ -81,6 +86,11 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
         setErrorMessage(() => "");
 
         try {
+            if (!data.isSelfManaged) {
+                data.serverPoolType = null;
+                data.serverPoolValue = null;
+            }
+
             data.loadBalancerAlgorithm ??= LoadBalancerAlgorithm.RandomKeyOnEachConnection;
 
             if (!data.path) {
@@ -147,6 +157,7 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
 
     const isSelfManaged = form.watch("isSelfManaged");
     const serverPoolType = form.watch("serverPoolType");
+    const serverPoolValue = Array.from(form.watch("serverPoolValue") ?? []).map(String);
 
     return (
         <>
@@ -328,7 +339,10 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
                             <RadioGroup
                                 defaultValue={serverPoolType}
                                 label="Server Pool Type"
-                                onValueChange={(v) => form.setValue("serverPoolType", v)}
+                                onValueChange={(v) => {
+                                    form.setValue("serverPoolType", v);
+                                    form.setValue("serverPoolValue", null);
+                                }}
                             >
                                 <Radio value="manual">Manual</Radio>
                                 <Radio value="tag">Tag (Recommended)</Radio>
@@ -350,9 +364,47 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
                                 <div className="grid gap-4">
                                     <Divider />
 
-                                    <CheckboxGroup label="Select Servers">
-                                        <Checkbox value="manual">Server 1</Checkbox>
-                                        <Checkbox value="tag">Server 2</Checkbox>
+                                    <CheckboxGroup
+                                        defaultValue={serverPoolValue}
+                                        label="Select Servers"
+                                        onValueChange={(values) => {
+                                            const ids = values.map((x) => parseInt(x));
+
+                                            form.setValue("serverPoolValue", JSON.stringify(ids));
+                                        }}
+                                    >
+                                        {servers.map((server) => (
+                                            <Checkbox
+                                                key={server.id}
+                                                aria-label={server.name}
+                                                classNames={{
+                                                    base: cn(
+                                                        "ms-0.5 inline-flex w-full max-w-md bg-content1 mb-1",
+                                                        "hover:bg-content2 items-center justify-start",
+                                                        "cursor-pointer rounded-lg gap-2 p-2 border-2 border-transparent",
+                                                        "data-[selected=true]:border-primary"
+                                                    ),
+                                                    label: "w-full"
+                                                }}
+                                                value={String(server.id)}
+                                            >
+                                                <div className="grid gap-2">
+                                                    <span className="text-sm">{server.name}</span>
+                                                    <div className="flex justify-between items-center gap-2">
+                                                        <Chip size="sm" variant="flat">
+                                                            {server.hostnameOrIp}
+                                                        </Chip>
+                                                        <Chip
+                                                            color={server.isAvailable ? "success" : "danger"}
+                                                            size="sm"
+                                                            variant="flat"
+                                                        >
+                                                            {server.isAvailable ? "Available" : "Not Available"}
+                                                        </Chip>
+                                                    </div>
+                                                </div>
+                                            </Checkbox>
+                                        ))}
                                     </CheckboxGroup>
                                 </div>
                             )}
@@ -361,9 +413,20 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
                                 <div className="grid gap-4">
                                     <Divider />
 
-                                    <CheckboxGroup label="Select Tags">
-                                        <Checkbox value="manual">Tag 1</Checkbox>
-                                        <Checkbox value="tag">Tag 2</Checkbox>
+                                    <CheckboxGroup
+                                        defaultValue={serverPoolValue}
+                                        label="Select Tags"
+                                        onValueChange={(values) => {
+                                            const ids = values.map((x) => parseInt(x));
+
+                                            form.setValue("serverPoolValue", JSON.stringify(ids));
+                                        }}
+                                    >
+                                        {tags.map((tag) => (
+                                            <Checkbox key={tag.id} value={String(tag.id)}>
+                                                {tag.name}
+                                            </Checkbox>
+                                        ))}
                                     </CheckboxGroup>
                                 </div>
                             )}
