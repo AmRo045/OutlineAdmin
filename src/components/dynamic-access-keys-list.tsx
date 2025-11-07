@@ -179,6 +179,7 @@ export default function DynamicAccessKeysList() {
                         <TableColumn>ID</TableColumn>
                         <TableColumn>NAME</TableColumn>
                         <TableColumn>PATH</TableColumn>
+                        <TableColumn>MANAGEMENT</TableColumn>
                         <TableColumn>PREFIX</TableColumn>
                         <TableColumn align="center">NUMBER OF KEYS</TableColumn>
                         <TableColumn align="center">LOAD BALANCER ALGO</TableColumn>
@@ -193,6 +194,17 @@ export default function DynamicAccessKeysList() {
                                     <span className="whitespace-nowrap">{dynamicAccessKey.name}</span>
                                 </TableCell>
                                 <TableCell>{dynamicAccessKey.path}</TableCell>
+                                <TableCell>
+                                    {dynamicAccessKey.isSelfManaged ? (
+                                        <Chip color="secondary" variant="flat">
+                                            Self-Managed
+                                        </Chip>
+                                    ) : (
+                                        <Chip color="default" variant="flat">
+                                            Manual
+                                        </Chip>
+                                    )}
+                                </TableCell>
                                 <TableCell>
                                     <Chip
                                         color={dynamicAccessKey.prefix ? "success" : "default"}
@@ -238,24 +250,26 @@ export default function DynamicAccessKeysList() {
                                             </Button>
                                         </Tooltip>
 
-                                        <Tooltip
-                                            closeDelay={100}
-                                            color="primary"
-                                            content="Manage access keys"
-                                            delay={600}
-                                            size="sm"
-                                        >
-                                            <Button
-                                                as={Link}
+                                        {!dynamicAccessKey.isSelfManaged && (
+                                            <Tooltip
+                                                closeDelay={100}
                                                 color="primary"
-                                                href={`/dynamic-access-keys/${dynamicAccessKey.id}/access-keys`}
-                                                isIconOnly={true}
+                                                content="Manage access keys"
+                                                delay={600}
                                                 size="sm"
-                                                variant="light"
                                             >
-                                                <KeyIcon size={24} />
-                                            </Button>
-                                        </Tooltip>
+                                                <Button
+                                                    as={Link}
+                                                    color="primary"
+                                                    href={`/dynamic-access-keys/${dynamicAccessKey.id}/access-keys`}
+                                                    isIconOnly={true}
+                                                    size="sm"
+                                                    variant="light"
+                                                >
+                                                    <KeyIcon size={24} />
+                                                </Button>
+                                            </Tooltip>
+                                        )}
 
                                         <Tooltip
                                             closeDelay={100}

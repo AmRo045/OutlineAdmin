@@ -152,8 +152,13 @@ export interface NewDynamicAccessKeyRequest {
     name: string;
     path: string;
     loadBalancerAlgorithm: string;
-    expiresAt?: Date | null;
-    prefix?: string | null;
+    isSelfManaged: boolean;
+    serverPoolValue: string | null;
+    serverPoolType: string | null;
+    usageInterval: string | null;
+    usageStartedAt: Date | null;
+    expiresAt: Date | null;
+    prefix: string | null;
 }
 
 export interface EditDynamicAccessKeyRequest extends NewDynamicAccessKeyRequest {

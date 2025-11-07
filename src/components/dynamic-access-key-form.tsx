@@ -8,6 +8,8 @@ import slugify from "slugify";
 import moment from "moment";
 import {
     Button,
+    Checkbox,
+    CheckboxGroup,
     Chip,
     Divider,
     Dropdown,
@@ -20,6 +22,7 @@ import {
     useDisclosure
 } from "@heroui/react";
 import { useRouter } from "next/navigation";
+import { Radio, RadioGroup } from "@heroui/radio";
 
 import {
     AccessKeyPrefixType,
@@ -46,14 +49,24 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
                   path: dynamicAccessKey.path,
                   loadBalancerAlgorithm: dynamicAccessKey.loadBalancerAlgorithm,
                   expiresAt: dynamicAccessKey.expiresAt,
-                  prefix: dynamicAccessKey.prefix
+                  prefix: dynamicAccessKey.prefix,
+                  isSelfManaged: dynamicAccessKey.isSelfManaged,
+                  serverPoolType: dynamicAccessKey.serverPoolType,
+                  serverPoolValue: dynamicAccessKey.serverPoolValue,
+                  usageInterval: dynamicAccessKey.usageInterval,
+                  usageStartedAt: dynamicAccessKey.usageStartedAt
               }
             : {
                   name: "",
                   path: "",
                   loadBalancerAlgorithm: LoadBalancerAlgorithm.RandomKeyOnEachConnection,
                   expiresAt: null,
-                  prefix: null
+                  prefix: null,
+                  isSelfManaged: false,
+                  serverPoolType: null,
+                  serverPoolValue: null,
+                  usageInterval: null,
+                  usageStartedAt: null
               }
     });
 
@@ -131,6 +144,9 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
             setSelectedPrefix(null);
         }
     }, [dynamicAccessKey]);
+
+    const isSelfManaged = form.watch("isSelfManaged");
+    const serverPoolType = form.watch("serverPoolType");
 
     return (
         <>
@@ -281,6 +297,76 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
                                     </Chip>
                                 ))}
                             </div>
+                        </div>
+                    )}
+
+                    <RadioGroup
+                        defaultValue={isSelfManaged ? "self-managed" : "manual"}
+                        label="Management Type"
+                        onValueChange={(v) => form.setValue("isSelfManaged", v === "self-managed")}
+                    >
+                        <Radio value="manual">Manual</Radio>
+                        <Radio value="self-managed">Self-Managed</Radio>
+                    </RadioGroup>
+
+                    <ul className="p-4 grid gap-2 rounded-xl bg-content2 text-foreground-500">
+                        <li>
+                            <strong className="text-warning">Manual:</strong> You’ll need to assign and remove access
+                            keys yourself. This option gives you full control, but requires more effort.
+                        </li>
+                        <li>
+                            <strong className="text-warning">Self-Managed:</strong> You’ll set up a server pool, and the
+                            system will automatically handle access key management for you. This option is easier to
+                            maintain once configured.
+                        </li>
+                    </ul>
+
+                    {isSelfManaged && (
+                        <div className="grid gap-4">
+                            <Divider />
+
+                            <RadioGroup
+                                defaultValue={serverPoolType}
+                                label="Server Pool Type"
+                                onValueChange={(v) => form.setValue("serverPoolType", v)}
+                            >
+                                <Radio value="manual">Manual</Radio>
+                                <Radio value="tag">Tag (Recommended)</Radio>
+                            </RadioGroup>
+
+                            <ul className="p-4 grid gap-2 rounded-xl bg-content2 text-foreground-500">
+                                <li>
+                                    <strong className="text-warning">Manual:</strong> You’ll manually select which
+                                    servers belong to this pool. This gives you full control over the pool’s
+                                    composition.
+                                </li>
+                                <li>
+                                    <strong className="text-warning">Tag (Recommended):</strong> The system will
+                                    automatically include servers that match the specified tags.
+                                </li>
+                            </ul>
+
+                            {serverPoolType === "manual" && (
+                                <div className="grid gap-4">
+                                    <Divider />
+
+                                    <CheckboxGroup label="Select Servers">
+                                        <Checkbox value="manual">Server 1</Checkbox>
+                                        <Checkbox value="tag">Server 2</Checkbox>
+                                    </CheckboxGroup>
+                                </div>
+                            )}
+
+                            {serverPoolType === "tag" && (
+                                <div className="grid gap-4">
+                                    <Divider />
+
+                                    <CheckboxGroup label="Select Tags">
+                                        <Checkbox value="manual">Tag 1</Checkbox>
+                                        <Checkbox value="tag">Tag 2</Checkbox>
+                                    </CheckboxGroup>
+                                </div>
+                            )}
                         </div>
                     )}
 

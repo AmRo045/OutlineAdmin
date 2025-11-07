@@ -104,7 +104,12 @@ export async function createDynamicAccessKey(data: NewDynamicAccessKeyRequest): 
             path: data.path,
             loadBalancerAlgorithm: data.loadBalancerAlgorithm,
             prefix: data.prefix,
-            expiresAt: data.expiresAt
+            expiresAt: data.expiresAt,
+            isSelfManaged: data.isSelfManaged,
+            serverPoolType: data.serverPoolType,
+            serverPoolValue: data.serverPoolValue,
+            usageInterval: data.usageInterval,
+            usageStartedAt: data.usageStartedAt
         }
     });
 
@@ -119,7 +124,12 @@ export async function updateDynamicAccessKey(data: EditDynamicAccessKeyRequest):
             path: data.path,
             loadBalancerAlgorithm: data.loadBalancerAlgorithm,
             prefix: data.prefix,
-            expiresAt: data.expiresAt
+            expiresAt: data.expiresAt,
+            isSelfManaged: data.isSelfManaged,
+            serverPoolType: data.serverPoolType,
+            serverPoolValue: data.serverPoolValue,
+            usageInterval: data.usageInterval,
+            usageStartedAt: data.usageStartedAt
         }
     });
 
