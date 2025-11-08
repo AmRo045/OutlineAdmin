@@ -1,6 +1,6 @@
 "use client";
 
-import { DynamicAccessKey } from "@prisma/client";
+import { DynamicAccessKey, Server, Tag } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -8,7 +8,10 @@ import slugify from "slugify";
 import moment from "moment";
 import {
     Button,
+    Checkbox,
+    CheckboxGroup,
     Chip,
+    cn,
     Divider,
     Dropdown,
     DropdownItem,
@@ -20,6 +23,7 @@ import {
     useDisclosure
 } from "@heroui/react";
 import { useRouter } from "next/navigation";
+import { Radio, RadioGroup } from "@heroui/radio";
 
 import {
     AccessKeyPrefixType,
@@ -27,17 +31,25 @@ import {
     LoadBalancerAlgorithm,
     NewDynamicAccessKeyRequest
 } from "@/src/core/definitions";
-import { createDynamicAccessKey, updateDynamicAccessKey } from "@/src/core/actions/dynamic-access-key";
+import {
+    createDynamicAccessKey,
+    removeSelfManagedDynamicAccessKeyAccessKeys,
+    syncDynamicAccessKeyAccessKeys,
+    updateDynamicAccessKey
+} from "@/src/core/actions/dynamic-access-key";
 import MessageModal from "@/src/components/modals/message-modal";
 import { ArrowLeftIcon, DeleteIcon } from "@/src/components/icons";
 import CustomDatePicker from "@/src/components/custom-date-picker";
 import { AccessKeyPrefixes } from "@/src/core/outline/access-key-prefix";
+import { MAX_DATA_LIMIT_FOR_ACCESS_KEYS } from "@/src/core/config";
 
 interface Props {
+    servers: Server[];
+    tags: Tag[];
     dynamicAccessKey?: DynamicAccessKey | null;
 }
 
-export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
+export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }: Props) {
     const router = useRouter();
     const form = useForm<NewDynamicAccessKeyRequest | EditDynamicAccessKeyRequest>({
         defaultValues: dynamicAccessKey
@@ -46,14 +58,26 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
                   path: dynamicAccessKey.path,
                   loadBalancerAlgorithm: dynamicAccessKey.loadBalancerAlgorithm,
                   expiresAt: dynamicAccessKey.expiresAt,
-                  prefix: dynamicAccessKey.prefix
+                  prefix: dynamicAccessKey.prefix,
+                  isSelfManaged: dynamicAccessKey.isSelfManaged,
+                  serverPoolType: dynamicAccessKey.serverPoolType,
+                  serverPoolValue: dynamicAccessKey.serverPoolValue
+                      ? JSON.parse(dynamicAccessKey.serverPoolValue)
+                      : null,
+                  validityPeriod: dynamicAccessKey.validityPeriod ? dynamicAccessKey.validityPeriod : null,
+                  dataLimit: Number(dynamicAccessKey.dataLimit)
               }
             : {
                   name: "",
                   path: "",
                   loadBalancerAlgorithm: LoadBalancerAlgorithm.RandomKeyOnEachConnection,
                   expiresAt: null,
-                  prefix: null
+                  prefix: null,
+                  isSelfManaged: false,
+                  serverPoolType: null,
+                  serverPoolValue: null,
+                  validityPeriod: null,
+                  dataLimit: null
               }
     });
 
@@ -68,6 +92,15 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
         setErrorMessage(() => "");
 
         try {
+            if (data.isSelfManaged) {
+                if (Array.isArray(data.serverPoolValue)) {
+                    data.serverPoolValue = JSON.stringify(data.serverPoolValue);
+                }
+            } else {
+                data.serverPoolType = null;
+                data.serverPoolValue = null;
+            }
+
             data.loadBalancerAlgorithm ??= LoadBalancerAlgorithm.RandomKeyOnEachConnection;
 
             if (!data.path) {
@@ -81,6 +114,14 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
 
                 updateData.id = dynamicAccessKey.id;
                 await updateDynamicAccessKey(updateData);
+
+                if (dynamicAccessKey.isSelfManaged && !updateData.isSelfManaged) {
+                    await removeSelfManagedDynamicAccessKeyAccessKeys(dynamicAccessKey.id);
+                }
+
+                if (!dynamicAccessKey.isSelfManaged && updateData.isSelfManaged) {
+                    await syncDynamicAccessKeyAccessKeys(dynamicAccessKey.id, []);
+                }
             } else {
                 await createDynamicAccessKey(data);
             }
@@ -131,6 +172,10 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
             setSelectedPrefix(null);
         }
     }, [dynamicAccessKey]);
+
+    const isSelfManaged = form.watch("isSelfManaged");
+    const serverPoolType = form.watch("serverPoolType");
+    const serverPoolValue = Array.from(form.watch("serverPoolValue") ?? []).map(String);
 
     return (
         <>
@@ -189,8 +234,45 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
                         })}
                     />
 
-                    <div className="flex gap-2">
-                        {selectedExpirationDate && (
+                    {!selectedExpirationDate && (
+                        <>
+                            <Input
+                                color="primary"
+                                errorMessage={form.formState.errors.validityPeriod?.message}
+                                isInvalid={!!form.formState.errors.validityPeriod}
+                                label="Validity period (in days)"
+                                placeholder="e.g. 30"
+                                type="number"
+                                variant="underlined"
+                                {...form.register("validityPeriod", {
+                                    max: {
+                                        value: 10000,
+                                        message: "The value must be less than 1000"
+                                    },
+                                    min: {
+                                        value: 1,
+                                        message: "The value must be greater than 1"
+                                    }
+                                })}
+                            />
+
+                            {!dynamicAccessKey && (
+                                <RadioGroup
+                                    defaultValue="now"
+                                    label="Usage start date"
+                                    onValueChange={(v) => {
+                                        form.setValue("setUsageDateOnFirstConnection", v === "first-connection");
+                                    }}
+                                >
+                                    <Radio value="now">Set on creation</Radio>
+                                    <Radio value="first-connection">Set on first connection</Radio>
+                                </RadioGroup>
+                            )}
+                        </>
+                    )}
+
+                    {selectedExpirationDate && (
+                        <div className="flex gap-2">
                             <Button
                                 color="danger"
                                 isIconOnly={true}
@@ -201,14 +283,14 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
                             >
                                 <DeleteIcon size={18} />
                             </Button>
-                        )}
 
-                        <CustomDatePicker
-                            label="Expiration Date:"
-                            value={selectedExpirationDate}
-                            onChange={(value) => setSelectedExpirationDate(value)}
-                        />
-                    </div>
+                            <CustomDatePicker
+                                label="Expiration Date:"
+                                value={selectedExpirationDate}
+                                onChange={(value) => setSelectedExpirationDate(value)}
+                            />
+                        </div>
+                    )}
 
                     <Dropdown>
                         <DropdownTrigger>
@@ -281,6 +363,147 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey }: Props) {
                                     </Chip>
                                 ))}
                             </div>
+                        </div>
+                    )}
+
+                    <RadioGroup
+                        defaultValue={isSelfManaged ? "self-managed" : "manual"}
+                        label="Management Type"
+                        onValueChange={(v) => form.setValue("isSelfManaged", v === "self-managed")}
+                    >
+                        <Radio value="manual">Manual</Radio>
+                        <Radio value="self-managed">Self-Managed</Radio>
+                    </RadioGroup>
+
+                    <ul className="p-4 grid gap-2 rounded-xl bg-content2 text-foreground-500">
+                        <li>
+                            <strong className="text-warning">Manual:</strong> You’ll need to assign and remove access
+                            keys yourself. This option gives you full control, but requires more effort.
+                        </li>
+                        <li>
+                            <strong className="text-warning">Self-Managed:</strong> You’ll set up a server pool, and the
+                            system will automatically handle access key management for you. This option is easier to
+                            maintain once configured.
+                        </li>
+                    </ul>
+
+                    {isSelfManaged && (
+                        <div className="grid gap-4">
+                            <Divider />
+
+                            <Input
+                                endContent={<span>MB</span>}
+                                errorMessage={form.formState.errors.dataLimit?.message}
+                                isInvalid={!!form.formState.errors.dataLimit}
+                                label="Data limit"
+                                size="sm"
+                                type="number"
+                                variant="underlined"
+                                {...form.register("dataLimit", {
+                                    required: false,
+                                    min: 1,
+                                    max: {
+                                        value: MAX_DATA_LIMIT_FOR_ACCESS_KEYS,
+                                        message: `The value cannot be more that ${MAX_DATA_LIMIT_FOR_ACCESS_KEYS}`
+                                    },
+                                    setValueAs: (v) => parseInt(v)
+                                })}
+                            />
+
+                            <RadioGroup
+                                defaultValue={serverPoolType}
+                                label="Server Pool Type"
+                                onValueChange={(v) => {
+                                    form.setValue("serverPoolType", v);
+                                    form.setValue("serverPoolValue", null);
+                                }}
+                            >
+                                <Radio value="manual">Manual</Radio>
+                                <Radio value="tag">Tag (Recommended)</Radio>
+                            </RadioGroup>
+
+                            <ul className="p-4 grid gap-2 rounded-xl bg-content2 text-foreground-500">
+                                <li>
+                                    <strong className="text-warning">Manual:</strong> You’ll manually select which
+                                    servers belong to this pool. This gives you full control over the pool’s
+                                    composition.
+                                </li>
+                                <li>
+                                    <strong className="text-warning">Tag (Recommended):</strong> The system will
+                                    automatically include servers that match the specified tags.
+                                </li>
+                            </ul>
+
+                            {serverPoolType === "manual" && (
+                                <div className="grid gap-4">
+                                    <Divider />
+
+                                    <CheckboxGroup
+                                        defaultValue={serverPoolValue}
+                                        label="Select Servers"
+                                        onValueChange={(values) => {
+                                            const ids = values.map((x) => parseInt(x));
+
+                                            form.setValue("serverPoolValue", JSON.stringify(ids));
+                                        }}
+                                    >
+                                        {servers.map((server) => (
+                                            <Checkbox
+                                                key={server.id}
+                                                aria-label={server.name}
+                                                classNames={{
+                                                    base: cn(
+                                                        "ms-0.5 inline-flex w-full max-w-md bg-content1 mb-1",
+                                                        "hover:bg-content2 items-center justify-start",
+                                                        "cursor-pointer rounded-lg gap-2 p-2 border-2 border-transparent",
+                                                        "data-[selected=true]:border-primary"
+                                                    ),
+                                                    label: "w-full"
+                                                }}
+                                                value={String(server.id)}
+                                            >
+                                                <div className="grid gap-2">
+                                                    <span className="text-sm">{server.name}</span>
+                                                    <div className="flex justify-between items-center gap-2">
+                                                        <Chip size="sm" variant="flat">
+                                                            {server.hostnameOrIp}
+                                                        </Chip>
+                                                        <Chip
+                                                            color={server.isAvailable ? "success" : "danger"}
+                                                            size="sm"
+                                                            variant="flat"
+                                                        >
+                                                            {server.isAvailable ? "Available" : "Not Available"}
+                                                        </Chip>
+                                                    </div>
+                                                </div>
+                                            </Checkbox>
+                                        ))}
+                                    </CheckboxGroup>
+                                </div>
+                            )}
+
+                            {serverPoolType === "tag" && (
+                                <div className="grid gap-4">
+                                    <Divider />
+
+                                    <CheckboxGroup
+                                        defaultValue={serverPoolValue}
+                                        label="Select Tags"
+                                        onValueChange={(values) => {
+                                            const ids = values.map((x) => parseInt(x));
+
+                                            form.setValue("serverPoolValue", JSON.stringify(ids));
+                                        }}
+                                    >
+                                        {tags.map((tag) => (
+                                            <Checkbox key={tag.id} value={String(tag.id)}>
+                                                {tag.name}
+                                            </Checkbox>
+                                        ))}
+                                    </CheckboxGroup>
+                                </div>
+                            )}
                         </div>
                     )}
 

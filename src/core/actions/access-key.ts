@@ -10,13 +10,21 @@ import { BYTES_TO_MB_RATE, PAGE_SIZE } from "@/src/core/config";
 
 export async function getAccessKeys(
     serverId: number,
-    filters?: { skip?: number; take?: number }
+    filters?: { skip?: number; take?: number },
+    excludeSelfManagedKeys: boolean = true
 ): Promise<AccessKey[]> {
     const { skip = 0, take = PAGE_SIZE } = filters || {};
 
     return prisma.accessKey.findMany({
         where: {
-            serverId
+            serverId,
+            ...(excludeSelfManagedKeys
+                ? {
+                      NOT: {
+                          name: { startsWith: "self-managed-dak-access-key-" }
+                      }
+                  }
+                : {})
         },
         skip,
         take,
@@ -24,10 +32,17 @@ export async function getAccessKeys(
     });
 }
 
-export async function getAccessKeysCount(serverId: number): Promise<number> {
+export async function getAccessKeysCount(serverId: number, excludeSelfManagedKeys: boolean = true): Promise<number> {
     return prisma.accessKey.count({
         where: {
-            serverId
+            serverId,
+            ...(excludeSelfManagedKeys
+                ? {
+                      NOT: {
+                          name: { startsWith: "self-managed-dak-access-key-" }
+                      }
+                  }
+                : {})
         },
         orderBy: [{ id: "desc" }]
     });
@@ -42,7 +57,7 @@ export async function getAccessKeyById(serverId: number, id: number): Promise<Ac
     });
 }
 
-export async function createAccessKey(data: NewAccessKeyRequest): Promise<void> {
+export async function createAccessKey(data: NewAccessKeyRequest): Promise<AccessKey> {
     const server = await prisma.server.findFirstOrThrow({
         where: { id: data.serverId }
     });
@@ -57,7 +72,7 @@ export async function createAccessKey(data: NewAccessKeyRequest): Promise<void> 
         await outlineClient.setDataLimitForKey(newAccessKey.id, Number(data.dataLimit) * BYTES_TO_MB_RATE);
     }
 
-    await prisma.accessKey.create({
+    const createdAccessKey = await prisma.accessKey.create({
         data: {
             serverId: data.serverId,
             name: data.name,
@@ -75,6 +90,8 @@ export async function createAccessKey(data: NewAccessKeyRequest): Promise<void> 
 
     revalidatePath("/servers");
     revalidatePath(`/servers/${data.serverId}/access-keys`);
+
+    return createdAccessKey;
 }
 
 export async function updateAccessKey(data: EditAccessKeyRequest): Promise<void> {
@@ -115,7 +132,12 @@ export async function updateAccessKey(data: EditAccessKeyRequest): Promise<void>
     revalidatePath(`/servers/${data.serverId}/access-keys`);
 }
 
-export async function removeAccessKey(serverId: number, id: number, apiId?: string): Promise<void> {
+export async function removeAccessKey(
+    serverId: number,
+    id: number,
+    apiId?: string,
+    revalidateUiPath: boolean = true
+): Promise<void> {
     const server = await prisma.server.findFirstOrThrow({
         where: { id: serverId }
     });
@@ -140,6 +162,8 @@ export async function removeAccessKey(serverId: number, id: number, apiId?: stri
         }
     });
 
-    revalidatePath("/servers");
-    revalidatePath(`/servers/${serverId}/access-keys`);
+    if (revalidateUiPath) {
+        revalidatePath("/servers");
+        revalidatePath(`/servers/${serverId}/access-keys`);
+    }
 }

@@ -6,7 +6,7 @@ import { LoggerContext } from "@/src/core/definitions";
 export const startSyncJob = async () => {
     const logger = createLogger(LoggerContext.OutlineSyncJob);
 
-    const syncJobInterval = 60 * 1000;
+    const syncJobInterval = 90 * 1000;
     let canRunSyncJob = true;
     let shutdownRequestCount = 0;
 
@@ -31,7 +31,7 @@ export const startSyncJob = async () => {
 
     while (canRunSyncJob) {
         try {
-            await runCommand("npm", ["run", "sync"]);
+            await runCommand("npm", ["run", "sync-job"]);
         } catch (error) {
             logger.error("Sync job failed:", error);
         }
@@ -73,7 +73,7 @@ export const startHealthCheckJob = async () => {
 
     while (canRunJob) {
         try {
-            await runCommand("npm", ["run", "health-check"]);
+            await runCommand("npm", ["run", "health-check-job"]);
         } catch (error) {
             logger.error("Sync job failed:", error);
         }
@@ -84,6 +84,48 @@ export const startHealthCheckJob = async () => {
     }
 
     logger.info("Sync job stopped.");
+    process.exit(0);
+};
+
+export const startDakJob = async () => {
+    const logger = createLogger(LoggerContext.DakJob);
+
+    const dakJobInterval = 110 * 1000;
+    let canRunDakJob = true;
+    let shutdownRequestCount = 0;
+
+    const handleShutdown = (signal: string) => {
+        if (shutdownRequestCount === 0) {
+            logger.warn(`Received ${signal}. Stopping dak job...`);
+            logger.warn("Press CTRL + C to terminate the process");
+        }
+
+        canRunDakJob = false;
+        shutdownRequestCount++;
+
+        if (shutdownRequestCount > 1) {
+            process.exit(0);
+        }
+    };
+
+    process.on("SIGINT", () => handleShutdown("SIGINT"));
+    process.on("SIGTERM", () => handleShutdown("SIGTERM"));
+
+    logger.info("Starting dak job...");
+
+    while (canRunDakJob) {
+        try {
+            await runCommand("npm", ["run", "dak-job"]);
+        } catch (error) {
+            logger.error("Dak job failed:", error);
+        }
+
+        if (canRunDakJob) {
+            await new Promise((resolve) => setTimeout(resolve, dakJobInterval));
+        }
+    }
+
+    logger.info("Dak job stopped.");
     process.exit(0);
 };
 

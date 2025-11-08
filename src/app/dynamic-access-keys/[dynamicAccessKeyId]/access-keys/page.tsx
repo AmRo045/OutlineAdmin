@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default async function DynamicAccessKeyAccessKeysFormPage({ params }: Props) {
     const dynamicAccessKey = await getDynamicAccessKeyById(parseInt(params.dynamicAccessKeyId), true);
 
-    if (!dynamicAccessKey) {
+    if (!dynamicAccessKey || dynamicAccessKey.isSelfManaged) {
         notFound();
     }
 

@@ -30,15 +30,14 @@ export const Logo: React.FC<IconSvgProps> = ({ size = 36, width, height, ...prop
     </svg>
 );
 
-export const LogoutIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => {
+export const SelfManagedKeyIcon: React.FC<IconSvgProps> = ({ size = 24, width, height, ...props }) => {
     return (
         <svg height={size || height} viewBox="0 0 24 24" width={size || width} {...props}>
-            <path
-                clipRule="evenodd"
-                d="m8.379 2.669l3.69-.58c3.22-.506 4.83-.76 5.88.139C19 3.126 19 4.756 19 8.016V11h-5.92l2.7-3.376l-1.56-1.25l-4 5l-.5.626l.5.624l4 5l1.56-1.25L13.08 13H19v2.983c0 3.26 0 4.89-1.05 5.788c-1.05.898-2.66.645-5.881.14l-3.69-.58c-1.613-.254-2.419-.38-2.899-.942C5 19.828 5 19.012 5 17.38V6.62c0-1.632 0-2.449.48-3.01c.48-.561 1.286-.688 2.899-.941"
-                fill="currentColor"
-                fillRule="evenodd"
-            />
+            <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
+                <path d="m14.5 9.5l1 1m0-2l-4 4M3 12a9 9 0 1 0 9-9a9.74 9.74 0 0 0-6.74 2.74L3 8" />
+                <path d="M3 3v5h5" />
+                <circle cx="10" cy="14" r="2" />
+            </g>
         </svg>
     );
 };

@@ -4,7 +4,8 @@ import { SVGProps } from "react";
 
 export enum LoggerContext {
     OutlineSyncJob = "outline-sync-job",
-    HealthCheckJob = "health-check-job"
+    HealthCheckJob = "health-check-job",
+    DakJob = "dak-job"
 }
 
 export enum HealthCheckNotificationType {
@@ -152,8 +153,14 @@ export interface NewDynamicAccessKeyRequest {
     name: string;
     path: string;
     loadBalancerAlgorithm: string;
-    expiresAt?: Date | null;
-    prefix?: string | null;
+    isSelfManaged: boolean;
+    serverPoolValue: string | null;
+    serverPoolType: string | null;
+    validityPeriod: string | null;
+    setUsageDateOnFirstConnection?: boolean;
+    dataLimit: number | null;
+    expiresAt: Date | null;
+    prefix: string | null;
 }
 
 export interface EditDynamicAccessKeyRequest extends NewDynamicAccessKeyRequest {
