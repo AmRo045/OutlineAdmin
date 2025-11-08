@@ -166,7 +166,7 @@ export async function removeSelfManagedDynamicAccessKeyAccessKeys(id: number): P
 
     if (accessKeys.length > 0) {
         for (const accessKey of accessKeys) {
-            await removeAccessKey(accessKey.serverId, accessKey.id, accessKey.apiId);
+            await removeAccessKey(accessKey.serverId, accessKey.id, accessKey.apiId, false);
         }
     }
 }

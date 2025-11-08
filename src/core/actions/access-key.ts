@@ -117,7 +117,12 @@ export async function updateAccessKey(data: EditAccessKeyRequest): Promise<void>
     revalidatePath(`/servers/${data.serverId}/access-keys`);
 }
 
-export async function removeAccessKey(serverId: number, id: number, apiId?: string): Promise<void> {
+export async function removeAccessKey(
+    serverId: number,
+    id: number,
+    apiId?: string,
+    revalidateUiPath: boolean = true
+): Promise<void> {
     const server = await prisma.server.findFirstOrThrow({
         where: { id: serverId }
     });
@@ -142,6 +147,8 @@ export async function removeAccessKey(serverId: number, id: number, apiId?: stri
         }
     });
 
-    revalidatePath("/servers");
-    revalidatePath(`/servers/${serverId}/access-keys`);
+    if (revalidateUiPath) {
+        revalidatePath("/servers");
+        revalidatePath(`/servers/${serverId}/access-keys`);
+    }
 }

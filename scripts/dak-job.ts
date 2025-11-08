@@ -44,7 +44,6 @@ const main = async () => {
                 count: accessKeys.length
             });
 
-            // --- Calculate total data usage ---
             const dataUsage = accessKeys.reduce((acc, key) => acc + Number(key.dataUsage || 0), 0);
 
             await prisma.dynamicAccessKey.update({

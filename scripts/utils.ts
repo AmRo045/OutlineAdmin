@@ -90,7 +90,7 @@ export const startHealthCheckJob = async () => {
 export const startDakJob = async () => {
     const logger = createLogger(LoggerContext.DakJob);
 
-    const dakJobInterval = 150 * 1000;
+    const dakJobInterval = 110 * 1000;
     let canRunDakJob = true;
     let shutdownRequestCount = 0;
 
