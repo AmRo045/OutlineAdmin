@@ -11,6 +11,7 @@ import {
     NewDynamicAccessKeyRequest
 } from "@/src/core/definitions";
 import { PAGE_SIZE } from "@/src/core/config";
+import { removeAccessKey } from "@/src/core/actions/access-key";
 
 export async function getDynamicAccessKeys(
     filters?: { term?: string; skip?: number; take?: number },
@@ -164,8 +165,8 @@ export async function removeSelfManagedDynamicAccessKeyAccessKeys(id: number): P
     });
 
     if (accessKeys.length > 0) {
-        await prisma.accessKey.deleteMany({
-            where: { id: { in: accessKeys.map((k) => k.id) } }
-        });
+        for (const accessKey of accessKeys) {
+            await removeAccessKey(accessKey.serverId, accessKey.id, accessKey.apiId);
+        }
     }
 }
