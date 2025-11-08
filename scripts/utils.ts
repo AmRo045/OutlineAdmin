@@ -31,7 +31,7 @@ export const startSyncJob = async () => {
 
     while (canRunSyncJob) {
         try {
-            await runCommand("npm", ["run", "sync"]);
+            await runCommand("npm", ["run", "sync-job"]);
         } catch (error) {
             logger.error("Sync job failed:", error);
         }
@@ -73,7 +73,7 @@ export const startHealthCheckJob = async () => {
 
     while (canRunJob) {
         try {
-            await runCommand("npm", ["run", "health-check"]);
+            await runCommand("npm", ["run", "health-check-job"]);
         } catch (error) {
             logger.error("Sync job failed:", error);
         }
