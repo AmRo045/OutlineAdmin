@@ -8,7 +8,6 @@ import prisma from "@/prisma/db";
 import {
     EditServerRequest,
     NewServerRequest,
-    ServerWithAccessKeys,
     ServerWithAccessKeysAndTags,
     ServerWithAccessKeysCount,
     ServerWithAccessKeysCountAndTags,
@@ -43,7 +42,8 @@ export async function getServers(
 
 export async function getServersWithTags(
     filters?: { term?: string },
-    withKeysCount: boolean = false
+    withKeysCount: boolean = false,
+    excludeSelfManagedKeys: boolean = true
 ): Promise<ServerWithAccessKeysCountAndTags[]> {
     const { term } = filters || {};
 
@@ -56,9 +56,7 @@ export async function getServersWithTags(
                       {
                           tags: {
                               some: {
-                                  tag: {
-                                      name: { contains: term }
-                                  }
+                                  tag: { name: { contains: term } }
                               }
                           }
                       }
@@ -67,17 +65,34 @@ export async function getServersWithTags(
         },
         orderBy: [{ id: "desc" }],
         include: {
-            _count: withKeysCount ? { select: { accessKeys: true } } : undefined,
+            _count: withKeysCount
+                ? {
+                      select: {
+                          accessKeys: excludeSelfManagedKeys
+                              ? {
+                                    where: {
+                                        NOT: {
+                                            name: { startsWith: "self-managed-dak-access-key-" }
+                                        }
+                                    }
+                                }
+                              : true
+                      }
+                  }
+                : undefined,
             tags: { include: { tag: true } }
         }
     });
 }
 
-export async function getServersWithAccessKeys(filters?: {
-    term?: string;
-    skip?: number;
-    take?: number;
-}): Promise<ServerWithAccessKeys[]> {
+export async function getServersWithAccessKeysAndTags(
+    filters?: {
+        term?: string;
+        skip?: number;
+        take?: number;
+    },
+    excludeSelfManagedKeys: boolean = true
+): Promise<ServerWithAccessKeysAndTags[]> {
     const { term, skip = 0, take = 10 } = filters || {};
 
     return prisma.server.findMany({
@@ -88,27 +103,15 @@ export async function getServersWithAccessKeys(filters?: {
         take,
         orderBy: [{ id: "desc" }],
         include: {
-            accessKeys: true
-        }
-    });
-}
-
-export async function getServersWithAccessKeysAndTags(filters?: {
-    term?: string;
-    skip?: number;
-    take?: number;
-}): Promise<ServerWithAccessKeysAndTags[]> {
-    const { term, skip = 0, take = 10 } = filters || {};
-
-    return prisma.server.findMany({
-        where: {
-            OR: term ? [{ hostnameOrIp: { contains: term } }, { name: { contains: term } }] : undefined
-        },
-        skip,
-        take,
-        orderBy: [{ id: "desc" }],
-        include: {
-            accessKeys: true,
+            accessKeys: excludeSelfManagedKeys
+                ? {
+                      where: {
+                          NOT: {
+                              name: { startsWith: "self-managed-dak-access-key-" }
+                          }
+                      }
+                  }
+                : true,
             tags: {
                 include: {
                     tag: true

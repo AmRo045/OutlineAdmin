@@ -10,13 +10,21 @@ import { BYTES_TO_MB_RATE, PAGE_SIZE } from "@/src/core/config";
 
 export async function getAccessKeys(
     serverId: number,
-    filters?: { skip?: number; take?: number }
+    filters?: { skip?: number; take?: number },
+    excludeSelfManagedKeys: boolean = true
 ): Promise<AccessKey[]> {
     const { skip = 0, take = PAGE_SIZE } = filters || {};
 
     return prisma.accessKey.findMany({
         where: {
-            serverId
+            serverId,
+            ...(excludeSelfManagedKeys
+                ? {
+                      NOT: {
+                          name: { startsWith: "self-managed-dak-access-key-" }
+                      }
+                  }
+                : {})
         },
         skip,
         take,
@@ -24,10 +32,17 @@ export async function getAccessKeys(
     });
 }
 
-export async function getAccessKeysCount(serverId: number): Promise<number> {
+export async function getAccessKeysCount(serverId: number, excludeSelfManagedKeys: boolean = true): Promise<number> {
     return prisma.accessKey.count({
         where: {
-            serverId
+            serverId,
+            ...(excludeSelfManagedKeys
+                ? {
+                      NOT: {
+                          name: { startsWith: "self-managed-dak-access-key-" }
+                      }
+                  }
+                : {})
         },
         orderBy: [{ id: "desc" }]
     });
