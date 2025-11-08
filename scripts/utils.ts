@@ -6,7 +6,7 @@ import { LoggerContext } from "@/src/core/definitions";
 export const startSyncJob = async () => {
     const logger = createLogger(LoggerContext.OutlineSyncJob);
 
-    const syncJobInterval = 60 * 1000;
+    const syncJobInterval = 90 * 1000;
     let canRunSyncJob = true;
     let shutdownRequestCount = 0;
 
