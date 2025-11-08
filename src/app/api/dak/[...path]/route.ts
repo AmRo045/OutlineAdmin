@@ -111,6 +111,13 @@ const selectRandomServerKey = (accessKeys: AccessKey[]) => {
 };
 
 export const handleSelfManagedDynamicAccessKey = async (dynamicAccessKey: DynamicAccessKeyWithAccessKeys) => {
+    const bytesPerMB = 1024 * 1024;
+    const dataLimitInBytes = Number(dynamicAccessKey.dataLimit) * bytesPerMB;
+
+    if (dynamicAccessKey.dataUsage >= dataLimitInBytes) {
+        return jsonError("The dynamic access key data usage limit exceeded");
+    }
+
     const accessKeyName = `self-managed-dak-access-key-${dynamicAccessKey.id}`;
 
     try {
