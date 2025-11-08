@@ -3,7 +3,7 @@ import "@/src/styles/globals.css";
 import { Metadata, Viewport } from "next";
 import clsx from "clsx";
 import { ReactNode } from "react";
-import { Inter as FontSans } from "next/font/google";
+import localFont from "next/font/local";
 
 import { Providers } from "./providers";
 
@@ -14,8 +14,8 @@ import { Footer } from "@/src/components/footer";
 import { SideMenu } from "@/src/components/side-menu";
 import { SideMenuDrawer } from "@/src/components/side-menu-drawer";
 
-const fontSans = FontSans({
-    subsets: ["latin"],
+const vazirmatnFont = localFont({
+    src: "../fonts/Vazirmatn.ttf",
     variable: "--font-sans"
 });
 
@@ -45,7 +45,7 @@ export default async function RootLayout({ children }: Props) {
                 <link href="/favicon.svg" rel="icon" sizes="any" type="image/svg+xml" />
             </head>
 
-            <body className={clsx("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
+            <body className={clsx("min-h-screen bg-background font-sans antialiased", vazirmatnFont.variable)}>
                 <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
                     {session.isAuthorized ? (
                         <div className="grid xl:grid-cols-[auto_1fr] gap-2">
