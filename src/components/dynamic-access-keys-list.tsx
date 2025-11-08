@@ -19,7 +19,7 @@ import { DynamicAccessKey } from "@prisma/client";
 import { Link } from "@heroui/link";
 
 import ConfirmModal from "@/src/components/modals/confirm-modal";
-import { InfinityIcon, InfoIcon, PlusIcon } from "@/src/components/icons";
+import { InfinityIcon, InfoIcon, PlusIcon, SelfManagedKeyIcon } from "@/src/components/icons";
 import { DataLimitUnit, DynamicAccessKeyWithAccessKeysCount } from "@/src/core/definitions";
 import {
     getDynamicAccessKeys,
@@ -220,8 +220,14 @@ export default function DynamicAccessKeysList() {
 
                                 <div className="flex gap-1 justify-between items-center">
                                     <span>Number of keys</span>
-                                    <Chip color="default" radius="sm" size="sm" variant="flat">
-                                        {item._count?.accessKeys}
+                                    <Chip
+                                        color="default"
+                                        radius="sm"
+                                        size="sm"
+                                        startContent={item.isSelfManaged && <SelfManagedKeyIcon size={18} />}
+                                        variant="flat"
+                                    >
+                                        {item.isSelfManaged ? <span>Auto</span> : item._count?.accessKeys}
                                     </Chip>
                                 </div>
 
