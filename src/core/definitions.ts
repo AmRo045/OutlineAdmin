@@ -4,7 +4,8 @@ import { SVGProps } from "react";
 
 export enum LoggerContext {
     OutlineSyncJob = "outline-sync-job",
-    HealthCheckJob = "health-check-job"
+    HealthCheckJob = "health-check-job",
+    DakJob = "dak-job"
 }
 
 export enum HealthCheckNotificationType {

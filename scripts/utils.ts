@@ -87,6 +87,48 @@ export const startHealthCheckJob = async () => {
     process.exit(0);
 };
 
+export const startDakJob = async () => {
+    const logger = createLogger(LoggerContext.DakJob);
+
+    const dakJobInterval = 150 * 1000;
+    let canRunDakJob = true;
+    let shutdownRequestCount = 0;
+
+    const handleShutdown = (signal: string) => {
+        if (shutdownRequestCount === 0) {
+            logger.warn(`Received ${signal}. Stopping dak job...`);
+            logger.warn("Press CTRL + C to terminate the process");
+        }
+
+        canRunDakJob = false;
+        shutdownRequestCount++;
+
+        if (shutdownRequestCount > 1) {
+            process.exit(0);
+        }
+    };
+
+    process.on("SIGINT", () => handleShutdown("SIGINT"));
+    process.on("SIGTERM", () => handleShutdown("SIGTERM"));
+
+    logger.info("Starting dak job...");
+
+    while (canRunDakJob) {
+        try {
+            await runCommand("npm", ["run", "dak-job"]);
+        } catch (error) {
+            logger.error("Dak job failed:", error);
+        }
+
+        if (canRunDakJob) {
+            await new Promise((resolve) => setTimeout(resolve, dakJobInterval));
+        }
+    }
+
+    logger.info("Dak job stopped.");
+    process.exit(0);
+};
+
 export const runCommand = (command: string, args: string[]): Promise<void> => {
     return new Promise((resolve, reject) => {
         const process = spawn(command, args, { stdio: "inherit", shell: true });
