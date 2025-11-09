@@ -55,8 +55,6 @@ const main = async () => {
             });
 
             await removeSelfManagedDynamicAccessKeyAccessKeys(dak.id);
-
-            return;
         }
 
         if (dataUsage > dak.dataUsage) {
