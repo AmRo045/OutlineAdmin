@@ -16,8 +16,6 @@ const main = async () => {
     logger.info(`Found ${dynamicAccessKeys.length} DAK(s) to process.`);
 
     const processSelfManagedDak = async (dak: DynamicAccessKey) => {
-        let keysRemovedDueToExpiration = false;
-
         const expiryDate = getDakExpiryDateBasedOnValidityPeriod(dak);
 
         if (expiryDate && expiryDate.getTime() <= Date.now()) {
@@ -26,8 +24,10 @@ const main = async () => {
                 name: dak.name,
                 expiryDate
             });
+
             await removeSelfManagedDynamicAccessKeyAccessKeys(dak.id);
-            keysRemovedDueToExpiration = true;
+
+            return;
         }
 
         const pattern = `self-managed-dak-access-key-${dak.id}`;
@@ -41,7 +41,23 @@ const main = async () => {
             count: accessKeys.length
         });
 
+        const bytesPerMB = 1024 * 1024;
+        const dataLimitInBytes = dak.dataLimit ? Number(dak.dataLimit) * bytesPerMB : 0;
         const dataUsage = accessKeys.reduce((acc, key) => acc + Number(key.dataUsage || 0), 0);
+        const isDataUsageExceeded = dak.dataLimit && dataUsage >= dataLimitInBytes;
+
+        if (isDataUsageExceeded) {
+            logger.warn("DAK exceeded data limit — removing access keys", {
+                id: dak.id,
+                name: dak.name,
+                dataUsage,
+                dataLimitInBytes
+            });
+
+            await removeSelfManagedDynamicAccessKeyAccessKeys(dak.id);
+
+            return;
+        }
 
         await prisma.dynamicAccessKey.update({
             where: { id: dak.id },
@@ -53,22 +69,6 @@ const main = async () => {
             name: dak.name,
             dataUsage
         });
-
-        if (!keysRemovedDueToExpiration && dak.dataLimit) {
-            const bytesPerMB = 1024 * 1024;
-            const dataLimitInBytes = Number(dak.dataLimit) * bytesPerMB;
-
-            if (dataUsage >= dataLimitInBytes) {
-                logger.warn("DAK exceeded data limit — removing access keys", {
-                    id: dak.id,
-                    name: dak.name,
-                    dataUsage,
-                    dataLimitInBytes
-                });
-
-                await removeSelfManagedDynamicAccessKeyAccessKeys(dak.id);
-            }
-        }
     };
 
     const processManualDak = async (dak: DynamicAccessKey) => {
