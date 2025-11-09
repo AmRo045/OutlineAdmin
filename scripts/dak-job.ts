@@ -15,7 +15,7 @@ const main = async () => {
 
     logger.info(`Found ${dynamicAccessKeys.length} DAK(s) to process.`);
 
-     const processSelfManagedDak = async (dak: DynamicAccessKey) => {
+    const processSelfManagedDak = async (dak: DynamicAccessKey) => {
         const expiryDate = getDakExpiryDateBasedOnValidityPeriod(dak);
 
         if (expiryDate && expiryDate.getTime() <= Date.now()) {
