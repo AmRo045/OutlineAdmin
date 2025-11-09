@@ -7,6 +7,10 @@
 Outline Admin is a web interface for the Outline Manager API, providing a simple and user-friendly UI for managing VPN
 servers.
 
+![Build](https://github.com/AmRo045/OutlineAdmin/actions/workflows/build.yml/badge.svg)
+![CodeQL](https://github.com/AmRo045/OutlineAdmin/actions/workflows/github-code-scanning/codeql/badge.svg)
+[![Docker Pulls](https://img.shields.io/docker/pulls/amro045/outline-admin.svg?maxAge=604800)](https://hub.docker.com/r/amro045/outline-admin/)
+
 > [!NOTE]
 > The previous PHP/Laravel version of this project has been moved to
 > the [OutlineAdminLaravel](https://github.com/AmRo045/OutlineAdminLaravel) repository.
