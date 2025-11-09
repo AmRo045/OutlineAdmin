@@ -15,7 +15,7 @@ const main = async () => {
 
     logger.info(`Found ${dynamicAccessKeys.length} DAK(s) to process.`);
 
-    const processSelfManagedDak = async (dak: DynamicAccessKey) => {
+     const processSelfManagedDak = async (dak: DynamicAccessKey) => {
         const expiryDate = getDakExpiryDateBasedOnValidityPeriod(dak);
 
         if (expiryDate && expiryDate.getTime() <= Date.now()) {
@@ -59,16 +59,18 @@ const main = async () => {
             return;
         }
 
-        await prisma.dynamicAccessKey.update({
-            where: { id: dak.id },
-            data: { dataUsage }
-        });
+        if (dataUsage > dak.dataUsage) {
+            await prisma.dynamicAccessKey.update({
+                where: { id: dak.id },
+                data: { dataUsage }
+            });
 
-        logger.info("Data usage updated", {
-            id: dak.id,
-            name: dak.name,
-            dataUsage
-        });
+            logger.info("Data usage updated", {
+                id: dak.id,
+                name: dak.name,
+                dataUsage
+            });
+        }
     };
 
     const processManualDak = async (dak: DynamicAccessKey) => {
@@ -86,16 +88,18 @@ const main = async () => {
 
         const dataUsage = accessKeys.reduce((acc, key) => acc + Number(key.dataUsage || 0), 0);
 
-        await prisma.dynamicAccessKey.update({
-            where: { id: dak.id },
-            data: { dataUsage }
-        });
+        if (dataUsage > dak.dataUsage) {
+            await prisma.dynamicAccessKey.update({
+                where: { id: dak.id },
+                data: { dataUsage }
+            });
 
-        logger.info("Data usage updated", {
-            id: dak.id,
-            name: dak.name,
-            dataUsage
-        });
+            logger.info("Data usage updated", {
+                id: dak.id,
+                name: dak.name,
+                dataUsage
+            });
+        }
     };
 
     for (const dak of dynamicAccessKeys) {
