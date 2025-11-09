@@ -1,6 +1,6 @@
 {
   "name": "outline-admin",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "private": true,
   "scripts": {
     "compile": "tsc -p tsconfig.scripts.json && tscpaths -p tsconfig.scripts.tscpaths.json -s ./dist -o ./dist",
