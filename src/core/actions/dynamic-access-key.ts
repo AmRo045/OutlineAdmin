@@ -138,6 +138,18 @@ export async function updateDynamicAccessKey(data: EditDynamicAccessKeyRequest):
     revalidatePath("/dynamic-access-keys");
 }
 
+export async function resetDynamicAccessKeyUsage(id: number): Promise<void> {
+    await prisma.dynamicAccessKey.update({
+        where: { id },
+        data: {
+            dataUsage: 0,
+            usageStartedAt: null
+        }
+    });
+
+    revalidatePath("/dynamic-access-keys");
+}
+
 export async function removeDynamicAccessKey(id: number): Promise<void> {
     const dak = await prisma.dynamicAccessKey.findUnique({
         where: { id }
