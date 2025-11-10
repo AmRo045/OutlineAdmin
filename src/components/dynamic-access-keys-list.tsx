@@ -24,7 +24,8 @@ import { DataLimitUnit, DynamicAccessKeyWithAccessKeysCount } from "@/src/core/d
 import {
     getDynamicAccessKeys,
     getDynamicAccessKeysCount,
-    removeDynamicAccessKey
+    removeDynamicAccessKey,
+    resetDynamicAccessKeyUsage
 } from "@/src/core/actions/dynamic-access-key";
 import DynamicAccessKeyModal from "@/src/components/modals/dynamic-access-key-modal";
 import { app, PAGE_SIZE } from "@/src/core/config";
@@ -45,7 +46,8 @@ export default function DynamicAccessKeysList() {
 
     const totalPage = Math.ceil(totalItems / PAGE_SIZE);
 
-    const removeDynamicAccessKeyConfirmModalDisclosure = useDisclosure();
+    const deleteConfirmModalDisclosure = useDisclosure();
+    const resetConfirmModalDisclosure = useDisclosure();
     const dynamicAccessKeyModalDisclosure = useDisclosure();
 
     const searchForm = useForm<SearchFormProps>();
@@ -62,10 +64,17 @@ export default function DynamicAccessKeysList() {
         setPage(1);
     };
 
-    const handleRemoveDynamicAccessKey = async () => {
+    const handleDelete = async () => {
         if (!currentDynamicAccessKey) return;
 
         await removeDynamicAccessKey(currentDynamicAccessKey.id);
+        await updateData();
+    };
+
+    const handleReset = async () => {
+        if (!currentDynamicAccessKey) return;
+
+        await resetDynamicAccessKeyUsage(currentDynamicAccessKey.id);
         await updateData();
     };
 
@@ -135,15 +144,30 @@ export default function DynamicAccessKeysList() {
                 body={
                     <div className="grid gap-2">
                         <span>Are you sure you want to Delete this dynamic access key?</span>
-                        <p className="text-default-500 text-sm whitespace-pre-wrap break-all">
+                        <p className="text-foreground-500 text-sm whitespace-pre-wrap break-all">
                             {getCurrentAccessKeyUrl()}
                         </p>
                     </div>
                 }
                 confirmLabel="Delete"
-                disclosure={removeDynamicAccessKeyConfirmModalDisclosure}
+                disclosure={deleteConfirmModalDisclosure}
                 title="Delete Dyanmic Access Key"
-                onConfirm={handleRemoveDynamicAccessKey}
+                onConfirm={handleDelete}
+            />
+
+            <ConfirmModal
+                body={
+                    <div className="grid gap-2">
+                        <span>Are you sure you want to reset this dynamic access key?</span>
+                        <p className="text-foreground-500 text-sm whitespace-pre-wrap break-all">
+                            This action will set the data usage to 0 and the usage start date to null.
+                        </p>
+                    </div>
+                }
+                confirmLabel="Reset"
+                disclosure={resetConfirmModalDisclosure}
+                title="Reset Dyanmic Access Key"
+                onConfirm={handleReset}
             />
 
             <div className="grid gap-4">
@@ -266,13 +290,20 @@ export default function DynamicAccessKeysList() {
                                         QR Code
                                     </Button>
 
-                                    <Button
-                                        as={Link}
-                                        href={`/dynamic-access-keys/${item.id}/access-keys`}
-                                        isDisabled={item.isSelfManaged}
-                                    >
-                                        Access Keys
-                                    </Button>
+                                    {item.isSelfManaged ? (
+                                        <Button
+                                            onPress={() => {
+                                                setCurrentDynamicAccessKey(() => item);
+                                                resetConfirmModalDisclosure.onOpen();
+                                            }}
+                                        >
+                                            Reset
+                                        </Button>
+                                    ) : (
+                                        <Button as={Link} href={`/dynamic-access-keys/${item.id}/access-keys`}>
+                                            Access Keys
+                                        </Button>
+                                    )}
 
                                     <Button as={Link} href={`/dynamic-access-keys/${item.id}/edit`}>
                                         Edit
@@ -282,7 +313,7 @@ export default function DynamicAccessKeysList() {
                                         color="danger"
                                         onPress={() => {
                                             setCurrentDynamicAccessKey(() => item);
-                                            removeDynamicAccessKeyConfirmModalDisclosure.onOpen();
+                                            deleteConfirmModalDisclosure.onOpen();
                                         }}
                                     >
                                         Delete
