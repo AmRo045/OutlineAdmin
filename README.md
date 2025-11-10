@@ -18,6 +18,12 @@ servers.
 ## Table of Contents
 
 1. [Added Features](#added-features)
+    - [Dynamic Access Keys](#dynamic-access-keys)
+    - [Health Check](#health-check)
+    - [Notification Channels](#notification-channels)
+    - [Expiration Date](#expiration-date)
+    - [Tags](#tags)
+    - [Prefix](#prefix)
 2. [Installation](#installation)
     - [Docker](#docker)
     - [Docker Compose](#docker-compose)
@@ -30,10 +36,102 @@ servers.
 
 ## Added Features
 
-- Expiration dates for Access Keys.
-- QR codes for Access Keys.
-- Dynamic Access Keys.
-- Access Key prefix.
+The following features have been added to extend the functionality of the Outline Manager API:
+
+### Dynamic Access Keys
+
+Dynamic Access Keys (DAKs) provide a flexible way to manage Outline access keys by dynamically creating, deleting, and
+updating them as needed. This allows the connection configuration to be updated without regenerating or redistributing
+new keys.
+
+In Outline Admin, DAKs are enhanced beyond the official Outline implementation, adding automated management and server
+pooling features.
+
+#### Self-Managed DAKs
+
+A Self-Managed DAK automatically manages its associated access keys.
+When a client requests access and no key exists, the system will create one on demand.
+If a key expires or reaches its data limit, the underlying access keys will be removed automatically.
+Example of an auto-generated access key name: `self-managed-dak-access-key-{dak_id}`.
+These access keys are hidden in Outline Admin but remain visible in Outline Manager.
+
+Self-Managed DAKs use a server pool to decide where to create new access keys.
+You can choose how this pool is formed using one of the following modes:
+
+Self-Managed DAKs use a server pool to decide where to create new access keys.
+You can choose how this pool is formed using one of the following modes:
+
+#### Manual Server Selection
+
+In this mode, available servers are listed, and you can manually select one or more servers to include in the server
+pool.
+When the DAK creates an access key automatically, it will select one of these servers.
+
+#### Tag-Based Server Selection
+
+Instead of manually selecting servers, you can assign tags to servers (for example, `EU`, `US`, `High-Speed`,
+or `Irancell`).
+When creating a Self-Managed DAK, you can choose which tags to include.
+The DAK will then automatically use all servers matching those tags to form its pool.
+
+#### Manual DAKs
+
+A Manual DAK does not automatically create or remove access keys.
+Instead, the admin attach/detach access keys manually — similar to the official Outline dynamic access keys.
+
+### Health Check
+
+Outline Admin includes an automated Health Check system to monitor the status and availability of your servers.
+
+When you add a new server to Outline Admin, a health check is automatically created for that server.
+You can configure the check interval (how often the server is tested) and notification cooldown (how long to wait before
+sending another alert) in the Health Checks section.
+
+### Notification Channels
+
+To ensure you’re promptly informed about server issues, Outline Admin lets you define and manage notification channels.
+
+For example, you can set up a Telegram notification channel and link it to your server’s health check.
+If the server becomes unreachable or fails its check, Outline Admin will automatically send a notification through your
+chosen channel.
+
+### Expiration Date
+
+Outline Admin lets you set an expiration date for both standard access keys and dynamic access keys.
+When an access key reaches its expiration date, it will be automatically disabled, preventing any further connections.
+
+### Tags
+
+Tags provide a simple and flexible way to organize and group servers in Outline Admin.
+You can assign one or more tags to each server — for example, `EU`, `US`, `Asia`, `High-Speed` or `Irancell`.
+
+### Prefix
+
+**Prefixes** allow you to disguise Shadowsocks connections so they appear similar to other allowed network protocols.
+This helps bypass firewalls that block or inspect encrypted traffic by making Outline connections look like familiar
+protocols such as `HTTP`, `TLS`, `DNS`, or `SSH`.
+
+A prefix is a short sequence of bytes added at the start of a Shadowsocks connection.
+The port number used should typically match the protocol that the prefix is mimicking — for example, port `80` for
+`HTTP` or
+`443` for `HTTPS`.
+
+In Outline Admin, prefixes can be configured for both static and dynamic access keys.
+Admins can define and assign prefixes to help users connect more reliably in restricted networks.
+
+Example use cases:
+
+Simulate `HTTP` requests (`"POST "` → port `80`)
+
+Simulate `TLS` traffic (`"\u0016\u0003\u0001\u0000\u00a8\u0001\u0001"` → port `443`)
+
+Simulate `SSH` handshakes (`"SSH-2.0\r\n"` → port `22`)
+
+> [!NOTE]
+> Prefixes should be no longer than 16 bytes. Longer prefixes can cause salt collisions, which may reduce encryption
+> safety.
+
+---
 
 ## Installation
 
@@ -56,6 +154,12 @@ wget -O docker-compose.yml https://raw.githubusercontent.com/AmRo045/OutlineAdmi
 
 ```bash
 docker compose up -d
+```
+
+or
+
+```bash
+docker-compose up -d
 ```
 
 ### NodeJS
@@ -99,6 +203,8 @@ cd .next/standalone
 node server.js
 ```
 
+---
+
 ## Updating to Latest Version
 
 Pull the latest version of the outline-admin image
@@ -126,6 +232,8 @@ docker rmi {old-image-id}
 ```
 
 Replace {old-image-id} with the ID of the old image you want to remove.
+
+---
 
 ## Development
 
@@ -165,6 +273,8 @@ npm run setup
 npm run dev
 ```
 
+---
+
 ## Admin Password
 
 To update the admin user password, use one of the following commands.
@@ -180,6 +290,8 @@ For non-Docker setup:
 ```bash
 npm run password:change "your new password"
 ```
+
+---
 
 ## Donation
 
@@ -209,6 +321,8 @@ UQByW0gL9r89D4oFagC3ZRCEctIoh6XjHu7zv5xU2wcPVATT
 ```
 0xCcF2117F837b16fbc0FbDe0178De0a2aCbfadC58
 ```
+
+---
 
 ## Screenshots
 
