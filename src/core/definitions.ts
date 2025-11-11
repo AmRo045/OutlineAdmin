@@ -192,6 +192,18 @@ export interface UpdateHealthCheckRequest {
     interval: number;
 }
 
+export interface DynamicAccessKeyStats {
+    name: string;
+    path: string;
+    expiresAt: Date | null;
+    validityPeriod: string | null;
+    dataLimit: number | null;
+    dataUsage: number;
+    usageStartedAt: Date | null;
+    prefix: string | null;
+    isSelfManaged: boolean;
+}
+
 export namespace Outline {
     export interface Server {
         name: string;

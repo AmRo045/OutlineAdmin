@@ -5,6 +5,7 @@ import { DynamicAccessKey } from "@prisma/client";
 
 import prisma from "@/prisma/db";
 import {
+    DynamicAccessKeyStats,
     DynamicAccessKeyWithAccessKeys,
     DynamicAccessKeyWithAccessKeysCount,
     EditDynamicAccessKeyRequest,
@@ -181,4 +182,26 @@ export async function removeSelfManagedDynamicAccessKeyAccessKeys(id: number): P
             await removeAccessKey(accessKey.serverId, accessKey.id, accessKey.apiId, false);
         }
     }
+}
+
+export async function getDynamicAccessKeyStatsByPath(path: string): Promise<DynamicAccessKeyStats | null> {
+    const dak = await prisma.dynamicAccessKey.findFirst({
+        where: {
+            path
+        }
+    });
+
+    if (!dak) return null;
+
+    return {
+        name: dak.name,
+        path: dak.path,
+        validityPeriod: dak.validityPeriod,
+        dataLimit: Number(dak.dataLimit),
+        dataUsage: Number(dak.dataUsage),
+        usageStartedAt: dak.usageStartedAt,
+        prefix: dak.prefix,
+        isSelfManaged: dak.isSelfManaged,
+        expiresAt: dak.expiresAt
+    };
 }

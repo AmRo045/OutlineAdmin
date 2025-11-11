@@ -6,6 +6,7 @@ export const HEALTH_CHECK_DEFAULT_NOTIFICATION_COOLDOWN = 30; // minute
 
 export const AUTH_SESSION_KEY = "oa-auth-session";
 
+export const DAK_STATS_ROUTE = "/stats/dynamic-access-key";
 export const ADMIN_PASSWORD_ROUTE = "/admin";
 export const LOGIN_ROUTE = "/";
 export const HOME_ROUTE = "/servers";
