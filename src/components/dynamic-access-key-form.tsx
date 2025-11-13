@@ -112,12 +112,12 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }
             if (dynamicAccessKey) {
                 const updateData = data as EditDynamicAccessKeyRequest;
 
-                updateData.id = dynamicAccessKey.id;
-                await updateDynamicAccessKey(updateData);
-
-                if (dynamicAccessKey.isSelfManaged && !updateData.isSelfManaged) {
+                if (dynamicAccessKey.isSelfManaged) {
                     await removeSelfManagedDynamicAccessKeyAccessKeys(dynamicAccessKey.id);
                 }
+
+                updateData.id = dynamicAccessKey.id;
+                await updateDynamicAccessKey(updateData);
 
                 if (!dynamicAccessKey.isSelfManaged && updateData.isSelfManaged) {
                     await syncDynamicAccessKeyAccessKeys(dynamicAccessKey.id, []);

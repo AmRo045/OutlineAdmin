@@ -132,7 +132,8 @@ export async function updateDynamicAccessKey(data: EditDynamicAccessKeyRequest):
             serverPoolType: data.serverPoolType,
             serverPoolValue: data.serverPoolValue,
             dataLimit: data.dataLimit,
-            validityPeriod: data.validityPeriod?.toString() ?? null
+            validityPeriod: data.validityPeriod?.toString() ?? null,
+            activeServerId: null // reset the active server
         }
     });
 
