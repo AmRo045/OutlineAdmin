@@ -1,6 +1,6 @@
 import { DynamicAccessKey } from "@prisma/client";
 
-import { DataLimitUnit } from "@/src/core/definitions";
+import { DataLimitUnit, DynamicAccessKeyStats } from "@/src/core/definitions";
 import { app } from "@/src/core/config";
 
 export const formatAsDuration = (start: Date, end: Date): string => {
@@ -107,7 +107,7 @@ export const getNotificationChannelTypes = () => {
     return ["None", "Telegram"];
 };
 
-export const getDakExpiryDateBasedOnValidityPeriod = (dak: DynamicAccessKey) => {
+export const getDakExpiryDateBasedOnValidityPeriod = (dak: DynamicAccessKey | DynamicAccessKeyStats) => {
     return dak.usageStartedAt && dak.validityPeriod
         ? new Date(new Date(dak.usageStartedAt).getTime() + Number(dak.validityPeriod) * 24 * 60 * 60 * 1000)
         : null;

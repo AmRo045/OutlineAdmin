@@ -5,9 +5,10 @@ import { DynamicAccessKey } from "@prisma/client";
 import { InfinityIcon } from "@/src/components/icons";
 import { formatAsDuration, getDakExpiryDateBasedOnValidityPeriod } from "@/src/core/utils";
 import AccessKeyValidityChip from "@/src/components/access-key-validity-chip";
+import { DynamicAccessKeyStats } from "@/src/core/definitions";
 
 interface Props {
-    dak: DynamicAccessKey;
+    dak: DynamicAccessKey | DynamicAccessKeyStats;
 }
 
 export default function DynamicAccessKeyValidityChip({ dak }: Props) {

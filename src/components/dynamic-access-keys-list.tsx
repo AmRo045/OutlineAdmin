@@ -19,8 +19,8 @@ import { DynamicAccessKey } from "@prisma/client";
 import { Link } from "@heroui/link";
 
 import ConfirmModal from "@/src/components/modals/confirm-modal";
-import { InfinityIcon, InfoIcon, PlusIcon, SelfManagedKeyIcon } from "@/src/components/icons";
-import { DataLimitUnit, DynamicAccessKeyWithAccessKeysCount } from "@/src/core/definitions";
+import { InfoIcon, PlusIcon, SelfManagedKeyIcon } from "@/src/components/icons";
+import { DynamicAccessKeyWithAccessKeysCount } from "@/src/core/definitions";
 import {
     getDynamicAccessKeys,
     getDynamicAccessKeysCount,
@@ -31,7 +31,7 @@ import DynamicAccessKeyModal from "@/src/components/modals/dynamic-access-key-mo
 import { app, PAGE_SIZE } from "@/src/core/config";
 import DynamicAccessKeyValidityChip from "@/src/components/dynamic-access-key-validity-chip";
 import DynamicAccessKeysSslWarning from "@/src/components/dynamic-access-keys-ssl-warning";
-import { convertDataLimitToUnit, formatBytes } from "@/src/core/utils";
+import DynamicAccessKeyDataUsageChip from "@/src/components/dynamic-access-key-data-usage-chip";
 
 interface SearchFormProps {
     term: string;
@@ -108,33 +108,6 @@ export default function DynamicAccessKeysList() {
     useEffect(() => {
         updateData();
     }, [page]);
-
-    const renderDataUsageChip = (item: DynamicAccessKey) => {
-        const bytesPerMB = 1024 * 1024;
-        const dataLimitInBytes = Number(item.dataLimit) * bytesPerMB;
-        const isExceeded = item.dataLimit && item.dataUsage >= dataLimitInBytes;
-
-        return (
-            <Chip color={isExceeded ? "danger" : "default"} radius="sm" size="sm" variant="flat">
-                <div className="flex gap-2 items-center">
-                    <span>{formatBytes(Number(item.dataUsage))}</span>
-
-                    {item.isSelfManaged && (
-                        <>
-                            <span className="text-default-500">of</span>
-                            {item.dataLimit ? (
-                                <span>
-                                    {formatBytes(convertDataLimitToUnit(Number(item.dataLimit), DataLimitUnit.MB))}
-                                </span>
-                            ) : (
-                                <InfinityIcon size={20} />
-                            )}
-                        </>
-                    )}
-                </div>
-            </Chip>
-        );
-    };
 
     return (
         <>
@@ -239,7 +212,7 @@ export default function DynamicAccessKeysList() {
 
                                 <div className="flex gap-1 justify-between items-center">
                                     <span>Data usage</span>
-                                    {renderDataUsageChip(item)}
+                                    <DynamicAccessKeyDataUsageChip item={item} />
                                 </div>
 
                                 <div className="flex gap-1 justify-between items-center">
@@ -287,7 +260,7 @@ export default function DynamicAccessKeysList() {
                                             dynamicAccessKeyModalDisclosure.onOpen();
                                         }}
                                     >
-                                        QR Code
+                                        Share
                                     </Button>
 
                                     {item.isSelfManaged ? (

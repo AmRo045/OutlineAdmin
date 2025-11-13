@@ -65,7 +65,7 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }
                       ? JSON.parse(dynamicAccessKey.serverPoolValue)
                       : null,
                   validityPeriod: dynamicAccessKey.validityPeriod ? dynamicAccessKey.validityPeriod : null,
-                  dataLimit: Number(dynamicAccessKey.dataLimit)
+                  dataLimit: dynamicAccessKey.dataLimit ? Number(dynamicAccessKey.dataLimit) : undefined
               }
             : {
                   name: "",
@@ -112,12 +112,12 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }
             if (dynamicAccessKey) {
                 const updateData = data as EditDynamicAccessKeyRequest;
 
-                updateData.id = dynamicAccessKey.id;
-                await updateDynamicAccessKey(updateData);
-
-                if (dynamicAccessKey.isSelfManaged && !updateData.isSelfManaged) {
+                if (dynamicAccessKey.isSelfManaged) {
                     await removeSelfManagedDynamicAccessKeyAccessKeys(dynamicAccessKey.id);
                 }
+
+                updateData.id = dynamicAccessKey.id;
+                await updateDynamicAccessKey(updateData);
 
                 if (!dynamicAccessKey.isSelfManaged && updateData.isSelfManaged) {
                     await syncDynamicAccessKeyAccessKeys(dynamicAccessKey.id, []);

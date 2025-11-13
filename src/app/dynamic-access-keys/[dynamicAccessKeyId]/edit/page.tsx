@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 import { createPageTitle } from "@/src/core/utils";
 import DynamicAccessKeyForm from "@/src/components/dynamic-access-key-form";
@@ -18,6 +19,11 @@ interface Props {
 
 export default async function DynamicAccessKeyEditPage({ params }: Props) {
     const dynamicAccessKey = await findDynamicAccessKeyById(parseInt(params.dynamicAccessKeyId));
+
+    if (!dynamicAccessKey) {
+        notFound();
+    }
+
     const servers = await getServers({ status: true });
     const tags = await getTags();
 
