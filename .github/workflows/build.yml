@@ -28,6 +28,9 @@ on:
       - access.sh
       - README.md
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
