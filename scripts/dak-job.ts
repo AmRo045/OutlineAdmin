@@ -41,12 +41,13 @@ const main = async () => {
             count: accessKeys.length
         });
 
+        const dataLimit = dak.dataLimit ? Number(dak.dataLimit) : 0;
         const bytesPerMB = 1024 * 1024;
-        const dataLimitInBytes = dak.dataLimit ? Number(dak.dataLimit) * bytesPerMB : 0;
+        const dataLimitInBytes = dataLimit * bytesPerMB;
         const dataUsage = accessKeys.reduce((acc, key) => acc + Number(key.dataUsage || 0), 0);
-        const isDataUsageExceeded = dak.dataLimit && dataUsage >= dataLimitInBytes;
+        const isDataUsageExceeded = dataLimit && dataUsage >= dataLimitInBytes;
 
-        if (isDataUsageExceeded) {
+        if (isDataUsageExceeded && dataLimit > 0) {
             logger.warn("DAK exceeded data limit — removing access keys", {
                 id: dak.id,
                 name: dak.name,

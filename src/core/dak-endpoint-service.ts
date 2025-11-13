@@ -36,10 +36,11 @@ export class DakEndpointService {
     }
 
     private async handleSelfManaged() {
+        const dataLimit = this.dak.dataLimit ? Number(this.dak.dataLimit) : 0;
         const bytesPerMB = 1024 * 1024;
-        const dataLimitInBytes = Number(this.dak.dataLimit) * bytesPerMB;
+        const dataLimitInBytes = dataLimit * bytesPerMB;
 
-        if (this.dak.dataUsage >= dataLimitInBytes)
+        if (dataLimit > 0 && this.dak.dataUsage >= dataLimitInBytes)
             return this.error("The dynamic access key data usage limit exceeded");
 
         const servers = await this.getAvailableServers();
