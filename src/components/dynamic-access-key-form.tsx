@@ -65,7 +65,7 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }
                       ? JSON.parse(dynamicAccessKey.serverPoolValue)
                       : null,
                   validityPeriod: dynamicAccessKey.validityPeriod ? dynamicAccessKey.validityPeriod : null,
-                  dataLimit: Number(dynamicAccessKey.dataLimit)
+                  dataLimit: dynamicAccessKey.dataLimit ? Number(dynamicAccessKey.dataLimit) : undefined
               }
             : {
                   name: "",
