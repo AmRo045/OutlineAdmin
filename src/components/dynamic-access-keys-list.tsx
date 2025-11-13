@@ -260,7 +260,7 @@ export default function DynamicAccessKeysList() {
                                             dynamicAccessKeyModalDisclosure.onOpen();
                                         }}
                                     >
-                                        QR Code
+                                        Share
                                     </Button>
 
                                     {item.isSelfManaged ? (
