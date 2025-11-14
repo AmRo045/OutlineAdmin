@@ -146,14 +146,19 @@ export default function ServersList({ data }: Props) {
 
                                 <div className="flex gap-1 justify-between items-center">
                                     <span>Total data usage</span>
-                                    <Chip color="default" size="sm" variant="flat">
+                                    <Chip color="default" radius="sm" size="sm" variant="flat">
                                         {formatBytes(Number(item.totalDataUsage))}
                                     </Chip>
                                 </div>
 
                                 <div className="flex gap-1 justify-between items-center">
                                     <span>Status</span>
-                                    <Chip color={item.isAvailable ? "success" : "danger"} size="sm" variant="flat">
+                                    <Chip
+                                        color={item.isAvailable ? "success" : "danger"}
+                                        radius="sm"
+                                        size="sm"
+                                        variant="flat"
+                                    >
                                         {item.isAvailable ? "Available" : "Not Available"}
                                     </Chip>
                                 </div>
@@ -164,7 +169,13 @@ export default function ServersList({ data }: Props) {
                                     {item.tags.length > 0 ? (
                                         <div className="flex gap-2 justify-end items-center flex-wrap">
                                             {item.tags.map((t) => (
-                                                <Chip key={t.tag.id} color="default" size="sm" variant="flat">
+                                                <Chip
+                                                    key={t.tag.id}
+                                                    color="default"
+                                                    radius="sm"
+                                                    size="sm"
+                                                    variant="flat"
+                                                >
                                                     {t.tag.name}
                                                 </Chip>
                                             ))}
