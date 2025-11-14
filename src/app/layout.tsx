@@ -56,7 +56,7 @@ export default async function RootLayout({ children }: Props) {
                             <div className="relative flex flex-col w-full h-screen">
                                 <SideMenuDrawer />
 
-                                <main className="w-full pt-8 px-6 flex-grow">{children}</main>
+                                <main className="w-full mt-8 xl:mt-0 pt-8 px-2 flex-grow">{children}</main>
 
                                 <Footer />
                             </div>

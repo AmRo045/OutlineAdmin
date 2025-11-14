@@ -2,8 +2,9 @@
 
 import React from "react";
 import { Button, Drawer, DrawerBody, DrawerContent, useDisclosure } from "@heroui/react";
+import NextLink from "next/link";
 
-import { HamburgerMenuIcon } from "@/src/components/icons";
+import { HamburgerMenuIcon, Logo } from "@/src/components/icons";
 import { SideMenu } from "@/src/components/side-menu";
 import { app } from "@/src/core/config";
 
@@ -12,10 +13,14 @@ export const SideMenuDrawer = () => {
 
     return (
         <>
-            <div className="xl:hidden block">
-                <Button className="rounded-r-xl" radius="none" variant="light" onPress={disclosure.onOpen}>
+            <div className="xl:hidden flex justify-between items-center fixed z-20 w-full backdrop-blur p-2">
+                <NextLink className="w-fit items-center flex justify-start gap-2" href="/">
+                    <Logo size={24} />
+                    <span className="font-bold text-inherit mt-1.5">{app.name.toUpperCase()} </span>
+                </NextLink>
+
+                <Button isIconOnly={true} radius="sm" variant="light" onPress={disclosure.onOpen}>
                     <HamburgerMenuIcon size={24} />
-                    {app.name.toUpperCase()}
                 </Button>
             </div>
 
