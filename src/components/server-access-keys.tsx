@@ -2,16 +2,14 @@
 
 import {
     Button,
+    ButtonGroup,
+    Card,
+    CardBody,
+    CardFooter,
+    CardHeader,
     Chip,
     Link,
     Pagination,
-    Spinner,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow,
     Tooltip,
     useDisclosure
 } from "@heroui/react";
@@ -20,17 +18,16 @@ import { AccessKey } from "@prisma/client";
 
 import AccessKeyModal from "@/src/components/modals/access-key-modal";
 import ConfirmModal from "@/src/components/modals/confirm-modal";
-import { ArrowLeftIcon, DeleteIcon, EditIcon, EyeIcon, InfinityIcon, PlusIcon } from "@/src/components/icons";
+import { ArrowLeftIcon, PlusIcon } from "@/src/components/icons";
 import AccessKeyServerInfo from "@/src/components/access-key-server-info";
-import { convertDataLimitToUnit, formatBytes } from "@/src/core/utils";
 import { getAccessKeys, removeAccessKey } from "@/src/core/actions/access-key";
-import { DataLimitUnit, ServerWithTags } from "@/src/core/definitions";
-import NoResult from "@/src/components/no-result";
+import { ServerWithTags } from "@/src/core/definitions";
 import AccessKeyValidityChip from "@/src/components/access-key-validity-chip";
 import MessageModal from "@/src/components/modals/message-modal";
 import { AccessKeyPrefixes } from "@/src/core/outline/access-key-prefix";
 import { syncServer } from "@/src/core/actions/server";
 import { PAGE_SIZE } from "@/src/core/config";
+import AccessKeyDataUsageChip from "@/src/components/access-key-data-usage-chip";
 
 interface Props {
     server: ServerWithTags;
@@ -85,7 +82,11 @@ export default function ServerAccessKeys({ server, total }: Props) {
             const prefix = AccessKeyPrefixes.find((x) => x.type === currentAccessKey.prefix);
 
             if (prefix) {
-                prefixUrlValue = `?prefix=${prefix.urlEncodedValue}`;
+                if (currentAccessKey.accessUrl.endsWith("?outline=1")) {
+                    prefixUrlValue = `&prefix=${prefix.urlEncodedValue}`;
+                } else {
+                    prefixUrlValue = `?prefix=${prefix.urlEncodedValue}`;
+                }
             }
         }
 
@@ -117,9 +118,7 @@ export default function ServerAccessKeys({ server, total }: Props) {
                 body={
                     <div className="grid gap-2">
                         <span>Are you sure you want to remove this access key?</span>
-                        <p className="text-default-500 text-sm whitespace-pre-wrap break-all">
-                            {currentAccessKey?.accessUrl}
-                        </p>
+                        <p className="text-default-500 text-sm whitespace-pre-wrap break-all">{formattedAccessKey}</p>
                     </div>
                 }
                 confirmLabel="Remove"
@@ -167,133 +166,79 @@ export default function ServerAccessKeys({ server, total }: Props) {
                         </Button>
                     </div>
 
-                    <Table
-                        aria-label="Servers list"
-                        bottomContent={
-                            totalPage > 1 && (
-                                <div className="flex justify-center">
-                                    <Pagination
-                                        initialPage={page}
-                                        total={totalPage}
-                                        variant="light"
-                                        onChange={setPage}
-                                    />
-                                </div>
-                            )
-                        }
-                        color="primary"
-                        isCompact={false}
-                        isHeaderSticky={true}
-                        isStriped={true}
-                        shadow="sm"
-                    >
-                        <TableHeader>
-                            <TableColumn>ID</TableColumn>
-                            <TableColumn>NAME</TableColumn>
-                            <TableColumn align="center">DATA USAGE</TableColumn>
-                            <TableColumn align="center">VALIDITY</TableColumn>
-                            <TableColumn align="center">PREFIX</TableColumn>
-                            <TableColumn align="center">ACTIONS</TableColumn>
-                        </TableHeader>
-                        <TableBody emptyContent={<NoResult />} isLoading={isLoading} loadingContent={<Spinner />}>
-                            {accessKeys.map((accessKey) => (
-                                <TableRow key={accessKey.id}>
-                                    <TableCell>{accessKey.id}</TableCell>
-                                    <TableCell>{accessKey.name}</TableCell>
-                                    <TableCell>
-                                        <div className="flex justify-center gap-2 items-center">
-                                            <span>{formatBytes(Number(accessKey.dataUsage))}</span>
-                                            <span className="text-default-500">of</span>
-                                            {accessKey.dataLimit ? (
-                                                <span>
-                                                    {formatBytes(
-                                                        convertDataLimitToUnit(
-                                                            Number(accessKey.dataLimit),
-                                                            accessKey.dataLimitUnit as DataLimitUnit
-                                                        )
-                                                    )}
-                                                </span>
-                                            ) : (
-                                                <InfinityIcon size={20} />
-                                            )}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell width={160}>
-                                        <AccessKeyValidityChip value={accessKey.expiresAt} />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Chip color={accessKey.prefix ? "success" : "default"} size="sm" variant="flat">
-                                            {accessKey.prefix ? accessKey.prefix : "None"}
+                    <div className="flex flex-wrap justify-center gap-4">
+                        {accessKeys.map((item) => (
+                            <Card key={item.id} className="md:w-[400px] w-full">
+                                <CardHeader>
+                                    <div className="grid gap-1">
+                                        <span className="max-w-[360px] truncate">{item.name}</span>
+                                    </div>
+                                </CardHeader>
+                                <CardBody className="text-sm grid gap-2">
+                                    <div className="flex gap-1 justify-between items-center">
+                                        <span>ID</span>
+                                        <Chip radius="sm" size="sm" variant="flat">
+                                            {item.id}
                                         </Chip>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex gap-2 justify-center items-center">
-                                            <Tooltip
-                                                closeDelay={100}
-                                                color="primary"
-                                                content="Show the key"
-                                                delay={600}
-                                                size="sm"
-                                            >
-                                                <Button
-                                                    color="primary"
-                                                    isIconOnly={true}
-                                                    size="sm"
-                                                    variant="light"
-                                                    onPress={() => {
-                                                        setCurrentAccessKey(() => accessKey);
-                                                        accessKeyModalDisclosure.onOpen();
-                                                    }}
-                                                >
-                                                    <EyeIcon size={24} />
-                                                </Button>
-                                            </Tooltip>
+                                    </div>
 
-                                            <Tooltip
-                                                closeDelay={100}
-                                                color="primary"
-                                                content="Edit the key"
-                                                delay={600}
-                                                size="sm"
-                                            >
-                                                <Button
-                                                    as={Link}
-                                                    color="primary"
-                                                    href={`/servers/${server.id}/access-keys/${accessKey.id}/edit`}
-                                                    isIconOnly={true}
-                                                    size="sm"
-                                                    variant="light"
-                                                >
-                                                    <EditIcon size={24} />
-                                                </Button>
-                                            </Tooltip>
+                                    <div className="flex gap-1 justify-between items-center">
+                                        <span>Data usage</span>
+                                        <AccessKeyDataUsageChip item={item} />
+                                    </div>
 
-                                            <Tooltip
-                                                closeDelay={100}
-                                                color="danger"
-                                                content="Remove the key"
-                                                delay={600}
-                                                size="sm"
-                                            >
-                                                <Button
-                                                    color="danger"
-                                                    isIconOnly={true}
-                                                    size="sm"
-                                                    variant="light"
-                                                    onPress={() => {
-                                                        setCurrentAccessKey(() => accessKey);
-                                                        removeAccessKeyConfirmModalDisclosure.onOpen();
-                                                    }}
-                                                >
-                                                    <DeleteIcon size={24} />
-                                                </Button>
-                                            </Tooltip>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                                    <div className="flex gap-1 justify-between items-center">
+                                        <span>Validity</span>
+                                        <AccessKeyValidityChip value={item.expiresAt} />
+                                    </div>
+
+                                    <div className="flex gap-1 justify-between items-center">
+                                        <span>Prefix</span>
+                                        <Chip
+                                            color={item.prefix ? "success" : "default"}
+                                            radius="sm"
+                                            size="sm"
+                                            variant="flat"
+                                        >
+                                            {item.prefix ? item.prefix : "None"}
+                                        </Chip>
+                                    </div>
+                                </CardBody>
+                                <CardFooter>
+                                    <ButtonGroup color="default" fullWidth={true} size="sm" variant="flat">
+                                        <Button
+                                            onPress={() => {
+                                                setCurrentAccessKey(() => item);
+                                                accessKeyModalDisclosure.onOpen();
+                                            }}
+                                        >
+                                            Share
+                                        </Button>
+
+                                        <Button as={Link} href={`/servers/${server.id}/access-keys/${item.id}/edit`}>
+                                            Edit
+                                        </Button>
+
+                                        <Button
+                                            color="danger"
+                                            onPress={() => {
+                                                setCurrentAccessKey(() => item);
+                                                removeAccessKeyConfirmModalDisclosure.onOpen();
+                                            }}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </ButtonGroup>
+                                </CardFooter>
+                            </Card>
+                        ))}
+                    </div>
+
+                    {totalPage > 1 && (
+                        <div className="flex justify-center">
+                            <Pagination initialPage={page} total={totalPage} variant="light" onChange={setPage} />
+                        </div>
+                    )}
                 </section>
             </div>
         </>

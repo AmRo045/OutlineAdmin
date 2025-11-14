@@ -15,7 +15,7 @@ export default function AccessKeyServerInfo({ server, numberOfKeys }: Props) {
     return (
         <section className="rounded-xl bg-default-100 p-4 grid grid-cols-2 gap-y-2 gap-x-8">
             <div className="flex justify-between items-center gap-2 col-span-2 md:col-span-1">
-                <span className="text-sm text-default-500">Hostname or IP</span>
+                <span className="text-sm text-default-500">Host/IP</span>
                 <Snippet
                     classNames={{
                         base: "!max-w-[300px]",
@@ -50,28 +50,28 @@ export default function AccessKeyServerInfo({ server, numberOfKeys }: Props) {
 
             <div className="flex justify-between items-center gap-2 col-span-2 md:col-span-1">
                 <span className="text-sm text-default-500">Status</span>
-                <Chip color={server.isAvailable ? "success" : "danger"} size="sm" variant="flat">
+                <Chip color={server.isAvailable ? "success" : "danger"} radius="sm" size="sm" variant="flat">
                     {server.isAvailable ? "Available" : "Not Available"}
                 </Chip>
             </div>
 
             <div className="flex justify-between items-center gap-2 col-span-2 md:col-span-1">
                 <span className="text-sm text-default-500">Version</span>
-                <Chip size="sm" variant="flat">
+                <Chip radius="sm" size="sm" variant="flat">
                     {server.version}
                 </Chip>
             </div>
 
             <div className="flex justify-between items-center gap-2 col-span-2 md:col-span-1">
                 <span className="text-sm text-default-500">Number of keys</span>
-                <Chip size="sm" variant="flat">
+                <Chip radius="sm" size="sm" variant="flat">
                     {numberOfKeys}
                 </Chip>
             </div>
 
             <div className="flex justify-between items-center gap-2 col-span-2 md:col-span-1">
                 <span className="text-sm text-default-500">Total usage</span>
-                <Chip size="sm" variant="flat">
+                <Chip radius="sm" size="sm" variant="flat">
                     {formatBytes(Number(server.totalDataUsage))}
                 </Chip>
             </div>
@@ -79,7 +79,7 @@ export default function AccessKeyServerInfo({ server, numberOfKeys }: Props) {
             <div className="flex justify-between items-center gap-2 col-span-2 md:col-span-1">
                 <span className="text-sm text-default-500">Creation date</span>
                 <Tooltip closeDelay={200} content={moment(server.apiCreatedAt).fromNow()} delay={600} size="sm">
-                    <Chip size="sm" variant="flat">
+                    <Chip radius="sm" size="sm" variant="flat">
                         {moment(server.apiCreatedAt).format("YYYY-MM-DD HH:mm:ss")}
                     </Chip>
                 </Tooltip>
@@ -123,13 +123,17 @@ export default function AccessKeyServerInfo({ server, numberOfKeys }: Props) {
 
             <div className="flex flex-wrap justify-between items-center gap-2 col-span-2 ">
                 <span className="text-sm text-default-500">Tags</span>
-                <div className="flex gap-2 justify-center items-center flex-wrap">
-                    {server.tags.map((t) => (
-                        <Chip key={t.tag.id} color="default" size="sm" variant="flat">
-                            {t.tag.name}
-                        </Chip>
-                    ))}
-                </div>
+                {server.tags.length > 0 ? (
+                    <div className="flex gap-2 justify-end items-center flex-wrap">
+                        {server.tags.map((t) => (
+                            <Chip key={t.tag.id} color="default" radius="sm" size="sm" variant="flat">
+                                {t.tag.name}
+                            </Chip>
+                        ))}
+                    </div>
+                ) : (
+                    <span className="text-foreground-400">¯\_(ツ)_/¯</span>
+                )}
             </div>
         </section>
     );
