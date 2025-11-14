@@ -180,11 +180,11 @@ export default function DynamicAccessKeysList() {
 
                 <div className="flex flex-wrap justify-center gap-4">
                     {dynamicAccessKeys.map((item) => (
-                        <Card key={item.id} className="w-[340px]">
+                        <Card key={item.id} className="md:w-[380px] w-full">
                             <CardHeader>
                                 <div className="grid gap-1">
-                                    <span className="max-w-[320px] truncate">{item.name}</span>
-                                    <span className="max-w-[320px] truncate text-foreground-400 text-sm">
+                                    <span className="max-w-[340px] truncate">{item.name}</span>
+                                    <span className="max-w-[340px] truncate text-foreground-400 text-sm">
                                         {item.path}
                                     </span>
                                 </div>

@@ -79,7 +79,7 @@ export default function DynamicAccessKeyAccessKeysForm({ dynamicAccessKey, serve
                     </form>
                 </section>
 
-                <section className="grid gap-6 px-10">
+                <section className="grid gap-6 p-2 xl:px-10">
                     <CheckboxGroup defaultValue={form.getValues("accessKeys")} onChange={handleSelection}>
                         <div className="flex justify-center flex-wrap gap-8">
                             {servers?.map((server) => (
