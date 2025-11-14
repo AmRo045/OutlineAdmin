@@ -40,7 +40,7 @@ export default function AccessKeyForm({ serverId, accessKeyData }: Props) {
             ? {
                   serverId: accessKeyData.serverId,
                   name: accessKeyData.name,
-                  dataLimit: Number(accessKeyData.dataLimit),
+                  dataLimit: accessKeyData.dataLimit ? Number(accessKeyData.dataLimit) : undefined,
                   expiresAt: accessKeyData.expiresAt,
                   prefix: accessKeyData.prefix
               }

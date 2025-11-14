@@ -2,26 +2,22 @@
 
 import {
     Button,
+    ButtonGroup,
+    Card,
+    CardBody,
+    CardFooter,
+    CardHeader,
     Chip,
     Input,
     Link,
-    Snippet,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow,
-    Tooltip,
     useDisclosure
 } from "@heroui/react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import ConfirmModal from "@/src/components/modals/confirm-modal";
-import { CopyIcon, DeleteIcon, KeyIcon, PlusIcon, SettingsIcon } from "@/src/components/icons";
+import { PlusIcon } from "@/src/components/icons";
 import { getServersWithTags, removeServer } from "@/src/core/actions/server";
-import NoResult from "@/src/components/no-result";
 import { ServerWithAccessKeysCountAndTags } from "@/src/core/definitions";
 import { formatBytes } from "@/src/core/utils";
 import { app } from "@/src/core/config";
@@ -80,7 +76,7 @@ export default function ServersList({ data }: Props) {
             />
 
             <div className="grid gap-4">
-                <h1 className="text-xl">Your Servers</h1>
+                <h1 className="text-xl">Servers</h1>
 
                 <div className="flex justify-between items-center gap-2">
                     <form onSubmit={searchForm.handleSubmit(handleSearch)}>
@@ -104,133 +100,115 @@ export default function ServersList({ data }: Props) {
                     </Button>
                 </div>
 
-                <Table
-                    aria-label="Servers list"
-                    color="primary"
-                    isCompact={false}
-                    isHeaderSticky={true}
-                    isStriped={true}
-                    shadow="sm"
-                >
-                    <TableHeader>
-                        <TableColumn>ID</TableColumn>
-                        <TableColumn>NAME</TableColumn>
-                        <TableColumn>HOSTNAME OR IP</TableColumn>
-                        <TableColumn align="center">TAGS</TableColumn>
-                        <TableColumn align="center">NUMBER OF KEYS</TableColumn>
-                        <TableColumn align="center">TOTAL USAGE</TableColumn>
-                        <TableColumn align="center">STATUS</TableColumn>
-                        <TableColumn align="center">ACTIONS</TableColumn>
-                    </TableHeader>
-                    <TableBody emptyContent={<NoResult />}>
-                        {servers.map((server) => (
-                            <TableRow key={server.id}>
-                                <TableCell>{server.id}</TableCell>
-                                <TableCell>{server.name}</TableCell>
-                                <TableCell>
-                                    <Snippet
-                                        classNames={{
-                                            copyButton: "text-sm !min-w-6 !w-6 h-6",
-                                            pre: "!ps-1"
-                                        }}
-                                        copyIcon={<CopyIcon size={16} />}
-                                        hideSymbol={true}
+                <div className="flex flex-wrap justify-center gap-4">
+                    {servers.map((item) => (
+                        <Card key={item.id} className="md:w-[400px] w-full">
+                            <CardHeader>
+                                <div className="grid gap-1">
+                                    <span className="max-w-[360px] truncate">{item.name}</span>
+                                </div>
+                            </CardHeader>
+                            <CardBody className="text-sm grid gap-2">
+                                <div className="flex gap-1 justify-between items-center">
+                                    <span>ID</span>
+                                    <Chip radius="sm" size="sm" variant="flat">
+                                        {item.id}
+                                    </Chip>
+                                </div>
+
+                                <div className="flex gap-1 justify-between items-center">
+                                    <span>Host/IP</span>
+                                    <Chip radius="sm" size="sm" variant="flat">
+                                        {item.hostnameOrIp}
+                                    </Chip>
+                                </div>
+
+                                <div className="flex gap-1 justify-between items-center">
+                                    <span>Host/IP for new access keys</span>
+                                    <Chip radius="sm" size="sm" variant="flat">
+                                        {item.hostnameForNewAccessKeys}
+                                    </Chip>
+                                </div>
+
+                                <div className="flex gap-1 justify-between items-center">
+                                    <span>Port for new access keys</span>
+                                    <Chip radius="sm" size="sm" variant="flat">
+                                        {item.portForNewAccessKeys}
+                                    </Chip>
+                                </div>
+
+                                <div className="flex gap-1 justify-between items-center">
+                                    <span>Number of keys</span>
+                                    <Chip color="default" radius="sm" size="sm" variant="flat">
+                                        {item._count?.accessKeys}
+                                    </Chip>
+                                </div>
+
+                                <div className="flex gap-1 justify-between items-center">
+                                    <span>Total data usage</span>
+                                    <Chip color="default" radius="sm" size="sm" variant="flat">
+                                        {formatBytes(Number(item.totalDataUsage))}
+                                    </Chip>
+                                </div>
+
+                                <div className="flex gap-1 justify-between items-center">
+                                    <span>Status</span>
+                                    <Chip
+                                        color={item.isAvailable ? "success" : "danger"}
+                                        radius="sm"
                                         size="sm"
                                         variant="flat"
                                     >
-                                        {server.hostnameOrIp}
-                                    </Snippet>
-                                </TableCell>
-                                <TableCell className="max-w-[260px]">
-                                    <div className="flex gap-2 justify-center items-center flex-wrap">
-                                        {server.tags.map((t) => (
-                                            <Chip key={t.tag.id} color="default" size="sm" variant="flat">
-                                                {t.tag.name}
-                                            </Chip>
-                                        ))}
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <Chip color="default" size="sm" variant="flat">
-                                        {server._count?.accessKeys}
+                                        {item.isAvailable ? "Available" : "Not Available"}
                                     </Chip>
-                                </TableCell>
-                                <TableCell>
-                                    <Chip color="default" size="sm" variant="flat">
-                                        {formatBytes(Number(server.totalDataUsage))}
-                                    </Chip>
-                                </TableCell>
-                                <TableCell>
-                                    <Chip color={server.isAvailable ? "success" : "danger"} size="sm" variant="flat">
-                                        {server.isAvailable ? "Available" : "Not Available"}
-                                    </Chip>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex gap-2 justify-center items-center">
-                                        <Tooltip
-                                            closeDelay={100}
-                                            color="primary"
-                                            content="Server keys"
-                                            delay={600}
-                                            size="sm"
-                                        >
-                                            <Button
-                                                as={Link}
-                                                color="primary"
-                                                href={`/servers/${server.id}/access-keys`}
-                                                isIconOnly={true}
-                                                size="sm"
-                                                variant="light"
-                                            >
-                                                <KeyIcon size={24} />
-                                            </Button>
-                                        </Tooltip>
+                                </div>
 
-                                        <Tooltip
-                                            closeDelay={100}
-                                            color="primary"
-                                            content="Server settings"
-                                            delay={600}
-                                            size="sm"
-                                        >
-                                            <Button
-                                                as={Link}
-                                                color="primary"
-                                                href={`/servers/${server.id}/settings`}
-                                                isIconOnly={true}
-                                                size="sm"
-                                                variant="light"
-                                            >
-                                                <SettingsIcon size={24} />
-                                            </Button>
-                                        </Tooltip>
+                                <div className="flex gap-1 justify-between items-center">
+                                    <span>Tags</span>
 
-                                        <Tooltip
-                                            closeDelay={100}
-                                            color="danger"
-                                            content="Remove the server"
-                                            delay={600}
-                                            size="sm"
-                                        >
-                                            <Button
-                                                color="danger"
-                                                isIconOnly={true}
-                                                size="sm"
-                                                variant="light"
-                                                onPress={() => {
-                                                    setServerToRemove(server.id);
-                                                    removeServerConfirmModalDisclosure.onOpen();
-                                                }}
-                                            >
-                                                <DeleteIcon size={24} />
-                                            </Button>
-                                        </Tooltip>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                                    {item.tags.length > 0 ? (
+                                        <div className="flex gap-2 justify-end items-center flex-wrap">
+                                            {item.tags.map((t) => (
+                                                <Chip
+                                                    key={t.tag.id}
+                                                    color="default"
+                                                    radius="sm"
+                                                    size="sm"
+                                                    variant="flat"
+                                                >
+                                                    {t.tag.name}
+                                                </Chip>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <span className="text-foreground-400">¯\_(ツ)_/¯</span>
+                                    )}
+                                </div>
+                            </CardBody>
+                            <CardFooter>
+                                <ButtonGroup color="default" fullWidth={true} size="sm" variant="flat">
+                                    <Button as={Link} href={`/servers/${item.id}/access-keys`}>
+                                        Access Keys
+                                    </Button>
+
+                                    <Button as={Link} href={`/servers/${item.id}/settings`}>
+                                        Settings
+                                    </Button>
+
+                                    <Button
+                                        color="danger"
+                                        onPress={() => {
+                                            setServerToRemove(item.id);
+                                            removeServerConfirmModalDisclosure.onOpen();
+                                        }}
+                                    >
+                                        Delete
+                                    </Button>
+                                </ButtonGroup>
+                            </CardFooter>
+                        </Card>
+                    ))}
+                </div>
             </div>
         </>
     );

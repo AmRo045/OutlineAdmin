@@ -188,7 +188,7 @@ export default function DynamicAccessKeyForm({ dynamicAccessKey, tags, servers }
                 disclosure={errorModalDisclosure}
                 title="Error!"
             />
-            <div className="grid gap-6">
+            <div className="grid gap-6 p-2">
                 <section className="flex justify-start items-center gap-2">
                     <Tooltip closeDelay={100} color="default" content="Dynamic access keys" delay={600} size="sm">
                         <Button isIconOnly as={Link} href="/dynamic-access-keys" size="sm" variant="light">

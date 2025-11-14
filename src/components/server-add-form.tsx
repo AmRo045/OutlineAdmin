@@ -53,16 +53,16 @@ export default function ServerAddForm() {
                     <h1 className="text-xl">Add Outline Server</h1>
                 </section>
 
-                <section className="px-10 grid gap-2">
+                <section className="p-2 grid gap-2">
                     <Tabs>
                         <Tab title="New Server">
                             <div className="grid gap-2">
-                                <p className="text-sm text-default-500">
+                                <p className="text-sm text-default-500 ">
                                     Log into your VPN server and run this command
                                 </p>
                                 <Snippet
                                     classNames={{
-                                        pre: "!whitespace-pre-line"
+                                        pre: "!break-words whitespace-pre-wrap max-w-[70vw]"
                                     }}
                                     color="default"
                                     variant="flat"
@@ -79,7 +79,7 @@ export default function ServerAddForm() {
                                 </p>
                                 <Snippet
                                     classNames={{
-                                        pre: "!whitespace-pre-line"
+                                        pre: "!break-words whitespace-pre-wrap max-w-[70vw]"
                                     }}
                                     color="default"
                                     variant="flat"
@@ -91,14 +91,14 @@ export default function ServerAddForm() {
                     </Tabs>
                 </section>
 
-                <section className="px-10 grid gap-2">
+                <section className="p-2 grid gap-2">
                     <form className="grid gap-4" onSubmit={form.handleSubmit(actualSubmit)}>
                         <Input
                             color="primary"
                             label="Paste your installation output here"
                             placeholder={app.snippets.exampleServerManagementJson}
                             required={true}
-                            variant="faded"
+                            variant="underlined"
                             {...form.register("managementJson", {
                                 required: true,
                                 maxLength: 512

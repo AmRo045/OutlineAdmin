@@ -30,11 +30,11 @@ export default function HealthCheckListItem({ item }: Props) {
                     <div className="flex justify-between items-center gap-2">
                         <span>Status:</span>
                         {item.isAvailable ? (
-                            <Chip color="success" size="sm" variant="flat">
+                            <Chip color="success" radius="sm" size="sm" variant="flat">
                                 Available
                             </Chip>
                         ) : (
-                            <Chip color="danger" size="sm" variant="flat">
+                            <Chip color="danger" radius="sm" size="sm" variant="flat">
                                 Not Available
                             </Chip>
                         )}
@@ -42,21 +42,21 @@ export default function HealthCheckListItem({ item }: Props) {
 
                     <div className="flex justify-between items-center gap-2">
                         <span>Last check:</span>
-                        <Chip size="sm" variant="flat">
+                        <Chip radius="sm" size="sm" variant="flat">
                             {item.lastCheckedAt?.toLocaleString() ?? "Not Checked Yet"}
                         </Chip>
                     </div>
 
                     <div className="flex justify-between items-center gap-2">
                         <span>Interval:</span>
-                        <Chip size="sm" variant="flat">
+                        <Chip radius="sm" size="sm" variant="flat">
                             Every {item.interval}m
                         </Chip>
                     </div>
 
                     <div className="flex justify-between items-center gap-2">
                         <span>Notification:</span>
-                        <Chip size="sm" variant="flat">
+                        <Chip radius="sm" size="sm" variant="flat">
                             {renderChannelName()}
                         </Chip>
                     </div>
