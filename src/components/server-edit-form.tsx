@@ -104,7 +104,7 @@ export default function ServerEditForm({ server, tags }: Props) {
                     <h1 className="text-xl">Server Settings</h1>
                 </section>
 
-                <form className="px-10 grid gap-4" onSubmit={form.handleSubmit(actualSubmit)}>
+                <form className="p-2 grid gap-4" onSubmit={form.handleSubmit(actualSubmit)}>
                     <span className="text-lg">Editable Information</span>
                     <Input
                         className="w-[320px]"
@@ -113,7 +113,7 @@ export default function ServerEditForm({ server, tags }: Props) {
                         label="Server name"
                         required={true}
                         size="sm"
-                        variant="faded"
+                        variant="underlined"
                         {...form.register("name", {
                             required: true,
                             maxLength: 128
@@ -127,7 +127,7 @@ export default function ServerEditForm({ server, tags }: Props) {
                         label="Hostname or IP for new access keys"
                         required={true}
                         size="sm"
-                        variant="faded"
+                        variant="underlined"
                         {...form.register("hostnameForNewAccessKeys", {
                             required: true,
                             maxLength: 128
@@ -142,7 +142,7 @@ export default function ServerEditForm({ server, tags }: Props) {
                         required={true}
                         size="sm"
                         type="number"
-                        variant="faded"
+                        variant="underlined"
                         {...form.register("portForNewAccessKeys", {
                             required: true,
                             min: 1,
@@ -176,7 +176,7 @@ export default function ServerEditForm({ server, tags }: Props) {
 
                 <Divider />
 
-                <div className="px-10 grid gap-4">
+                <div className="p-2 grid gap-4">
                     <span className="text-lg">Remove The Server</span>
                     <p className="text-default-500 text-sm">
                         Please note that this action will only remove the server from the {app.name}&apos;s database.
