@@ -76,7 +76,7 @@ export default function ServersList({ data }: Props) {
             />
 
             <div className="grid gap-4">
-                <h1 className="text-xl">Your Servers</h1>
+                <h1 className="text-xl">Servers</h1>
 
                 <div className="flex justify-between items-center gap-2">
                     <form onSubmit={searchForm.handleSubmit(handleSearch)}>
@@ -108,7 +108,7 @@ export default function ServersList({ data }: Props) {
                                     <span className="max-w-[360px] truncate">{item.name}</span>
                                 </div>
                             </CardHeader>
-                            <CardBody className="text-sm grid gap-4">
+                            <CardBody className="text-sm grid gap-2">
                                 <div className="flex gap-1 justify-between items-center">
                                     <span>ID</span>
                                     <Chip radius="sm" size="sm" variant="flat">
@@ -117,14 +117,14 @@ export default function ServersList({ data }: Props) {
                                 </div>
 
                                 <div className="flex gap-1 justify-between items-center">
-                                    <span>Hostname/IP</span>
+                                    <span>Host/IP</span>
                                     <Chip radius="sm" size="sm" variant="flat">
                                         {item.hostnameOrIp}
                                     </Chip>
                                 </div>
 
                                 <div className="flex gap-1 justify-between items-center">
-                                    <span>Hostname/IP for new access keys</span>
+                                    <span>Host/IP for new access keys</span>
                                     <Chip radius="sm" size="sm" variant="flat">
                                         {item.hostnameForNewAccessKeys}
                                     </Chip>
