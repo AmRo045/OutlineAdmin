@@ -28,6 +28,7 @@ servers.
     - [Docker](#docker)
     - [Docker Compose](#docker-compose)
     - [NodeJS](#nodejs)
+3. [Nginx Integration](#nginx-integration)
 3. [Updating to Latest Version](#updating-to-latest-version)
 4. [Development](#development)
 5. [Admin Password](#admin-password)
@@ -205,6 +206,44 @@ node server.js
 
 ---
 
+## Nginx Integration
+
+If you want to expose Outline Admin over `HTTPS` using your own domain, the recommended approach is to run it behind
+Nginx
+as a reverse proxy.
+
+Below is an example Nginx configuration you can use as a starting point:
+
+```conf
+server {
+    listen 443 ssl;
+    server_name your-outline-admin-domain.com;
+
+    ssl_certificate /etc/letsencrypt/live/your-outline-admin-domain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your-outline-admin-domain.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    location / {
+        proxy_pass http://localhost:3000;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 80;
+    server_name your-outline-admin-domain.com;
+
+    return 301 https://$host$request_uri;
+}
+```
+
+---
+
 ## Updating to Latest Version
 
 Pull the latest version of the outline-admin image
@@ -330,8 +369,11 @@ UQByW0gL9r89D4oFagC3ZRCEctIoh6XjHu7zv5xU2wcPVATT
 ![Servers](/.github/screenshots/2-servers.png)
 ![New server](/.github/screenshots/3-new-server.png)
 ![Server settings](/.github/screenshots/4-server-settings.png)
-![Server access keys](/.github/screenshots/5-server-access-keys.png)
-![Dynamic access keys](/.github/screenshots/6-dynamic-access-keys.png)
-![Dynamic access key edit](/.github/screenshots/7-dynamic-access-key-edit.png)
-![Dynamic access key details](/.github/screenshots/8-dynamic-access-key-details.png)
-![Dynamic access key access-keys](/.github/screenshots/9-dynamic-access-key-access-keys.png)
+![Server metrics](/.github/screenshots/5-server-metrics.png)
+![Server access keys](/.github/screenshots/6-server-access-keys.png)
+![Dynamic access keys](/.github/screenshots/7-dynamic-access-keys.png)
+![New dynamic access key](/.github/screenshots/8-new-dynamic-access-key.png)
+![Health checks](/.github/screenshots/9-health-checks.png)
+![Notification channels](/.github/screenshots/10-notification-channels.png)
+![New notification channels](/.github/screenshots/11-new-notification-channel.png)
+![Tags](/.github/screenshots/12-tags.png)
