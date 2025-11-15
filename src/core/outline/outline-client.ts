@@ -42,6 +42,13 @@ export default class OutlineClient {
         return await response.json();
     }
 
+    async serverMetrics(): Promise<Outline.Experimental.Metrics> {
+        const since = 30;
+        const response = await this.fetchWrapper(`/experimental/server/metrics?since=${since}d`, "GET");
+
+        return await response.json();
+    }
+
     async keys(): Promise<Outline.AccessKey[]> {
         const response = await this.fetchWrapper("/access-keys", "GET");
 

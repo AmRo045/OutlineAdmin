@@ -148,7 +148,7 @@ export default function DynamicAccessKeysList() {
                     <h1 className="text-xl">Dynamic Access Keys</h1>
 
                     <Tooltip content="Read more about dynamic access keys">
-                        <Link href={app.links.outlineVpnWiki.dynamicAccessKeys} target="_blank">
+                        <Link href={app.links.outlineVpn.dynamicAccessKeys} target="_blank">
                             <InfoIcon size={20} />
                         </Link>
                     </Tooltip>

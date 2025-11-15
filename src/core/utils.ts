@@ -112,3 +112,45 @@ export const getDakExpiryDateBasedOnValidityPeriod = (dak: DynamicAccessKey | Dy
         ? new Date(new Date(dak.usageStartedAt).getTime() + Number(dak.validityPeriod) * 24 * 60 * 60 * 1000)
         : null;
 };
+
+export function formatTimestamp(timestamp: number): string {
+    const date = new Date(timestamp);
+
+    return date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        hour12: true
+    });
+}
+
+export function formatAdaptiveTime(seconds: number): string {
+    if (seconds < 60) {
+        return `${seconds.toFixed(2)} sec`;
+    }
+
+    const minutes = seconds / 60;
+
+    if (minutes < 60) {
+        return `${minutes.toFixed(2)} min`;
+    }
+
+    const hours = minutes / 60;
+
+    return `${hours.toFixed(2)} hr`;
+}
+
+export function countryCodeToFlag(code: string): string {
+    if (!code || code.length !== 2) return "";
+
+    const A = 0x1f1e6;
+
+    return code
+        .toUpperCase()
+        .split("")
+        .map((c) => String.fromCodePoint(A + c.charCodeAt(0) - 65))
+        .join("");
+}

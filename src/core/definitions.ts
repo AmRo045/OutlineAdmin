@@ -228,4 +228,61 @@ export namespace Outline {
         accessUrl: string;
         dataLimitInBytes?: number;
     }
+
+    export namespace Experimental {
+        export interface DataTransferred {
+            bytes: number;
+        }
+
+        export interface TunnelTime {
+            seconds: number;
+        }
+
+        export interface BandwidthData {
+            data: DataTransferred;
+            timestamp: number;
+        }
+
+        export interface Bandwidth {
+            current: BandwidthData;
+            peak: BandwidthData;
+        }
+
+        export interface LocationData {
+            location: string;
+            asn: number | null;
+            asOrg: string | null;
+            dataTransferred: DataTransferred;
+            tunnelTime: TunnelTime;
+        }
+
+        export interface ServerMetrics {
+            tunnelTime: TunnelTime;
+            dataTransferred: DataTransferred;
+            bandwidth: Bandwidth;
+            locations: LocationData[];
+        }
+
+        export interface PeakDeviceCount {
+            data: number;
+            timestamp: number | null;
+        }
+
+        export interface Connection {
+            lastTrafficSeen: number | null;
+            peakDeviceCount: PeakDeviceCount;
+        }
+
+        export interface AccessKey {
+            accessKeyId: number;
+            dataTransferred: DataTransferred;
+            tunnelTime: TunnelTime;
+            connection: Connection;
+        }
+
+        export interface Metrics {
+            server: ServerMetrics;
+            accessKeys: AccessKey[];
+        }
+    }
 }
