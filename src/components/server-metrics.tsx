@@ -1,46 +1,49 @@
 "use client";
 
-import { Button, Card, CardBody, CardHeader, Chip, Divider, Link, Tooltip } from "@heroui/react";
-import React from "react";
+import { Alert, Button, Card, CardBody, CardHeader, Chip, Divider, Link, Skeleton, Tooltip } from "@heroui/react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { Server } from "@prisma/client";
+import { range } from "@heroui/shared-utils";
 
 import { ArrowLeftIcon } from "@/src/components/icons";
 import { app } from "@/src/core/config";
+import { Outline } from "@/src/core/definitions";
+import { getServerMetrics } from "@/src/core/actions/server";
+import { countryCodeToFlag, formatAdaptiveTime, formatBytes, formatTimestamp } from "@/src/core/utils";
 
-// interface Props {
-//     server: Server;
-// }
+interface Props {
+    server: Server;
+}
 
-// export default function ServerMetrics({ server }: Props) {
-export default function ServerMetrics() {
+export default function ServerMetrics({ server }: Props) {
     const searchParams = useSearchParams();
     const returnUrl = searchParams.get("return");
 
-    // const [metrics, setMetrics] = useState<Outline.Experimental.Metrics | null>();
-    // const [isLoading, setIsLoading] = useState<boolean>(true);
-    //
-    // const loadMetrics = async () => {
-    //     setIsLoading(true);
-    //
-    //     const metrics = await getServerMetrics(server);
-    //
-    //     setMetrics(metrics);
-    //     setIsLoading(false);
-    // };
-    //
-    // useEffect(() => {
-    //     loadMetrics();
-    // }, []);
-    //
-    // const hasNoData = !isLoading && !metrics;
+    const [metrics, setMetrics] = useState<Outline.Experimental.Metrics | null>();
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    const renderDataVolume = (value: string) => {
-        return (
-            <span className="bg-primary-100 dark:bg-primary-800 text-primary rounded-full w-fit text-2xl py-1 px-2">
-                {value}
-            </span>
-        );
+    const loadMetrics = async (quietly: boolean = false) => {
+        if (quietly) {
+            setMetrics(await getServerMetrics(server));
+        } else {
+            setIsLoading(true);
+
+            setMetrics(await getServerMetrics(server));
+
+            setIsLoading(false);
+        }
     };
+
+    useEffect(() => {
+        loadMetrics();
+
+        const refreshInterval = setInterval(() => loadMetrics(true), 10000);
+
+        return () => clearInterval(refreshInterval);
+    }, []);
+
+    const hasNoData = !isLoading && !metrics;
 
     return (
         <>
@@ -58,9 +61,9 @@ export default function ServerMetrics() {
                         </Button>
                     </Tooltip>
 
-                    {/*<h1 className="text-xl break-word">*/}
-                    {/*    {server.name} ({server.hostnameOrIp}) Metrics*/}
-                    {/*</h1>*/}
+                    <h1 className="text-xl break-word">
+                        {server.name} ({server.hostnameOrIp}) Metrics
+                    </h1>
                 </section>
 
                 <section className="grid gap-4 xl:px-4">
@@ -74,153 +77,214 @@ export default function ServerMetrics() {
                         </Link>
                     </p>
 
-                    <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
-                        <Card className="bg-content2 dark:bg-content1" shadow="none">
-                            <CardHeader>Total bandwidth usage (last 30 days)</CardHeader>
+                    {hasNoData && <Alert color="danger">Failed to fetch server metrics.</Alert>}
 
-                            <CardBody className="grid gap-2">
-                                <Chip color="primary" size="lg" variant="flat">
-                                    321.68 GB
-                                </Chip>
+                    {isLoading && (
+                        <div className="grid gap-4">
+                            <Card className="bg-content2 dark:bg-content1" shadow="none">
+                                <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+                                    <Card className="bg-transparent" shadow="none">
+                                        <CardHeader>
+                                            <Skeleton className="w-[200px] h-4 rounded-lg" />
+                                        </CardHeader>
 
-                                <span className="text-foreground-400 text-sm">
-                                    This shows the total amount of data transferred through the server over the past
-                                    30 days.
-                                </span>
-                            </CardBody>
-                        </Card>
+                                        <CardBody className="grid gap-2">
+                                            <Skeleton className="w-[58px] h-[32px] rounded-full" />
 
-                        <Card className="bg-content2 dark:bg-content1" shadow="none">
-                            <CardHeader className="flex justify-between gap-2">
-                                <span>Current bandwidth usage</span>
-                                <Chip color="primary" size="sm" variant="dot">
-                                    25 kB/s
-                                </Chip>
-                            </CardHeader>
+                                            <Skeleton className="w-[300px] h-4 rounded-lg" />
+                                        </CardBody>
+                                    </Card>
 
-                            <CardBody className="grid gap-2">
-                                <Chip color="primary" size="lg" variant="flat">
-                                    13.6 MB/s
-                                </Chip>
+                                    <Divider className="bg-content3 dark:bg-content3/40 md:hidden" />
 
-                                <span className="text-foreground-400 text-sm">11/6/2025, 12:15:00 PM</span>
-                            </CardBody>
-                        </Card>
-                    </div>
+                                    <Card className="bg-content2 dark:bg-content1" shadow="none">
+                                        <CardHeader className="flex justify-between gap-2">
+                                            <Skeleton className="w-[200px] h-4 rounded-lg" />
+                                            <Skeleton className="w-[42px] h-[24px] rounded-full" />
+                                        </CardHeader>
 
-                    <Card className="bg-content2 dark:bg-content1" shadow="none">
-                        <CardHeader>ASes with most bandwidth usage (last 30 days)</CardHeader>
+                                        <CardBody className="grid gap-2">
+                                            <Skeleton className="w-[58px] h-[32px] rounded-full" />
 
-                        <CardBody>
-                            <div className="flex flex-wrap w-full gap-2">
-                                <div className="p-4 bg-background rounded-xl grid gap-4 w-full md:w-[300px]">
-                                    <span className="text-sm text-foreground-400">
-                                        Mobile Communication Company of Iran PLC
-                                    </span>
-
-                                    <div className="flex items-center justify-between gap-2">
-                                        <Chip color="primary" variant="flat">
-                                            198.09 GB
-                                        </Chip>
-
-                                        <span>AS197207 🇮🇷</span>
-                                    </div>
+                                            <Skeleton className="w-[200px] h-4 rounded-lg" />
+                                        </CardBody>
+                                    </Card>
                                 </div>
 
-                                <div className="p-4 bg-background rounded-xl grid gap-4 w-full md:w-[300px]">
-                                    <span className="text-sm text-foreground-400">
-                                        Mobile Communication Company of Iran PLC
-                                    </span>
+                                <Divider className="bg-content3 dark:bg-content3/40 my-4" />
 
-                                    <div className="flex items-center justify-between gap-2">
-                                        <Chip color="primary" variant="flat">
-                                            198.09 GB
-                                        </Chip>
+                                <Card className="bg-transparent" shadow="none">
+                                    <CardHeader>
+                                        <Skeleton className="w-[350px] h-4 rounded-lg" />
+                                    </CardHeader>
 
-                                        <span>AS197207 🇮🇷</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </CardBody>
-                    </Card>
+                                    <CardBody>
+                                        <div className="flex flex-wrap w-full gap-2">
+                                            {range(1, 4).map((item) => (
+                                                <Skeleton
+                                                    key={item}
+                                                    className="w-full md:w-[300px] h-[96px] rounded-xl"
+                                                />
+                                            ))}
+                                        </div>
+                                    </CardBody>
+                                </Card>
+                            </Card>
 
-                    <Card className="bg-content2 dark:bg-content1" shadow="none">
-                        <Card className="bg-transparent" shadow="none">
-                            <CardHeader>Total Tunnel Time (last 30 days)</CardHeader>
+                            <Card className="bg-content2 dark:bg-content1" shadow="none">
+                                <Card className="bg-transparent" shadow="none">
+                                    <CardHeader>
+                                        <Skeleton className="w-[280px] h-4 rounded-lg" />
+                                    </CardHeader>
 
-                            <CardBody className="grid gap-2">
-                                <Chip color="primary" size="lg" variant="flat">
-                                    3,449.448 hours
-                                </Chip>
-                            </CardBody>
-                        </Card>
+                                    <CardBody className="grid gap-2">
+                                        <Skeleton className="w-[58px] h-[32px] rounded-full" />
+                                    </CardBody>
+                                </Card>
 
-                        <Divider className="bg-content3 dark:bg-content3/40 my-4" />
+                                <Divider className="bg-content3 dark:bg-content3/40 my-4" />
 
-                        <Card className="bg-transparent" shadow="none">
-                            <CardHeader>ASes with highest Tunnel Time (last 30 days)</CardHeader>
+                                <Card className="bg-transparent" shadow="none">
+                                    <CardHeader>
+                                        <Skeleton className="w-[350px] h-4 rounded-lg" />
+                                    </CardHeader>
 
-                            <CardBody className="grid gap-2">
-                                <div className="flex flex-wrap w-full gap-2">
-                                    <div className="p-4 bg-background rounded-xl grid gap-4 w-full md:w-[300px]">
-                                        <span className="text-sm text-foreground-400">
-                                            Mobile Communication Company of Iran PLC
-                                        </span>
+                                    <CardBody className="grid gap-2">
+                                        <div className="flex flex-wrap w-full gap-2">
+                                            {range(1, 4).map((item) => (
+                                                <Skeleton
+                                                    key={item}
+                                                    className="w-full md:w-[300px] h-[96px] rounded-xl"
+                                                />
+                                            ))}
+                                        </div>
+                                    </CardBody>
+                                </Card>
+                            </Card>
+                        </div>
+                    )}
 
-                                        <div className="flex items-center justify-between gap-2">
-                                            <Chip color="primary" variant="flat">
-                                                198.09 GB
+                    {!isLoading && !hasNoData && (
+                        <div className="grid gap-4">
+                            <Card className="bg-content2 dark:bg-content1" shadow="none">
+                                <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+                                    <Card className="bg-transparent" shadow="none">
+                                        <CardHeader>Total bandwidth usage (last 30 days)</CardHeader>
+
+                                        <CardBody className="grid gap-2">
+                                            <Chip color="primary" size="lg" variant="flat">
+                                                {formatBytes(metrics!.server.dataTransferred.bytes)}
                                             </Chip>
 
-                                            <span>AS197207 🇮🇷</span>
-                                        </div>
-                                    </div>
+                                            <span className="text-foreground-400 text-sm">
+                                                This shows the total amount of data transferred through the server over
+                                                the past 30 days.
+                                            </span>
+                                        </CardBody>
+                                    </Card>
 
-                                    <div className="p-4 bg-background rounded-xl grid gap-4 w-full md:w-[300px]">
-                                        <span className="text-sm text-foreground-400">
-                                            Mobile Communication Company of Iran PLC
-                                        </span>
+                                    <Divider className="bg-content3 dark:bg-content3/40 md:hidden" />
 
-                                        <div className="flex items-center justify-between gap-2">
-                                            <Chip color="primary" variant="flat">
-                                                198.09 GB
+                                    <Card className="bg-content2 dark:bg-content1" shadow="none">
+                                        <CardHeader className="flex justify-between gap-2">
+                                            <span>Current bandwidth usage</span>
+                                            <Chip color="primary" size="sm" variant="dot">
+                                                {formatBytes(metrics!.server.bandwidth.current.data.bytes)}/s
+                                            </Chip>
+                                        </CardHeader>
+
+                                        <CardBody className="grid gap-2">
+                                            <Chip color="primary" size="lg" variant="flat">
+                                                {formatBytes(metrics!.server.bandwidth.peak.data.bytes)}/s
                                             </Chip>
 
-                                            <span>AS197207 🇮🇷</span>
-                                        </div>
-                                    </div>
+                                            <span className="text-foreground-400 text-sm">
+                                                {formatTimestamp(metrics!.server.bandwidth.peak.timestamp * 1000)}
+                                            </span>
+                                        </CardBody>
+                                    </Card>
                                 </div>
-                            </CardBody>
-                        </Card>
-                    </Card>
 
-                    {/*{hasNoData && (*/}
-                    {/*    <Alert*/}
-                    {/*        color="danger"*/}
-                    {/*        endContent={*/}
-                    {/*            <Button*/}
-                    {/*                as={Link}*/}
-                    {/*                className="mt-1"*/}
-                    {/*                color="danger"*/}
-                    {/*                href={returnUrl ? returnUrl : "/servers"}*/}
-                    {/*                size="sm"*/}
-                    {/*                variant="light"*/}
-                    {/*            >*/}
-                    {/*                Back*/}
-                    {/*            </Button>*/}
-                    {/*        }*/}
-                    {/*    >*/}
-                    {/*        Failed to fetch server metrics.*/}
-                    {/*    </Alert>*/}
-                    {/*)}*/}
+                                <Divider className="bg-content3 dark:bg-content3/40 my-4" />
 
-                    {/*{isLoading ? (*/}
-                    {/*    <span>Loading...</span>*/}
-                    {/*) : (*/}
-                    {/*    <div>*/}
-                    {/*        <pre>{JSON.stringify(metrics, null, 4)}</pre>*/}
-                    {/*    </div>*/}
-                    {/*)}*/}
+                                <Card className="bg-transparent" shadow="none">
+                                    <CardHeader>ASes with most bandwidth usage (last 30 days)</CardHeader>
+
+                                    <CardBody>
+                                        <div className="flex flex-wrap w-full gap-2">
+                                            {metrics!.server.locations
+                                                .filter((l) => l.asn && l.dataTransferred.bytes > 0)
+                                                .map((location, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="p-4 bg-background rounded-xl grid gap-4 w-full md:w-[300px]"
+                                                    >
+                                                        <span className="text-sm text-foreground-400">
+                                                            {location.asOrg}
+                                                        </span>
+
+                                                        <div className="flex items-center justify-between gap-2">
+                                                            <Chip color="primary" variant="flat">
+                                                                {formatBytes(location.dataTransferred.bytes)}
+                                                            </Chip>
+
+                                                            <span>
+                                                                {location.asn} {countryCodeToFlag(location.location)}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                        </div>
+                                    </CardBody>
+                                </Card>
+                            </Card>
+
+                            <Card className="bg-content2 dark:bg-content1" shadow="none">
+                                <Card className="bg-transparent" shadow="none">
+                                    <CardHeader>Total Tunnel Time (last 30 days)</CardHeader>
+
+                                    <CardBody className="grid gap-2">
+                                        <Chip color="primary" size="lg" variant="flat">
+                                            {formatAdaptiveTime(metrics!.server.tunnelTime.seconds)}
+                                        </Chip>
+                                    </CardBody>
+                                </Card>
+
+                                <Divider className="bg-content3 dark:bg-content3/40 my-4" />
+
+                                <Card className="bg-transparent" shadow="none">
+                                    <CardHeader>ASes with highest Tunnel Time (last 30 days)</CardHeader>
+
+                                    <CardBody className="grid gap-2">
+                                        <div className="flex flex-wrap w-full gap-2">
+                                            {metrics!.server.locations
+                                                .filter((l) => l.asn && l.dataTransferred.bytes > 0)
+                                                .map((location, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="p-4 bg-background rounded-xl grid gap-4 w-full md:w-[300px]"
+                                                    >
+                                                        <span className="text-sm text-foreground-400">
+                                                            {location.asOrg}
+                                                        </span>
+
+                                                        <div className="flex items-center justify-between gap-2">
+                                                            <Chip color="primary" variant="flat">
+                                                                {formatAdaptiveTime(location.tunnelTime.seconds)}
+                                                            </Chip>
+
+                                                            <span>
+                                                                {location.asn} {countryCodeToFlag(location.location)}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                        </div>
+                                    </CardBody>
+                                </Card>
+                            </Card>
+                        </div>
+                    )}
                 </section>
             </div>
         </>
