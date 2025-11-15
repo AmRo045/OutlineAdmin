@@ -28,6 +28,7 @@ servers.
     - [Docker](#docker)
     - [Docker Compose](#docker-compose)
     - [NodeJS](#nodejs)
+3. [Nginx Integration](#nginx-integration)
 3. [Updating to Latest Version](#updating-to-latest-version)
 4. [Development](#development)
 5. [Admin Password](#admin-password)
@@ -201,6 +202,44 @@ npm run build
 ```bash
 cd .next/standalone
 node server.js
+```
+
+---
+
+## Nginx Integration
+
+If you want to expose Outline Admin over `HTTPS` using your own domain, the recommended approach is to run it behind
+Nginx
+as a reverse proxy.
+
+Below is an example Nginx configuration you can use as a starting point:
+
+```conf
+server {
+    listen 443 ssl;
+    server_name your-outline-admin-domain.com;
+
+    ssl_certificate /etc/letsencrypt/live/your-outline-admin-domain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your-outline-admin-domain.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    location / {
+        proxy_pass http://localhost:3000;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 80;
+    server_name your-outline-admin-domain.com;
+
+    return 301 https://$host$request_uri;
+}
 ```
 
 ---
