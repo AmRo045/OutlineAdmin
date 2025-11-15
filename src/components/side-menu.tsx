@@ -105,7 +105,7 @@ export const SideMenu = ({ drawerDisclosure }: Props) => {
                             </Tooltip>
 
                             <Tooltip closeDelay={100} content="Reddit page">
-                                <Link isExternal href={app.links.outlineVpnWiki.index}>
+                                <Link isExternal href={app.links.outlineVpn.index}>
                                     <RedditIcon className="text-default-500" size={24} />
                                 </Link>
                             </Tooltip>

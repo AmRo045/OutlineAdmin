@@ -195,6 +195,10 @@ export default function ServersList({ data }: Props) {
                                         Settings
                                     </Button>
 
+                                    <Button as={Link} href={`/servers/${item.id}/metrics`}>
+                                        Metrics
+                                    </Button>
+
                                     <Button
                                         color="danger"
                                         onPress={() => {
