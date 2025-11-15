@@ -8,6 +8,7 @@ import prisma from "@/prisma/db";
 import {
     EditServerRequest,
     NewServerRequest,
+    Outline,
     ServerWithAccessKeysAndTags,
     ServerWithAccessKeysCount,
     ServerWithAccessKeysCountAndTags,
@@ -234,4 +235,28 @@ export async function syncServer(server: number | Server): Promise<void> {
 
     revalidatePath("/servers");
     revalidatePath(`/servers/${serverToSync.id}/access-keys`);
+}
+
+export async function getServerMetrics(server: number | Server): Promise<Outline.Experimental.Metrics | null> {
+    let serverData: Server | null;
+
+    if (Number.isInteger(server)) {
+        serverData = await getServerById(server as number);
+    } else {
+        serverData = server as Server;
+    }
+
+    if (!serverData) {
+        return null;
+    }
+
+    try {
+        const outlineClient = OutlineClient.fromConfig(serverData.managementJson);
+
+        return await outlineClient.serverMetrics();
+    } catch (error) {
+        console.error(error);
+
+        return null;
+    }
 }

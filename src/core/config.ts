@@ -30,9 +30,11 @@ export const app = {
         github: "https://github.com/AmRo045/OutlineAdmin",
         x: "https://x.com/AmRo045",
         me: "https://amro045.github.io",
-        outlineVpnWiki: {
+        outlineVpn: {
             index: "https://www.reddit.com/r/outlinevpn/wiki/index",
-            dynamicAccessKeys: "https://developers.google.com/outline/docs/guides/service-providers/dynamic-access-keys"
+            dynamicAccessKeys:
+                "https://developers.google.com/outline/docs/guides/service-providers/dynamic-access-keys",
+            dataCollectionPolicy: "https://support.google.com/outline/answer/15331222"
         },
         myTelegramApiProxyWorkerRepo: "https://github.com/AmRo045/telegram-api-proxy-worker"
     },
