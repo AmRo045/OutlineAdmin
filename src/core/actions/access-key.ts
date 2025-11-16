@@ -142,18 +142,22 @@ export async function removeAccessKey(
         where: { id: serverId }
     });
 
-    const outlineClient = OutlineClient.fromConfig(server.managementJson);
+    try {
+        const outlineClient = OutlineClient.fromConfig(server.managementJson);
 
-    if (apiId) {
-        await outlineClient.deleteKey(apiId);
-    } else {
-        const accessKey = await prisma.accessKey.findFirstOrThrow({
-            where: {
-                id: id
-            }
-        });
+        if (apiId) {
+            await outlineClient.deleteKey(apiId);
+        } else {
+            const accessKey = await prisma.accessKey.findFirstOrThrow({
+                where: {
+                    id: id
+                }
+            });
 
-        await outlineClient.deleteKey(accessKey.apiId);
+            await outlineClient.deleteKey(accessKey.apiId);
+        }
+    } catch (e) {
+        console.error(e);
     }
 
     await prisma.accessKey.delete({
